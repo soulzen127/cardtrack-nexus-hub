@@ -40,6 +40,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import CardDetailsDialog from "@/components/cards/CardDetailsDialog";
 import RegisterCardDialog from "@/components/cards/RegisterCardDialog";
+import { useI18n } from "@/hooks/use-i18n";
 
 // Mock card data
 const cards = [
@@ -55,6 +56,7 @@ export default function CardsPage() {
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const { t } = useI18n();
 
   const filteredCards = cards.filter(card => 
     card.cardNumber.includes(searchTerm) || 
@@ -68,11 +70,11 @@ export default function CardsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge variant="outline" className="bg-cardtrack-green/10 text-cardtrack-green border-cardtrack-green/20">Active</Badge>;
+        return <Badge variant="outline" className="bg-cardtrack-green/10 text-cardtrack-green border-cardtrack-green/20">{t("active")}</Badge>;
       case "suspended":
-        return <Badge variant="outline" className="bg-cardtrack-amber/10 text-cardtrack-amber border-cardtrack-amber/20">Suspended</Badge>;
+        return <Badge variant="outline" className="bg-cardtrack-amber/10 text-cardtrack-amber border-cardtrack-amber/20">{t("suspended")}</Badge>;
       case "lost":
-        return <Badge variant="outline" className="bg-cardtrack-red/10 text-cardtrack-red border-cardtrack-red/20">Lost</Badge>;
+        return <Badge variant="outline" className="bg-cardtrack-red/10 text-cardtrack-red border-cardtrack-red/20">{t("lost")}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -87,34 +89,34 @@ export default function CardsPage() {
     <MainLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-          <h1 className="text-2xl font-bold tracking-tight">Card Management</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("cardManagement")}</h1>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={() => setIsRegisterOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Register Card
+              {t("registerCard")}
             </Button>
             <Button variant="outline" size="sm">
               <Upload className="h-4 w-4 mr-2" />
-              Import
+              {t("import")}
             </Button>
             <Button variant="outline" size="sm">
               <Download className="h-4 w-4 mr-2" />
-              Export
+              {t("export")}
             </Button>
           </div>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Cards Overview</CardTitle>
-            <CardDescription>Manage and monitor all registered cards in the system</CardDescription>
+            <CardTitle>{t("cardsOverview")}</CardTitle>
+            <CardDescription>{t("manageAndMonitorCards")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="relative flex-1">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by card number or holder name..."
+                  placeholder={t("searchByCardOrHolder")}
                   className="pl-8"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -129,13 +131,13 @@ export default function CardsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Card Number</TableHead>
-                    <TableHead>Holder</TableHead>
-                    <TableHead className="hidden md:table-cell">Issue Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="hidden md:table-cell">Last Seen</TableHead>
-                    <TableHead className="hidden lg:table-cell">Location</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t("cardNumber")}</TableHead>
+                    <TableHead>{t("holder")}</TableHead>
+                    <TableHead className="hidden md:table-cell">{t("issueDate")}</TableHead>
+                    <TableHead>{t("status")}</TableHead>
+                    <TableHead className="hidden md:table-cell">{t("lastSeen")}</TableHead>
+                    <TableHead className="hidden lg:table-cell">{t("location")}</TableHead>
+                    <TableHead className="text-right">{t("actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -166,24 +168,24 @@ export default function CardsPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuLabel>{t("actions")}</DropdownMenuLabel>
                               <DropdownMenuItem onClick={() => openCardDetails(card)}>
-                                View Details
+                                {t("viewDetails")}
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               {card.status !== "active" && (
                                 <DropdownMenuItem onClick={() => handleStatusChange(card.id, "active")}>
-                                  Mark as Active
+                                  {t("markAsActive")}
                                 </DropdownMenuItem>
                               )}
                               {card.status !== "suspended" && (
                                 <DropdownMenuItem onClick={() => handleStatusChange(card.id, "suspended")}>
-                                  Suspend Card
+                                  {t("suspendCard")}
                                 </DropdownMenuItem>
                               )}
                               {card.status !== "lost" && (
                                 <DropdownMenuItem onClick={() => handleStatusChange(card.id, "lost")}>
-                                  Report as Lost
+                                  {t("reportAsLost")}
                                 </DropdownMenuItem>
                               )}
                             </DropdownMenuContent>
@@ -194,7 +196,7 @@ export default function CardsPage() {
                   ) : (
                     <TableRow>
                       <TableCell colSpan={7} className="h-24 text-center">
-                        No cards found.
+                        {t("noCardsFound")}
                       </TableCell>
                     </TableRow>
                   )}
