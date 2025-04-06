@@ -1,4 +1,3 @@
-
 import { Language } from "@/contexts/LanguageContext";
 
 type TranslationKeys = 
@@ -75,6 +74,18 @@ type TranslationKeys =
   | "alertWhenCardsEnter"
   | "cityLimits"
   | "alertWhenCardsLeave"
+  // Map view additional translations
+  | "mapboxTokenRequired"
+  | "enterMapboxToken"
+  | "enterMapboxPublicToken"
+  | "obtainTokenText"
+  | "initializeMap"
+  | "zoomIn"
+  | "zoomOut"
+  | "centerMap"
+  | "streets"
+  | "satellite"
+  | "light"
   // CardsPage translations
   | "cardManagement"
   | "registerCard"
@@ -224,6 +235,18 @@ export const translations: TranslationMap = {
     alertWhenCardsEnter: "Alert when cards enter",
     cityLimits: "City Limits",
     alertWhenCardsLeave: "Alert when cards leave",
+    // Map view additional translations
+    mapboxTokenRequired: "Mapbox Token Required",
+    enterMapboxToken: "Enter your Mapbox public token",
+    enterMapboxPublicToken: "Enter Mapbox public token",
+    obtainTokenText: "Obtain a token from",
+    initializeMap: "Initialize Map",
+    zoomIn: "Zoom In",
+    zoomOut: "Zoom Out",
+    centerMap: "Center Map",
+    streets: "Streets",
+    satellite: "Satellite",
+    light: "Light",
     // CardsPage translations
     cardManagement: "Card Management",
     registerCard: "Register Card",
@@ -266,8 +289,7 @@ export const translations: TranslationMap = {
     recordCategory: "Record Category",
     allRecords: "All Records",
     today: "Today",
-    thisWeek: "This Week",
-    thisMonth: "This Month",
+    thisWeek: "This Month",
     customRange: "Custom Range",
     cardEvents: "Card Events",
     systemLogs: "System Logs",
@@ -369,6 +391,18 @@ export const translations: TranslationMap = {
     alertWhenCardsEnter: "卡片進入時發出警報",
     cityLimits: "城市邊界",
     alertWhenCardsLeave: "卡片離開時發出警報",
+    // Map view additional translations
+    mapboxTokenRequired: "需要 Mapbox 令牌",
+    enterMapboxToken: "輸入您的 Mapbox 公共令牌",
+    enterMapboxPublicToken: "輸入 Mapbox 公共令牌",
+    obtainTokenText: "從以下網址獲取令牌",
+    initializeMap: "初始化地圖",
+    zoomIn: "放大",
+    zoomOut: "縮小",
+    centerMap: "置中地圖",
+    streets: "街道",
+    satellite: "衛星",
+    light: "淺色",
     // CardsPage translations
     cardManagement: "卡片管理",
     registerCard: "註冊卡片",
@@ -514,6 +548,18 @@ export const translations: TranslationMap = {
     alertWhenCardsEnter: "カードが入場する際に警告",
     cityLimits: "市境界",
     alertWhenCardsLeave: "カードが退場する際に警告",
+    // Map view additional translations
+    mapboxTokenRequired: "Mapboxトークンが必要です",
+    enterMapboxToken: "Mapbox公開トークンを入力してください",
+    enterMapboxPublicToken: "Mapbox公開トークンを入力",
+    obtainTokenText: "トークンの取得先",
+    initializeMap: "マップを初期化",
+    zoomIn: "拡大",
+    zoomOut: "縮小",
+    centerMap: "マップの中心に戻る",
+    streets: "ストリート",
+    satellite: "衛星",
+    light: "ライト",
     // CardsPage translations
     cardManagement: "カード管理",
     registerCard: "カード登録",
