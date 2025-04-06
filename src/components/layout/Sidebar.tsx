@@ -14,9 +14,13 @@ import {
   Menu,
   LogOut,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Languages
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "@/i18n/translations";
+import { LanguageSelector } from "@/components/language/LanguageSelector";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -25,25 +29,28 @@ interface SidebarProps {
 
 interface SidebarItem {
   name: string;
+  translationKey: string;
   path: string;
   icon: React.ReactNode;
 }
 
 export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const location = useLocation();
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
 
   const mainItems: SidebarItem[] = [
-    { name: "Dashboard", path: "/dashboard", icon: <Home size={20} /> },
-    { name: "Cards", path: "/cards", icon: <CreditCard size={20} /> },
-    { name: "Tracking", path: "/tracking", icon: <Map size={20} /> },
-    { name: "Records", path: "/records", icon: <Search size={20} /> },
-    { name: "Reports", path: "/reports", icon: <BarChart size={20} /> },
-    { name: "Alerts", path: "/alerts", icon: <Bell size={20} /> }
+    { name: "Dashboard", translationKey: "dashboard", path: "/dashboard", icon: <Home size={20} /> },
+    { name: "Cards", translationKey: "cards", path: "/cards", icon: <CreditCard size={20} /> },
+    { name: "Tracking", translationKey: "tracking", path: "/tracking", icon: <Map size={20} /> },
+    { name: "Records", translationKey: "records", path: "/records", icon: <Search size={20} /> },
+    { name: "Reports", translationKey: "reports", path: "/reports", icon: <BarChart size={20} /> },
+    { name: "Alerts", translationKey: "alerts", path: "/alerts", icon: <Bell size={20} /> }
   ];
 
   const secondaryItems: SidebarItem[] = [
-    { name: "Users", path: "/users", icon: <Users size={20} /> },
-    { name: "Settings", path: "/settings", icon: <Settings size={20} /> }
+    { name: "Users", translationKey: "users", path: "/users", icon: <Users size={20} /> },
+    { name: "Settings", translationKey: "settings", path: "/settings", icon: <Settings size={20} /> }
   ];
 
   return (
@@ -99,10 +106,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                     : "text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
                   !isOpen && "lg:justify-center"
                 )}
-                title={!isOpen ? item.name : undefined}
+                title={!isOpen ? t(item.translationKey as any) : undefined}
               >
                 <span className="text-lg">{item.icon}</span>
-                {isOpen && <span className="ml-3">{item.name}</span>}
+                {isOpen && <span className="ml-3">{t(item.translationKey as any)}</span>}
               </Link>
             ))}
           </nav>
@@ -120,12 +127,22 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                       : "text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
                     !isOpen && "lg:justify-center"
                   )}
-                  title={!isOpen ? item.name : undefined}
+                  title={!isOpen ? t(item.translationKey as any) : undefined}
                 >
                   <span className="text-lg">{item.icon}</span>
-                  {isOpen && <span className="ml-3">{item.name}</span>}
+                  {isOpen && <span className="ml-3">{t(item.translationKey as any)}</span>}
                 </Link>
               ))}
+              
+              {isOpen ? (
+                <div className="px-3 py-2">
+                  <LanguageSelector />
+                </div>
+              ) : (
+                <div className="flex justify-center py-2">
+                  <LanguageSelector minimal />
+                </div>
+              )}
             </nav>
           </div>
         </div>
@@ -137,10 +154,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
               "flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-sidebar-accent/50",
               !isOpen && "lg:justify-center"
             )}
-            title={!isOpen ? "Logout" : undefined}
+            title={!isOpen ? t("logout") : undefined}
           >
             <LogOut size={20} />
-            {isOpen && <span className="ml-3">Logout</span>}
+            {isOpen && <span className="ml-3">{t("logout")}</span>}
           </Link>
         </div>
       </aside>
