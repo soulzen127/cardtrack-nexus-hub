@@ -155,7 +155,42 @@ type TranslationKeys =
   | "kaohsiung"
   | "tainan"
   | "taichung"
-  | "hsinchu";
+  | "hsinchu"
+  // User Management translations
+  | "userManagement"
+  | "manageUserAccounts"
+  | "addUser"
+  | "addNewUser"
+  | "fillUserDetails"
+  | "name"
+  | "email"
+  | "role"
+  | "selectRole"
+  | "admin"
+  | "manager"
+  | "standardUser"
+  | "userAddedSuccess"
+  // System Settings translations
+  | "systemSettings"
+  | "generalSettings"
+  | "securitySettings"
+  | "notificationSettings"
+  | "apiSettings"
+  | "backupSettings"
+  // Alert & Notifications translations
+  | "alertsAndNotifications"
+  | "notificationCenter"
+  | "alertSettings"
+  | "notificationHistory"
+  | "markAllAsRead"
+  | "clearAll"
+  // Report translations
+  | "createNewReport"
+  | "reportTemplates"
+  | "scheduledReports"
+  | "generatedReports"
+  | "reportManagement"
+  | "generateScheduleDownload";
 
 export type Translations = Record<TranslationKeys, string>;
 type TranslationMap = Record<Language, Translations>;
@@ -316,7 +351,42 @@ export const translations: TranslationMap = {
     kaohsiung: "Kaohsiung, Taiwan",
     tainan: "Tainan, Taiwan",
     taichung: "Taichung, Taiwan",
-    hsinchu: "Hsinchu, Taiwan"
+    hsinchu: "Hsinchu, Taiwan",
+    // User Management translations
+    userManagement: "User Management",
+    manageUserAccounts: "Manage user accounts and permissions",
+    addUser: "Add User",
+    addNewUser: "Add New User",
+    fillUserDetails: "Fill in the user details below to create a new account",
+    name: "Name",
+    email: "Email",
+    role: "Role",
+    selectRole: "Select role",
+    admin: "Administrator",
+    manager: "Manager",
+    standardUser: "Standard User",
+    userAddedSuccess: "User added successfully",
+    // System Settings translations
+    systemSettings: "System Settings",
+    generalSettings: "General Settings",
+    securitySettings: "Security Settings",
+    notificationSettings: "Notification Settings",
+    apiSettings: "API Settings",
+    backupSettings: "Backup & Recovery",
+    // Alert & Notifications translations
+    alertsAndNotifications: "Alerts & Notifications",
+    notificationCenter: "Notification Center",
+    alertSettings: "Alert Settings",
+    notificationHistory: "Notification History",
+    markAllAsRead: "Mark All as Read",
+    clearAll: "Clear All",
+    // Report translations
+    createNewReport: "Create New Report",
+    reportTemplates: "Report Templates",
+    scheduledReports: "Scheduled Reports",
+    generatedReports: "Generated Reports",
+    reportManagement: "Report Management",
+    generateScheduleDownload: "Generate, schedule, and download reports"
   },
   zh_TW: {
     dashboard: "儀表板",
@@ -473,7 +543,42 @@ export const translations: TranslationMap = {
     kaohsiung: "高雄，台灣",
     tainan: "台南，台灣",
     taichung: "台中，台灣",
-    hsinchu: "新竹，台灣"
+    hsinchu: "新竹，台灣",
+    // User Management translations
+    userManagement: "用戶管理",
+    manageUserAccounts: "管理用戶帳戶和權限",
+    addUser: "添加用戶",
+    addNewUser: "添加新用戶",
+    fillUserDetails: "填寫以下用戶詳細信息以創建新帳戶",
+    name: "姓名",
+    email: "電子郵件",
+    role: "角色",
+    selectRole: "選擇角色",
+    admin: "管理員",
+    manager: "經理",
+    standardUser: "標準用戶",
+    userAddedSuccess: "用戶添加成功",
+    // System Settings translations
+    systemSettings: "系統設置",
+    generalSettings: "一般設置",
+    securitySettings: "安全設置",
+    notificationSettings: "通知設置",
+    apiSettings: "API設置",
+    backupSettings: "備份與恢復",
+    // Alert & Notifications translations
+    alertsAndNotifications: "警報與通知",
+    notificationCenter: "通知中心",
+    alertSettings: "警報設置",
+    notificationHistory: "通知歷史",
+    markAllAsRead: "標記所有為已讀",
+    clearAll: "清除所有",
+    // Report translations
+    createNewReport: "創建新報告",
+    reportTemplates: "報告模板",
+    scheduledReports: "計劃報告",
+    generatedReports: "已生成報告",
+    reportManagement: "報告管理",
+    generateScheduleDownload: "生成、計劃和下載報告"
   },
   ja: {
     dashboard: "ダッシュボード",
@@ -630,7 +735,42 @@ export const translations: TranslationMap = {
     kaohsiung: "高雄、台湾",
     tainan: "台南、台湾",
     taichung: "台中、台湾",
-    hsinchu: "新竹、台湾"
+    hsinchu: "新竹、台湾",
+    // User Management translations
+    userManagement: "ユーザー管理",
+    manageUserAccounts: "ユーザーアカウントと権限の管理",
+    addUser: "ユーザーを追加",
+    addNewUser: "新規ユーザーを追加",
+    fillUserDetails: "新しいアカウントを作成するには、以下のユーザー詳細を入力してください",
+    name: "名前",
+    email: "メール",
+    role: "役割",
+    selectRole: "役割を選択",
+    admin: "管理者",
+    manager: "マネージャー",
+    standardUser: "標準ユーザー",
+    userAddedSuccess: "ユーザーが正常に追加されました",
+    // System Settings translations
+    systemSettings: "システム設定",
+    generalSettings: "一般設定",
+    securitySettings: "セキュリティ設定",
+    notificationSettings: "通知設定",
+    apiSettings: "API設定",
+    backupSettings: "バックアップと復元",
+    // Alert & Notifications translations
+    alertsAndNotifications: "アラートと通知",
+    notificationCenter: "通知センター",
+    alertSettings: "アラート設定",
+    notificationHistory: "通知履歴",
+    markAllAsRead: "すべて既読にする",
+    clearAll: "すべてクリア",
+    // Report translations
+    createNewReport: "新規レポート作成",
+    reportTemplates: "レポートテンプレート",
+    scheduledReports: "予定されたレポート",
+    generatedReports: "生成されたレポート",
+    reportManagement: "レポート管理",
+    generateScheduleDownload: "レポートの生成、スケジュール設定、ダウンロード"
   }
 };
 
