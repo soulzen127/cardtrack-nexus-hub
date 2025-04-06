@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -84,28 +83,32 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
       window.initGoogleMap = () => {
         if (!mapContainer.current) return;
         
-        const googleMap = new window.google.maps.Map(mapContainer.current, {
-          center: { lat: 23.9739, lng: 120.9738 }, // Taiwan center
-          zoom: 7,
-          mapTypeId: 'roadmap',
-        });
-        
-        // Add markers
-        const locationsToUse = cardLocations || mockCardLocations;
-        locationsToUse.forEach(location => {
-          const [lng, lat] = location.coordinates;
-          new window.google.maps.Marker({
-            position: { lat, lng },
-            map: googleMap,
-            title: location.name,
+        if (window.google && window.google.maps) {
+          const googleMap = new window.google.maps.Map(mapContainer.current, {
+            center: { lat: 23.9739, lng: 120.9738 }, // Taiwan center
+            zoom: 7,
+            mapTypeId: 'roadmap',
           });
-        });
-        
-        setGoogleMapLoaded(true);
+          
+          // Add markers
+          const locationsToUse = cardLocations || mockCardLocations;
+          locationsToUse.forEach(location => {
+            const [lng, lat] = location.coordinates;
+            if (window.google && window.google.maps) {
+              new window.google.maps.Marker({
+                position: { lat, lng },
+                map: googleMap,
+                title: location.name,
+              });
+            }
+          });
+          
+          setGoogleMapLoaded(true);
+        }
       };
       
       document.head.appendChild(script);
-    } else {
+    } else if (window.initGoogleMap) {
       // If script is already loaded, just initialize the map
       window.initGoogleMap();
     }
