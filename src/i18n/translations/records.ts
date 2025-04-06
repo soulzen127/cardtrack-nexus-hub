@@ -35,7 +35,19 @@ export const recordsTranslations: TranslationCategory = {
     resolved: "Resolved",
     acknowledge: "Acknowledge",
     resolve: "Resolve",
-    showingRecords: "Showing 1-5 of 125 records"
+    showingRecords: "Showing 1-5 of 125 records",
+    export: "Export",
+    from: "From",
+    to: "To",
+    reset: "Reset",
+    alerts: "Alerts",
+    location: "Location",
+    today: "Today",
+    thisWeek: "This Week",
+    thisMonth: "This Month",
+    customRange: "Custom Range",
+    previous: "Previous",
+    next: "Next"
   },
   zh_TW: {
     recordsAndLogs: "記錄和日誌",
@@ -69,7 +81,19 @@ export const recordsTranslations: TranslationCategory = {
     resolved: "已解決",
     acknowledge: "確認",
     resolve: "解決",
-    showingRecords: "顯示1-5，共125條記錄"
+    showingRecords: "顯示1-5，共125條記錄",
+    export: "導出",
+    from: "從",
+    to: "至",
+    reset: "重置",
+    alerts: "警報",
+    location: "位置",
+    today: "今天",
+    thisWeek: "本週",
+    thisMonth: "本月",
+    customRange: "自定義範圍",
+    previous: "上一頁",
+    next: "下一頁"
   },
   ja: {
     recordsAndLogs: "記録とログ",
@@ -103,6 +127,18 @@ export const recordsTranslations: TranslationCategory = {
     resolved: "解決済み",
     acknowledge: "確認",
     resolve: "解決",
-    showingRecords: "125件中1-5件を表示"
+    showingRecords: "125件中1-5件を表示",
+    export: "エクスポート",
+    from: "から",
+    to: "まで",
+    reset: "リセット",
+    alerts: "アラート",
+    location: "場所",
+    today: "今日",
+    thisWeek: "今週",
+    thisMonth: "今月",
+    customRange: "カスタム範囲",
+    previous: "前へ",
+    next: "次へ"
   }
 };

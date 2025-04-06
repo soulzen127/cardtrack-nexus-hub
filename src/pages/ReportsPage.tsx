@@ -32,9 +32,11 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState("templates");
+  const { t } = useI18n();
   
   // Mock reports data
   const reportTemplates = [
@@ -69,10 +71,10 @@ export default function ReportsPage() {
     <MainLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-          <h1 className="text-2xl font-bold tracking-tight">Reports</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("reportManagement")}</h1>
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Create New Report
+            {t("createNewReport")}
           </Button>
         </div>
 
@@ -81,13 +83,13 @@ export default function ReportsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <BarChart className="h-5 w-5 mr-2 text-primary" />
-                Report Templates
+                {t("reportTemplates")}
               </CardTitle>
-              <CardDescription>Standard ready-to-use reports</CardDescription>
+              <CardDescription>{t("standardReadyToUseReports")}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{reportTemplates.length}</div>
-              <p className="text-sm text-muted-foreground">Available templates</p>
+              <p className="text-sm text-muted-foreground">{t("availableTemplates")}</p>
             </CardContent>
           </Card>
           
@@ -95,13 +97,13 @@ export default function ReportsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <Clock className="h-5 w-5 mr-2 text-primary" />
-                Scheduled Reports
+                {t("scheduledReports")}
               </CardTitle>
-              <CardDescription>Automated recurring reports</CardDescription>
+              <CardDescription>{t("automatedRecurringReports")}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{scheduledReports.length}</div>
-              <p className="text-sm text-muted-foreground">Active schedules</p>
+              <p className="text-sm text-muted-foreground">{t("activeSchedules")}</p>
             </CardContent>
           </Card>
           
@@ -109,31 +111,31 @@ export default function ReportsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <FileText className="h-5 w-5 mr-2 text-primary" />
-                Generated Reports
+                {t("generatedReports")}
               </CardTitle>
-              <CardDescription>Recently created reports</CardDescription>
+              <CardDescription>{t("recentlyCreatedReports")}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{recentReports.length}</div>
-              <p className="text-sm text-muted-foreground">Reports this week</p>
+              <p className="text-sm text-muted-foreground">{t("reportsThisWeek")}</p>
             </CardContent>
           </Card>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Report Management</CardTitle>
+            <CardTitle>{t("reportManagement")}</CardTitle>
             <CardDescription>
-              Generate, schedule, and download reports
+              {t("generateScheduleDownload")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="templates" onValueChange={setActiveTab}>
               <TabsList className="mb-4">
-                <TabsTrigger value="templates">Report Templates</TabsTrigger>
-                <TabsTrigger value="scheduled">Scheduled Reports</TabsTrigger>
-                <TabsTrigger value="recent">Recent Reports</TabsTrigger>
-                <TabsTrigger value="analytics">Analytics</TabsTrigger>
+                <TabsTrigger value="templates">{t("reportTemplates")}</TabsTrigger>
+                <TabsTrigger value="scheduled">{t("scheduledReports")}</TabsTrigger>
+                <TabsTrigger value="recent">{t("generatedReports")}</TabsTrigger>
+                <TabsTrigger value="analytics">{t("analytics")}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="templates">

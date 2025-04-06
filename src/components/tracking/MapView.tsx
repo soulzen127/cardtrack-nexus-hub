@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useI18n } from "@/hooks/use-i18n";
 import { createMarkers, CardLocation } from "./MapMarker";
 import { MapPin, Layers, ZoomIn, ZoomOut, Locate } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 interface MapViewProps {
   isRealtime: boolean;
@@ -22,6 +24,8 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
   const [mapboxToken, setMapboxToken] = useState<string>('');
   const [isMapInitialized, setIsMapInitialized] = useState(false);
   const [mapStyle, setMapStyle] = useState<string>('streets-v12');
+  const [mapProvider, setMapProvider] = useState<'mapbox' | 'google'>('mapbox');
+  const [googleMapLoaded, setGoogleMapLoaded] = useState(false);
 
   // Mock card locations data with coordinates
   const mockCardLocations = [
@@ -30,7 +34,7 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     { id: "C003", name: "Charlie Brown", location: "Tainan, Taiwan", coordinates: [120.2175, 22.9997] as [number, number] },
   ];
 
-  const initializeMap = () => {
+  const initializeMapbox = () => {
     if (!mapContainer.current || !mapboxToken) return;
     if (map.current) return;
 
@@ -64,9 +68,52 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     });
   };
 
+  // Initialize Google Maps
+  const initializeGoogleMap = () => {
+    if (!mapContainer.current || googleMapLoaded) return;
+
+    // Load Google Maps API script if not already loaded
+    if (!document.getElementById('google-maps-script')) {
+      const script = document.createElement('script');
+      script.id = 'google-maps-script';
+      script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&callback=initGoogleMap`;
+      script.async = true;
+      script.defer = true;
+      
+      // Define the callback function in the global scope
+      window.initGoogleMap = () => {
+        if (!mapContainer.current) return;
+        
+        const googleMap = new window.google.maps.Map(mapContainer.current, {
+          center: { lat: 23.9739, lng: 120.9738 }, // Taiwan center
+          zoom: 7,
+          mapTypeId: 'roadmap',
+        });
+        
+        // Add markers
+        const locationsToUse = cardLocations || mockCardLocations;
+        locationsToUse.forEach(location => {
+          const [lng, lat] = location.coordinates;
+          new window.google.maps.Marker({
+            position: { lat, lng },
+            map: googleMap,
+            title: location.name,
+          });
+        });
+        
+        setGoogleMapLoaded(true);
+      };
+      
+      document.head.appendChild(script);
+    } else {
+      // If script is already loaded, just initialize the map
+      window.initGoogleMap();
+    }
+  };
+
   // Handle map style changes
   const handleStyleChange = (style: string) => {
-    if (!map.current) return;
+    if (!map.current || mapProvider !== 'mapbox') return;
     
     setMapStyle(style);
     map.current.setStyle(`mapbox://styles/mapbox/${style}`);
@@ -82,9 +129,9 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     });
   };
 
-  // Zoom controls
+  // Zoom controls for Mapbox
   const handleZoom = (direction: 'in' | 'out') => {
-    if (!map.current) return;
+    if (!map.current || mapProvider !== 'mapbox') return;
     
     const currentZoom = map.current.getZoom();
     map.current.easeTo({
@@ -93,9 +140,9 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     });
   };
 
-  // Center on Taiwan
+  // Center on Taiwan for Mapbox
   const handleRecenter = () => {
-    if (!map.current) return;
+    if (!map.current || mapProvider !== 'mapbox') return;
     
     map.current.easeTo({
       center: [120.9738, 23.9739],
@@ -104,9 +151,31 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     });
   };
 
+  // Handle map provider change
+  const handleMapProviderChange = (provider: 'mapbox' | 'google') => {
+    // Clean up previous map
+    markers.current.forEach(marker => marker.remove());
+    if (map.current) {
+      map.current.remove();
+      map.current = null;
+    }
+    
+    setMapProvider(provider);
+    setIsMapInitialized(false);
+  };
+
+  useEffect(() => {
+    // Initialize the selected map provider
+    if (mapProvider === 'mapbox' && mapboxToken) {
+      initializeMapbox();
+    } else if (mapProvider === 'google') {
+      initializeGoogleMap();
+    }
+  }, [mapProvider, mapboxToken]);
+
   useEffect(() => {
     // Check if map is already loaded
-    if (isMapInitialized && map.current) {
+    if (isMapInitialized && map.current && mapProvider === 'mapbox') {
       // Add markers using the extracted function
       const locationsToUse = cardLocations || mockCardLocations;
       createMarkers({
@@ -118,8 +187,7 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
   }, [cardLocations, isMapInitialized]);
 
   useEffect(() => {
-    initializeMap();
-
+    // Cleanup function
     return () => {
       markers.current.forEach(marker => marker.remove());
       if (map.current) {
@@ -127,31 +195,94 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
         map.current = null;
       }
     };
-  }, [mapboxToken]);
+  }, []);
 
-  if (!mapboxToken) {
+  // Display token input if no mapbox token
+  if (mapProvider === 'mapbox' && !mapboxToken) {
     return (
       <div className="map-container bg-muted flex flex-col items-center justify-center p-8 rounded-md min-h-[300px]">
         <div className="text-center space-y-3 max-w-md mx-auto">
           <h3 className="text-lg font-medium">{t("mapboxTokenRequired")}</h3>
           <p className="text-muted-foreground">{t("enterMapboxToken")}:</p>
-          <div className="flex flex-col space-y-2">
-            <input 
-              type="text" 
-              className="w-full px-3 py-2 border rounded-md"
-              placeholder={t("enterMapboxPublicToken")}
-              onChange={(e) => setMapboxToken(e.target.value)}
-              value={mapboxToken}
-            />
-            <p className="text-xs text-muted-foreground">
-              {t("obtainTokenText")} <a href="https://mapbox.com" target="_blank" rel="noopener" className="text-primary">mapbox.com</a>
-            </p>
+          <div className="space-y-4">
+            <div className="flex flex-col space-y-2">
+              <input 
+                type="text" 
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder={t("enterMapboxPublicToken")}
+                onChange={(e) => setMapboxToken(e.target.value)}
+                value={mapboxToken}
+              />
+              <p className="text-xs text-muted-foreground">
+                {t("obtainTokenText")} <a href="https://mapbox.com" target="_blank" rel="noopener" className="text-primary">mapbox.com</a>
+              </p>
+            </div>
+            
+            <div className="flex flex-col space-y-2">
+              <p className="text-sm font-medium">{t("mapProvider")}</p>
+              <RadioGroup 
+                defaultValue="mapbox" 
+                value={mapProvider}
+                onValueChange={(value) => handleMapProviderChange(value as 'mapbox' | 'google')}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="mapbox" id="mapbox" />
+                  <Label htmlFor="mapbox">Mapbox</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="google" id="google" />
+                  <Label htmlFor="google">Google Maps</Label>
+                </div>
+              </RadioGroup>
+            </div>
+            
+            {mapboxToken && (
+              <Button onClick={initializeMapbox}>
+                {t("initializeMap")}
+              </Button>
+            )}
           </div>
-          {mapboxToken && (
-            <Button onClick={initializeMap}>
-              {t("initializeMap")}
+        </div>
+      </div>
+    );
+  }
+
+  // Display Google Maps provider selection if Google is selected but no map is loaded
+  if (mapProvider === 'google' && !googleMapLoaded) {
+    return (
+      <div className="map-container bg-muted flex flex-col items-center justify-center p-8 rounded-md min-h-[300px]">
+        <div className="text-center space-y-3 max-w-md mx-auto">
+          <h3 className="text-lg font-medium">{t("googleMapsSetup")}</h3>
+          <p className="text-muted-foreground">{t("googleMapsExplanation")}</p>
+          
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-col space-y-2">
+              <p className="text-sm font-medium">{t("mapProvider")}</p>
+              <RadioGroup 
+                value={mapProvider}
+                onValueChange={(value) => handleMapProviderChange(value as 'mapbox' | 'google')}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="mapbox" id="mapbox" />
+                  <Label htmlFor="mapbox">Mapbox</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="google" id="google" />
+                  <Label htmlFor="google">Google Maps</Label>
+                </div>
+              </RadioGroup>
+            </div>
+            
+            <p className="text-xs text-muted-foreground">
+              {t("googleMapsApiKeyNeeded")} <a href="https://console.cloud.google.com/" target="_blank" rel="noopener" className="text-primary">Google Cloud Console</a>
+            </p>
+            
+            <Button onClick={initializeGoogleMap}>
+              {t("initializeGoogleMap")}
             </Button>
-          )}
+          </div>
         </div>
       </div>
     );
@@ -159,73 +290,97 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
 
   return (
     <div className="relative">
+      {/* Map Provider Selection */}
+      <div className="absolute top-3 left-3 z-20 bg-white p-2 rounded-md shadow-md">
+        <RadioGroup 
+          value={mapProvider}
+          onValueChange={(value) => handleMapProviderChange(value as 'mapbox' | 'google')}
+          className="flex space-x-4"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="mapbox" id="mapbox-map" />
+            <Label htmlFor="mapbox-map" className="text-xs">Mapbox</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="google" id="google-map" />
+            <Label htmlFor="google-map" className="text-xs">Google</Label>
+          </div>
+        </RadioGroup>
+      </div>
+      
+      {/* Map Container */}
       <div 
         ref={mapContainer} 
         className="map-container w-full h-[300px] rounded-md relative"
       />
       
-      {/* Map Controls */}
-      <div className="absolute top-3 left-3 bg-white p-2 rounded-md shadow-md z-10">
-        <div className="flex flex-col gap-2">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="h-8 w-8" 
-            onClick={() => handleZoom('in')}
-            title={t("zoomIn")}
-          >
-            <ZoomIn className="h-4 w-4" />
-          </Button>
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="h-8 w-8" 
-            onClick={() => handleZoom('out')}
-            title={t("zoomOut")}
-          >
-            <ZoomOut className="h-4 w-4" />
-          </Button>
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="h-8 w-8" 
-            onClick={handleRecenter}
-            title={t("centerMap")}
-          >
-            <Locate className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-      
-      {/* Map Style Toggle */}
-      <div className="absolute top-3 right-12 bg-white p-2 rounded-md shadow-md z-10">
-        <div className="flex flex-col gap-2">
-          <Button 
-            variant={mapStyle === 'streets-v12' ? 'default' : 'outline'} 
-            size="sm" 
-            className="text-xs h-7" 
-            onClick={() => handleStyleChange('streets-v12')}
-          >
-            {t("streets")}
-          </Button>
-          <Button 
-            variant={mapStyle === 'satellite-streets-v12' ? 'default' : 'outline'} 
-            size="sm" 
-            className="text-xs h-7" 
-            onClick={() => handleStyleChange('satellite-streets-v12')}
-          >
-            {t("satellite")}
-          </Button>
-          <Button 
-            variant={mapStyle === 'light-v11' ? 'default' : 'outline'} 
-            size="sm" 
-            className="text-xs h-7" 
-            onClick={() => handleStyleChange('light-v11')}
-          >
-            {t("light")}
-          </Button>
-        </div>
-      </div>
+      {/* Mapbox Controls (only show for Mapbox) */}
+      {mapProvider === 'mapbox' && (
+        <>
+          {/* Zoom Controls */}
+          <div className="absolute top-16 left-3 bg-white p-2 rounded-md shadow-md z-10">
+            <div className="flex flex-col gap-2">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-8 w-8" 
+                onClick={() => handleZoom('in')}
+                title={t("zoomIn")}
+              >
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-8 w-8" 
+                onClick={() => handleZoom('out')}
+                title={t("zoomOut")}
+              >
+                <ZoomOut className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-8 w-8" 
+                onClick={handleRecenter}
+                title={t("centerMap")}
+              >
+                <Locate className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          
+          {/* Map Style Toggle */}
+          <div className="absolute top-3 right-12 bg-white p-2 rounded-md shadow-md z-10">
+            <div className="flex flex-col gap-2">
+              <Button 
+                variant={mapStyle === 'streets-v12' ? 'default' : 'outline'} 
+                size="sm" 
+                className="text-xs h-7" 
+                onClick={() => handleStyleChange('streets-v12')}
+              >
+                {t("streets")}
+              </Button>
+              <Button 
+                variant={mapStyle === 'satellite-streets-v12' ? 'default' : 'outline'} 
+                size="sm" 
+                className="text-xs h-7" 
+                onClick={() => handleStyleChange('satellite-streets-v12')}
+              >
+                {t("satellite")}
+              </Button>
+              <Button 
+                variant={mapStyle === 'light-v11' ? 'default' : 'outline'} 
+                size="sm" 
+                className="text-xs h-7" 
+                onClick={() => handleStyleChange('light-v11')}
+              >
+                {t("light")}
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

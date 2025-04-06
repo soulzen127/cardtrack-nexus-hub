@@ -43,7 +43,14 @@ export const trackingTranslations: TranslationCategory = {
     centerMap: "Center Map",
     streets: "Streets",
     satellite: "Satellite",
-    light: "Light"
+    light: "Light",
+    // Google Maps related translations
+    mapProvider: "Map Provider",
+    googleMapsSetup: "Google Maps Setup",
+    googleMapsExplanation: "You need a Google Maps API key to use Google Maps",
+    googleMapsApiKeyNeeded: "Get your API key from",
+    initializeGoogleMap: "Initialize Google Map",
+    filter: "Filter"
   },
   zh_TW: {
     locationTracking: "位置追蹤",
@@ -85,7 +92,14 @@ export const trackingTranslations: TranslationCategory = {
     centerMap: "置中地圖",
     streets: "街道",
     satellite: "衛星",
-    light: "淺色"
+    light: "淺色",
+    // Google Maps related translations
+    mapProvider: "地圖提供商",
+    googleMapsSetup: "Google 地圖設置",
+    googleMapsExplanation: "您需要 Google 地圖 API 密鑰才能使用 Google 地圖",
+    googleMapsApiKeyNeeded: "從以下網址獲取您的 API 密鑰",
+    initializeGoogleMap: "初始化 Google 地圖",
+    filter: "過濾"
   },
   ja: {
     locationTracking: "位置追跡",
@@ -127,6 +141,13 @@ export const trackingTranslations: TranslationCategory = {
     centerMap: "マップの中心に戻る",
     streets: "ストリート",
     satellite: "衛星",
-    light: "ライト"
+    light: "ライト",
+    // Google Maps related translations
+    mapProvider: "マッププロバイダー",
+    googleMapsSetup: "Google マップの設定",
+    googleMapsExplanation: "Google マップを使用するには Google マップ API キーが必要です",
+    googleMapsApiKeyNeeded: "API キーの取得先",
+    initializeGoogleMap: "Google マップを初期化",
+    filter: "フィルター"
   }
 };

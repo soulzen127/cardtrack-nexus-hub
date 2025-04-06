@@ -45,10 +45,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function RecordsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+  const { t } = useI18n();
   
   // Mock records data
   const cardRecords = [
@@ -82,11 +84,11 @@ export default function RecordsPage() {
     <MainLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-          <h1 className="text-2xl font-bold tracking-tight">Records & Logs</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("recordsAndLogs")}</h1>
           <div className="flex items-center space-x-2">
             <Button variant="outline" size="sm" onClick={toggleFilter}>
               <Filter className="h-4 w-4 mr-2" />
-              Filters
+              {t("filters")}
               {isFilterExpanded ? (
                 <ChevronUp className="h-4 w-4 ml-2" />
               ) : (
@@ -95,7 +97,7 @@ export default function RecordsPage() {
             </Button>
             <Button variant="outline" size="sm">
               <Download className="h-4 w-4 mr-2" />
-              Export
+              {t("export")}
             </Button>
           </div>
         </div>
@@ -105,56 +107,56 @@ export default function RecordsPage() {
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center">
                 <SlidersHorizontal className="h-5 w-5 mr-2" />
-                Advanced Filters
+                {t("advancedFilters")}
               </CardTitle>
               <CardDescription>
-                Narrow down records by applying multiple filters
+                {t("narrowDownRecords")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Date Range</label>
+                  <label className="text-sm font-medium">{t("dateRange")}</label>
                   <div className="flex space-x-2">
                     <div className="w-1/2">
-                      <Input type="date" placeholder="From" className="h-9" />
+                      <Input type="date" placeholder={t("from")} className="h-9" />
                     </div>
                     <div className="w-1/2">
-                      <Input type="date" placeholder="To" className="h-9" />
+                      <Input type="date" placeholder={t("to")} className="h-9" />
                     </div>
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Record Type</label>
+                  <label className="text-sm font-medium">{t("recordType")}</label>
                   <Select>
                     <SelectTrigger className="h-9">
-                      <SelectValue placeholder="All Types" />
+                      <SelectValue placeholder={t("allTypes")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="access">Access Events</SelectItem>
-                      <SelectItem value="location">Location Updates</SelectItem>
-                      <SelectItem value="status">Status Changes</SelectItem>
-                      <SelectItem value="alert">Alerts</SelectItem>
+                      <SelectItem value="all">{t("allTypes")}</SelectItem>
+                      <SelectItem value="access">{t("accessEvents")}</SelectItem>
+                      <SelectItem value="location">{t("locationUpdates")}</SelectItem>
+                      <SelectItem value="status">{t("statusChanges")}</SelectItem>
+                      <SelectItem value="alert">{t("alerts")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Card ID</label>
-                  <Input placeholder="Enter card ID" className="h-9" />
+                  <label className="text-sm font-medium">{t("cardID")}</label>
+                  <Input placeholder={t("enterCardID")} className="h-9" />
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Location</label>
-                  <Input placeholder="Enter location" className="h-9" />
+                  <label className="text-sm font-medium">{t("location")}</label>
+                  <Input placeholder={t("enterLocation")} className="h-9" />
                 </div>
               </div>
               
               <div className="flex justify-end mt-4 space-x-2">
-                <Button variant="outline" size="sm">Reset</Button>
-                <Button size="sm">Apply Filters</Button>
+                <Button variant="outline" size="sm">{t("reset")}</Button>
+                <Button size="sm">{t("applyFilters")}</Button>
               </div>
             </CardContent>
           </Card>
@@ -162,9 +164,9 @@ export default function RecordsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Records Database</CardTitle>
+            <CardTitle>{t("recordsDatabase")}</CardTitle>
             <CardDescription>
-              Browse, search, and export system records and logs
+              {t("browseSearchExport")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -172,7 +174,7 @@ export default function RecordsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search records..."
+                  placeholder={t("searchRecords")}
                   className="pl-8"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -180,23 +182,23 @@ export default function RecordsPage() {
               </div>
               <Select defaultValue="all">
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Record Category" />
+                  <SelectValue placeholder={t("recordCategory")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Records</SelectItem>
-                  <SelectItem value="today">Today</SelectItem>
-                  <SelectItem value="thisWeek">This Week</SelectItem>
-                  <SelectItem value="thisMonth">This Month</SelectItem>
-                  <SelectItem value="custom">Custom Range</SelectItem>
+                  <SelectItem value="all">{t("allRecords")}</SelectItem>
+                  <SelectItem value="today">{t("today")}</SelectItem>
+                  <SelectItem value="thisWeek">{t("thisWeek")}</SelectItem>
+                  <SelectItem value="thisMonth">{t("thisMonth")}</SelectItem>
+                  <SelectItem value="custom">{t("customRange")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <Tabs defaultValue="cards">
               <TabsList className="mb-4">
-                <TabsTrigger value="cards">Card Events</TabsTrigger>
-                <TabsTrigger value="system">System Logs</TabsTrigger>
-                <TabsTrigger value="alerts">Alerts</TabsTrigger>
+                <TabsTrigger value="cards">{t("cardEvents")}</TabsTrigger>
+                <TabsTrigger value="system">{t("systemLogs")}</TabsTrigger>
+                <TabsTrigger value="alerts">{t("alerts")}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="cards">
@@ -349,14 +351,14 @@ export default function RecordsPage() {
             
             <div className="flex items-center justify-between mt-4">
               <div className="text-sm text-muted-foreground">
-                Showing 1-5 of 125 records
+                {t("showingRecords")}
               </div>
               <div className="flex items-center space-x-2">
                 <Button variant="outline" size="sm" disabled>
-                  Previous
+                  {t("previous")}
                 </Button>
                 <Button variant="outline" size="sm">
-                  Next
+                  {t("next")}
                 </Button>
               </div>
             </div>
