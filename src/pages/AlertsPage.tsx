@@ -37,8 +37,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function AlertsPage() {
+  const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState("");
   
   // Mock alerts data
@@ -158,15 +160,15 @@ export default function AlertsPage() {
     <MainLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-          <h1 className="text-2xl font-bold tracking-tight">Alerts & Notifications</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("alertsAndNotifications")}</h1>
           <div className="flex items-center space-x-2">
             <Button variant="outline" size="sm">
               <Bell className="h-4 w-4 mr-2" />
-              Alert Settings
+              {t("alertSettings")}
             </Button>
             <Button variant="outline" size="sm">
               <Filter className="h-4 w-4 mr-2" />
-              Filter
+              {t("filter")}
             </Button>
           </div>
         </div>
@@ -176,20 +178,20 @@ export default function AlertsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <AlertCircle className="h-5 w-5 mr-2 text-cardtrack-red" />
-                Active Alerts
+                {t("activeAlerts")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{activeAlerts.length}</div>
               <div className="flex items-center space-x-2">
                 <Badge variant="outline" className="bg-cardtrack-red/10 text-cardtrack-red border-cardtrack-red/20">
-                  {activeAlerts.filter(a => a.priority === 'high').length} High
+                  {activeAlerts.filter(a => a.priority === 'high').length} {t("high")}
                 </Badge>
                 <Badge variant="outline" className="bg-cardtrack-amber/10 text-cardtrack-amber border-cardtrack-amber/20">
-                  {activeAlerts.filter(a => a.priority === 'medium').length} Medium
+                  {activeAlerts.filter(a => a.priority === 'medium').length} {t("medium")}
                 </Badge>
                 <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
-                  {activeAlerts.filter(a => a.priority === 'low').length} Low
+                  {activeAlerts.filter(a => a.priority === 'low').length} {t("low")}
                 </Badge>
               </div>
             </CardContent>
@@ -199,7 +201,7 @@ export default function AlertsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <CheckCircle className="h-5 w-5 mr-2 text-cardtrack-green" />
-                Resolved Today
+                {t("resolvedToday")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -212,13 +214,13 @@ export default function AlertsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <Settings className="h-5 w-5 mr-2 text-primary" />
-                Alert Configurations
+                {t("alertConfigurations")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{alertConfigurations.length}</div>
               <p className="text-sm text-muted-foreground">
-                {alertConfigurations.filter(c => c.enabled).length} enabled
+                {alertConfigurations.filter(c => c.enabled).length} {t("enabled").toLowerCase()}
               </p>
             </CardContent>
           </Card>
@@ -226,9 +228,9 @@ export default function AlertsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Alert Management</CardTitle>
+            <CardTitle>{t("alertManagement")}</CardTitle>
             <CardDescription>
-              View, acknowledge, and manage system alerts
+              {t("viewAcknowledgeManage")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -236,7 +238,7 @@ export default function AlertsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search alerts..."
+                  placeholder={t("searchAlerts")}
                   className="pl-8"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -244,22 +246,22 @@ export default function AlertsPage() {
               </div>
               <Select defaultValue="all">
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Priority" />
+                  <SelectValue placeholder={t("priority")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Priorities</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="all">{t("allPriorities")}</SelectItem>
+                  <SelectItem value="high">{t("high")}</SelectItem>
+                  <SelectItem value="medium">{t("medium")}</SelectItem>
+                  <SelectItem value="low">{t("low")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <Tabs defaultValue="active">
               <TabsList className="mb-4">
-                <TabsTrigger value="active">Active Alerts</TabsTrigger>
-                <TabsTrigger value="resolved">Resolved Alerts</TabsTrigger>
-                <TabsTrigger value="settings">Alert Settings</TabsTrigger>
+                <TabsTrigger value="active">{t("active")}</TabsTrigger>
+                <TabsTrigger value="resolved">{t("resolved")}</TabsTrigger>
+                <TabsTrigger value="settings">{t("settings")}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="active">
@@ -316,14 +318,14 @@ export default function AlertsPage() {
                               size="sm"
                               onClick={() => handleAcknowledge(alert.id)}
                             >
-                              Acknowledge
+                              {t("acknowledge")}
                             </Button>
                             <Button 
                               variant="outline" 
                               size="sm"
                               onClick={() => handleResolve(alert.id)}
                             >
-                              Resolve
+                              {t("resolve")}
                             </Button>
                             <Button
                               variant="outline"
@@ -331,7 +333,7 @@ export default function AlertsPage() {
                               onClick={() => handleIgnore(alert.id)}
                             >
                               <XCircle className="h-4 w-4 mr-2" />
-                              Dismiss
+                              {t("dismiss")}
                             </Button>
                           </div>
                         </div>
@@ -352,7 +354,7 @@ export default function AlertsPage() {
                             <div>
                               <div className="flex items-center">
                                 <h3 className="font-medium">{alert.type}</h3>
-                                <Badge className="ml-2 bg-muted text-muted-foreground">Resolved</Badge>
+                                <Badge className="ml-2 bg-muted text-muted-foreground">{t("resolved")}</Badge>
                               </div>
                               <p className="text-sm text-muted-foreground">{alert.description}</p>
                             </div>
@@ -362,22 +364,22 @@ export default function AlertsPage() {
                             <div className="space-y-1">
                               <div className="flex items-center text-muted-foreground">
                                 <Calendar className="h-4 w-4 mr-1" />
-                                Occurred: {alert.timestamp}
+                                {t("occurred")}: {alert.timestamp}
                               </div>
                               <div className="flex items-center text-muted-foreground">
                                 <CheckCircle className="h-4 w-4 mr-1" />
-                                Resolved: {alert.resolvedAt}
+                                {t("resolved")}: {alert.resolvedAt}
                               </div>
                             </div>
                             <div className="space-y-1">
                               <div className="flex items-center text-muted-foreground">
                                 <User className="h-4 w-4 mr-1" />
-                                Resolved by: {alert.resolvedBy}
+                                {t("resolvedBy")}: {alert.resolvedBy}
                               </div>
                               {alert.notes && (
                                 <div className="flex items-start text-muted-foreground">
                                   <InfoIcon className="h-4 w-4 mr-1 mt-0.5" />
-                                  Notes: {alert.notes}
+                                  {t("notes")}: {alert.notes}
                                 </div>
                               )}
                             </div>
@@ -400,14 +402,14 @@ export default function AlertsPage() {
                               <ShieldAlert className="h-5 w-5 mr-2 text-primary" />
                               <h3 className="font-medium">{config.name}</h3>
                               {config.enabled ? (
-                                <Badge className="ml-2 bg-cardtrack-green/10 text-cardtrack-green">Enabled</Badge>
+                                <Badge className="ml-2 bg-cardtrack-green/10 text-cardtrack-green">{t("enabled")}</Badge>
                               ) : (
-                                <Badge className="ml-2 bg-muted text-muted-foreground">Disabled</Badge>
+                                <Badge className="ml-2 bg-muted text-muted-foreground">{t("disabled")}</Badge>
                               )}
                             </div>
                             <p className="text-sm text-muted-foreground">{config.description}</p>
                             <div className="flex items-center mt-1">
-                              <span className="text-xs mr-2">Channels:</span>
+                              <span className="text-xs mr-2">{t("channels")}:</span>
                               <div className="flex flex-wrap gap-1">
                                 {config.channels.map((channel, i) => (
                                   <Badge key={i} variant="outline" className="text-xs">
@@ -420,7 +422,7 @@ export default function AlertsPage() {
                           
                           <div className="flex space-x-2">
                             <Button variant="outline" size="sm">
-                              Edit
+                              {t("edit")}
                             </Button>
                             {config.enabled ? (
                               <Button 
@@ -428,7 +430,7 @@ export default function AlertsPage() {
                                 size="sm"
                                 className="text-cardtrack-red border-cardtrack-red/20 hover:bg-cardtrack-red/10"
                               >
-                                Disable
+                                {t("disable")}
                               </Button>
                             ) : (
                               <Button 
@@ -436,7 +438,7 @@ export default function AlertsPage() {
                                 size="sm"
                                 className="text-cardtrack-green border-cardtrack-green/20 hover:bg-cardtrack-green/10"
                               >
-                                Enable
+                                {t("enable")}
                               </Button>
                             )}
                           </div>

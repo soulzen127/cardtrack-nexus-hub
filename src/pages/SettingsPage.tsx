@@ -35,8 +35,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function SettingsPage() {
+  const { t } = useI18n();
   
   const handleSaveSettings = () => {
     toast.success("Settings saved successfully");
@@ -46,10 +48,10 @@ export default function SettingsPage() {
     <MainLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-          <h1 className="text-2xl font-bold tracking-tight">System Settings</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("systemSettings")}</h1>
           <Button onClick={handleSaveSettings}>
             <Save className="h-4 w-4 mr-2" />
-            Save Changes
+            {t("saveChanges")}
           </Button>
         </div>
 
@@ -57,46 +59,46 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Settings className="h-5 w-5 mr-2" />
-              Configuration
+              {t("configuration")}
             </CardTitle>
             <CardDescription>
-              Manage system-wide settings and preferences
+              {t("manageSettings")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="general">
               <TabsList className="mb-4">
-                <TabsTrigger value="general">General</TabsTrigger>
+                <TabsTrigger value="general">{t("generalSettings")}</TabsTrigger>
                 <TabsTrigger value="maps">Maps & Location</TabsTrigger>
-                <TabsTrigger value="notifications">Notifications</TabsTrigger>
-                <TabsTrigger value="security">Security</TabsTrigger>
-                <TabsTrigger value="appearance">Appearance</TabsTrigger>
+                <TabsTrigger value="notifications">{t("notificationSettings")}</TabsTrigger>
+                <TabsTrigger value="security">{t("securitySettings")}</TabsTrigger>
+                <TabsTrigger value="appearance">{t("appearance")}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="general">
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">System Information</h3>
+                    <h3 className="text-lg font-medium">{t("systemInformation")}</h3>
                     <Separator />
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="companyName">Organization Name</Label>
+                          <Label htmlFor="companyName">{t("organizationName")}</Label>
                           <Input id="companyName" defaultValue="CardTrack Inc." />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="systemName">System Name</Label>
+                          <Label htmlFor="systemName">{t("systemName")}</Label>
                           <Input id="systemName" defaultValue="CardTrack Nexus Hub" />
                         </div>
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="contactEmail">Contact Email</Label>
+                          <Label htmlFor="contactEmail">{t("contactEmail")}</Label>
                           <Input id="contactEmail" type="email" defaultValue="admin@cardtrack.example" />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="timezone">System Timezone</Label>
+                          <Label htmlFor="timezone">{t("systemTimezone")}</Label>
                           <Select defaultValue="asia_taipei">
                             <SelectTrigger id="timezone">
                               <SelectValue placeholder="Select timezone" />
@@ -114,12 +116,12 @@ export default function SettingsPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">Language Settings</h3>
+                    <h3 className="text-lg font-medium">{t("languageSettings")}</h3>
                     <Separator />
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="language">Primary Language</Label>
+                          <Label htmlFor="language">{t("primaryLanguage")}</Label>
                           <Select defaultValue="zh_TW">
                             <SelectTrigger id="language">
                               <SelectValue placeholder="Select language" />
@@ -133,7 +135,7 @@ export default function SettingsPage() {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="dateFormat">Date Format</Label>
+                          <Label htmlFor="dateFormat">{t("dateFormat")}</Label>
                           <Select defaultValue="yyyy_mm_dd">
                             <SelectTrigger id="dateFormat">
                               <SelectValue placeholder="Select format" />
@@ -150,19 +152,19 @@ export default function SettingsPage() {
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">
                           <Checkbox id="enableTranslation" />
-                          <Label htmlFor="enableTranslation">Enable automatic translation for card holder information</Label>
+                          <Label htmlFor="enableTranslation">{t("enableTranslation")}</Label>
                         </div>
                       </div>
                     </div>
                   </div>
                   
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">Data Management</h3>
+                    <h3 className="text-lg font-medium">{t("dataManagement")}</h3>
                     <Separator />
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="dataRetention">Data Retention Period</Label>
+                          <Label htmlFor="dataRetention">{t("dataRetentionPeriod")}</Label>
                           <Select defaultValue="365">
                             <SelectTrigger id="dataRetention">
                               <SelectValue placeholder="Select period" />
@@ -177,7 +179,7 @@ export default function SettingsPage() {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="backupSchedule">Automatic Backup Schedule</Label>
+                          <Label htmlFor="backupSchedule">{t("automaticBackupSchedule")}</Label>
                           <Select defaultValue="daily">
                             <SelectTrigger id="backupSchedule">
                               <SelectValue placeholder="Select schedule" />
@@ -194,7 +196,7 @@ export default function SettingsPage() {
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">
                           <Checkbox id="enableAudit" defaultChecked />
-                          <Label htmlFor="enableAudit">Enable comprehensive audit logging</Label>
+                          <Label htmlFor="enableAudit">{t("enableAudit")}</Label>
                         </div>
                       </div>
                     </div>
@@ -628,12 +630,12 @@ export default function SettingsPage() {
               <TabsContent value="appearance">
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">Theme Settings</h3>
+                    <h3 className="text-lg font-medium">{t("themeSettings")}</h3>
                     <Separator />
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="themeMode">Theme Mode</Label>
+                          <Label htmlFor="themeMode">{t("themeMode")}</Label>
                           <Select defaultValue="light">
                             <SelectTrigger id="themeMode">
                               <SelectValue placeholder="Select mode" />
@@ -646,7 +648,7 @@ export default function SettingsPage() {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="colorScheme">Color Scheme</Label>
+                          <Label htmlFor="colorScheme">{t("colorScheme")}</Label>
                           <Select defaultValue="blue">
                             <SelectTrigger id="colorScheme">
                               <SelectValue placeholder="Select scheme" />
@@ -664,21 +666,21 @@ export default function SettingsPage() {
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="primaryColor">Primary Color</Label>
+                          <Label htmlFor="primaryColor">{t("primaryColor")}</Label>
                           <div className="flex space-x-2">
                             <Input id="primaryColor" defaultValue="#1E6CB4" />
                             <div className="w-10 h-10 rounded-md bg-cardtrack-500" />
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="secondaryColor">Secondary Color</Label>
+                          <Label htmlFor="secondaryColor">{t("secondaryColor")}</Label>
                           <div className="flex space-x-2">
                             <Input id="secondaryColor" defaultValue="#319795" />
                             <div className="w-10 h-10 rounded-md bg-cardtrack-teal" />
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="accentColor">Accent Color</Label>
+                          <Label htmlFor="accentColor">{t("accentColor")}</Label>
                           <div className="flex space-x-2">
                             <Input id="accentColor" defaultValue="#D69E2E" />
                             <div className="w-10 h-10 rounded-md bg-cardtrack-amber" />
@@ -744,7 +746,7 @@ export default function SettingsPage() {
             <Button variant="outline">Cancel</Button>
             <Button onClick={handleSaveSettings}>
               <Save className="h-4 w-4 mr-2" />
-              Save Changes
+              {t("saveChanges")}
             </Button>
           </CardFooter>
         </Card>
