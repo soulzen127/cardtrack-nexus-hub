@@ -4,12 +4,14 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/hooks/use-i18n";
+import { createMarkers, CardLocation } from "./MapMarker";
+import { MapPin, Layers, ZoomIn, ZoomOut, Locate } from "lucide-react";
 
 interface MapViewProps {
   isRealtime: boolean;
   timeSliderValue?: number[];
   selectedDate?: string;
-  cardLocations?: { id: string; name: string; location: string; coordinates: [number, number] }[];
+  cardLocations?: CardLocation[];
 }
 
 export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocations }: MapViewProps) {
@@ -19,6 +21,7 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
   const { t } = useI18n();
   const [mapboxToken, setMapboxToken] = useState<string>('');
   const [isMapInitialized, setIsMapInitialized] = useState(false);
+  const [mapStyle, setMapStyle] = useState<string>('streets-v12');
 
   // Mock card locations data with coordinates
   const mockCardLocations = [
@@ -36,7 +39,7 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
+      style: `mapbox://styles/mapbox/${mapStyle}`,
       center: [120.9738, 23.9739], // Center on Taiwan
       zoom: 7,
     });
@@ -50,51 +53,67 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     // Add markers when map loads
     map.current.on('load', () => {
       setIsMapInitialized(true);
-      addMarkers();
+      
+      // Add markers using the extracted function
+      const locationsToUse = cardLocations || mockCardLocations;
+      createMarkers({
+        map: map.current!,
+        locations: locationsToUse,
+        markerRef: markers
+      });
     });
   };
 
-  const addMarkers = () => {
-    if (!map.current || !isMapInitialized) return;
+  // Handle map style changes
+  const handleStyleChange = (style: string) => {
+    if (!map.current) return;
     
-    // Clear existing markers
-    markers.current.forEach(marker => marker.remove());
-    markers.current = [];
+    setMapStyle(style);
+    map.current.setStyle(`mapbox://styles/mapbox/${style}`);
     
-    // Add new markers
-    const locationsToUse = cardLocations || mockCardLocations;
-    locationsToUse.forEach(card => {
-      const popup = new mapboxgl.Popup({ offset: 25 })
-        .setHTML(`
-          <div>
-            <strong>${card.name}</strong>
-            <p>${card.location}</p>
-            <p>Card ID: ${card.id}</p>
-          </div>
-        `);
+    // Re-add markers after style change (markers get removed on style change)
+    map.current.once('styledata', () => {
+      const locationsToUse = cardLocations || mockCardLocations;
+      createMarkers({
+        map: map.current!,
+        locations: locationsToUse,
+        markerRef: markers
+      });
+    });
+  };
 
-      const el = document.createElement('div');
-      el.className = 'marker';
-      el.style.width = '20px';
-      el.style.height = '20px';
-      el.style.borderRadius = '50%';
-      el.style.backgroundColor = '#6366f1'; 
-      el.style.border = '2px solid white';
-      el.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.3)';
+  // Zoom controls
+  const handleZoom = (direction: 'in' | 'out') => {
+    if (!map.current) return;
+    
+    const currentZoom = map.current.getZoom();
+    map.current.easeTo({
+      zoom: direction === 'in' ? currentZoom + 1 : currentZoom - 1,
+      duration: 300
+    });
+  };
 
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat(card.coordinates)
-        .setPopup(popup)
-        .addTo(map.current);
-        
-      markers.current.push(marker);
+  // Center on Taiwan
+  const handleRecenter = () => {
+    if (!map.current) return;
+    
+    map.current.easeTo({
+      center: [120.9738, 23.9739],
+      zoom: 7,
+      duration: 1000
     });
   };
 
   useEffect(() => {
     // Check if map is already loaded
     if (isMapInitialized && map.current) {
-      addMarkers();
+      // Add markers using the extracted function
+      const locationsToUse = cardLocations || mockCardLocations;
+      createMarkers({
+        map: map.current,
+        locations: locationsToUse,
+        markerRef: markers
+      });
     }
   }, [cardLocations, isMapInitialized]);
 
@@ -114,23 +133,23 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     return (
       <div className="map-container bg-muted flex flex-col items-center justify-center p-8 rounded-md min-h-[300px]">
         <div className="text-center space-y-3 max-w-md mx-auto">
-          <h3 className="text-lg font-medium">Mapbox API Token Required</h3>
-          <p className="text-muted-foreground">Please enter your Mapbox public token to enable the map view:</p>
+          <h3 className="text-lg font-medium">{t("mapboxTokenRequired")}</h3>
+          <p className="text-muted-foreground">{t("enterMapboxToken")}:</p>
           <div className="flex flex-col space-y-2">
             <input 
               type="text" 
               className="w-full px-3 py-2 border rounded-md"
-              placeholder="Enter Mapbox public token"
+              placeholder={t("enterMapboxPublicToken")}
               onChange={(e) => setMapboxToken(e.target.value)}
               value={mapboxToken}
             />
             <p className="text-xs text-muted-foreground">
-              You can obtain a token by creating an account at <a href="https://mapbox.com" target="_blank" rel="noopener" className="text-primary">mapbox.com</a>
+              {t("obtainTokenText")} <a href="https://mapbox.com" target="_blank" rel="noopener" className="text-primary">mapbox.com</a>
             </p>
           </div>
           {mapboxToken && (
             <Button onClick={initializeMap}>
-              Initialize Map
+              {t("initializeMap")}
             </Button>
           )}
         </div>
@@ -139,9 +158,74 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
   }
 
   return (
-    <div 
-      ref={mapContainer} 
-      className="map-container w-full h-[300px] rounded-md relative"
-    />
+    <div className="relative">
+      <div 
+        ref={mapContainer} 
+        className="map-container w-full h-[300px] rounded-md relative"
+      />
+      
+      {/* Map Controls */}
+      <div className="absolute top-3 left-3 bg-white p-2 rounded-md shadow-md z-10">
+        <div className="flex flex-col gap-2">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="h-8 w-8" 
+            onClick={() => handleZoom('in')}
+            title={t("zoomIn")}
+          >
+            <ZoomIn className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="h-8 w-8" 
+            onClick={() => handleZoom('out')}
+            title={t("zoomOut")}
+          >
+            <ZoomOut className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="h-8 w-8" 
+            onClick={handleRecenter}
+            title={t("centerMap")}
+          >
+            <Locate className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      
+      {/* Map Style Toggle */}
+      <div className="absolute top-3 right-12 bg-white p-2 rounded-md shadow-md z-10">
+        <div className="flex flex-col gap-2">
+          <Button 
+            variant={mapStyle === 'streets-v12' ? 'default' : 'outline'} 
+            size="sm" 
+            className="text-xs h-7" 
+            onClick={() => handleStyleChange('streets-v12')}
+          >
+            {t("streets")}
+          </Button>
+          <Button 
+            variant={mapStyle === 'satellite-streets-v12' ? 'default' : 'outline'} 
+            size="sm" 
+            className="text-xs h-7" 
+            onClick={() => handleStyleChange('satellite-streets-v12')}
+          >
+            {t("satellite")}
+          </Button>
+          <Button 
+            variant={mapStyle === 'light-v11' ? 'default' : 'outline'} 
+            size="sm" 
+            className="text-xs h-7" 
+            onClick={() => handleStyleChange('light-v11')}
+          >
+            {t("light")}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
