@@ -11,12 +11,15 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface TopbarProps {
   onToggleSidebar: () => void;
 }
 
 export function Topbar({ onToggleSidebar }: TopbarProps) {
+  const { t } = useI18n();
+
   return (
     <header className="sticky top-0 z-30 h-16 w-full border-b bg-background/95 backdrop-blur">
       <div className="flex h-16 items-center px-4 md:px-6">
@@ -33,13 +36,13 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
-              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("alerts")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <div className="max-h-80 overflow-y-auto">
                 <DropdownMenuItem className="cursor-pointer">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium">Geofence Alert</p>
-                    <p className="text-xs text-muted-foreground">Card #1234 exited authorized zone</p>
+                    <p className="text-sm font-medium">{t("geofenceAlert")}</p>
+                    <p className="text-xs text-muted-foreground">{t("cardLeftZone")}</p>
                     <p className="text-xs text-muted-foreground">5 minutes ago</p>
                   </div>
                 </DropdownMenuItem>
@@ -54,7 +57,7 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link to="/alerts" className="w-full text-center cursor-pointer">
-                  View all notifications
+                  {t("viewAllAlerts")}
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -73,11 +76,11 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
                 <Link to="/profile">Profile</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/settings">Settings</Link>
+                <Link to="/settings">{t("settings")}</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link to="/login">Logout</Link>
+                <Link to="/login">{t("logout")}</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

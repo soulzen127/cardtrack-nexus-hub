@@ -3,42 +3,84 @@ import React from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart, MapPin, CreditCard, AlertCircle, TrendingUp, TrendingDown } from "lucide-react";
+import { BarChart as BarChartIcon, MapPin, CreditCard, AlertCircle, TrendingUp, TrendingDown } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "@/i18n/translations";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from "@/components/ui/chart";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from "recharts";
 
 export default function Dashboard() {
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
+
   // Mock data for dashboard
   const stats = [
-    { title: "Total Active Cards", value: "1,254", trend: "up", percent: "12%", icon: <CreditCard className="h-5 w-5" /> },
-    { title: "Tracked Locations", value: "867", trend: "up", percent: "8%", icon: <MapPin className="h-5 w-5" /> },
-    { title: "Active Alerts", value: "23", trend: "down", percent: "5%", icon: <AlertCircle className="h-5 w-5" /> },
-    { title: "Reports Generated", value: "156", trend: "up", percent: "18%", icon: <BarChart className="h-5 w-5" /> },
+    { title: t("totalActiveCards"), value: "1,254", trend: "up", percent: "12%", icon: <CreditCard className="h-5 w-5" /> },
+    { title: t("trackedLocations"), value: "867", trend: "up", percent: "8%", icon: <MapPin className="h-5 w-5" /> },
+    { title: t("activeAlerts"), value: "23", trend: "down", percent: "5%", icon: <AlertCircle className="h-5 w-5" /> },
+    { title: t("reportsGenerated"), value: "156", trend: "up", percent: "18%", icon: <BarChartIcon className="h-5 w-5" /> },
   ];
 
   const recentAlerts = [
-    { id: 1, type: "Geofence", message: "Card #5643 left authorized zone", time: "10 minutes ago", priority: "high" },
-    { id: 2, type: "System", message: "Database backup completed", time: "1 hour ago", priority: "low" },
-    { id: 3, type: "Card", message: "Card #8921 reported lost", time: "3 hours ago", priority: "medium" },
+    { id: 1, type: t("geofenceAlert"), message: t("cardLeftZone"), time: "10 minutes ago", priority: "high" },
+    { id: 2, type: t("systemAlert"), message: t("databaseBackup"), time: "1 hour ago", priority: "low" },
+    { id: 3, type: t("cardLost"), message: t("cardLost"), time: "3 hours ago", priority: "medium" },
   ];
 
   const recentActivities = [
-    { id: 1, action: "Card Issued", details: "Card #3389 was issued to John Smith", time: "30 minutes ago" },
-    { id: 2, action: "Card Location Updated", details: "Card #5432 location updated", time: "45 minutes ago" },
-    { id: 3, action: "User Login", details: "Admin user logged in from 192.168.1.1", time: "1 hour ago" },
-    { id: 4, action: "Report Generated", details: "Monthly activity report was generated", time: "2 hours ago" },
+    { id: 1, action: t("cardIssued"), details: t("cardIssuedTo"), time: "30 minutes ago" },
+    { id: 2, action: t("locationUpdated"), details: t("locationUpdated"), time: "45 minutes ago" },
+    { id: 3, action: t("userLogin"), details: t("adminLogin"), time: "1 hour ago" },
+    { id: 4, action: t("reportGenerated"), details: t("monthlyReport"), time: "2 hours ago" },
+  ];
+
+  // Chart data
+  const cardActivityData = [
+    { name: "Jan", active: 1000, inactive: 400 },
+    { name: "Feb", active: 1200, inactive: 380 },
+    { name: "Mar", active: 1100, inactive: 350 },
+    { name: "Apr", active: 1400, inactive: 320 },
+    { name: "May", active: 1300, inactive: 290 },
+    { name: "Jun", active: 1500, inactive: 270 },
+  ];
+
+  const alertsByTypeData = [
+    { name: "Geofence", value: 35 },
+    { name: "System", value: 25 },
+    { name: "Card", value: 20 },
+    { name: "User", value: 15 },
+    { name: "Other", value: 5 },
   ];
 
   return (
     <MainLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("dashboard")}</h1>
           <div className="flex items-center space-x-2">
             <Button variant="outline" size="sm">
-              Export
+              {t("export")}
             </Button>
             <Button size="sm">
-              Refresh Data
+              {t("refreshData")}
             </Button>
           </div>
         </div>
@@ -58,7 +100,7 @@ export default function Dashboard() {
                         <TrendingDown className="h-3 w-3 mr-1 text-red-500" />
                       )}
                       <span className={stat.trend === "up" ? "text-green-500" : "text-red-500"}>
-                        {stat.percent} from last month
+                        {stat.percent} {t("from")} {t("lastMonth")}
                       </span>
                     </div>
                   </div>
@@ -71,11 +113,11 @@ export default function Dashboard() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="col-span-1">
             <CardHeader>
-              <CardTitle>Recent Alerts</CardTitle>
-              <CardDescription>Latest system alerts and notifications</CardDescription>
+              <CardTitle>{t("recentAlerts")}</CardTitle>
+              <CardDescription>{t("latestAlertsNotifications")}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -99,7 +141,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-6 text-center">
                 <Button variant="outline" asChild size="sm">
-                  <Link to="/alerts">View All Alerts</Link>
+                  <Link to="/alerts">{t("viewAllAlerts")}</Link>
                 </Button>
               </div>
             </CardContent>
@@ -107,8 +149,8 @@ export default function Dashboard() {
 
           <Card className="col-span-1">
             <CardHeader>
-              <CardTitle>Recent Activities</CardTitle>
-              <CardDescription>Recent system and user actions</CardDescription>
+              <CardTitle>{t("recentActivities")}</CardTitle>
+              <CardDescription>{t("recentSystemUserActions")}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -122,8 +164,64 @@ export default function Dashboard() {
               </div>
               <div className="mt-6 text-center">
                 <Button variant="outline" asChild size="sm">
-                  <Link to="/records">View All Activities</Link>
+                  <Link to="/records">{t("viewAllActivities")}</Link>
                 </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="col-span-1">
+            <CardHeader>
+              <CardTitle>Card Activity Trends</CardTitle>
+              <CardDescription>Monthly active vs inactive cards</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={cardActivityData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="active" 
+                      stroke="#6366f1" 
+                      activeDot={{ r: 8 }} 
+                      name="Active Cards"
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="inactive" 
+                      stroke="#f43f5e" 
+                      name="Inactive Cards"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="col-span-1">
+            <CardHeader>
+              <CardTitle>Alerts by Type</CardTitle>
+              <CardDescription>Distribution of alerts by category</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={alertsByTypeData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="value" fill="#6366f1" name="Number of Alerts" />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
@@ -131,16 +229,16 @@ export default function Dashboard() {
 
         <Card className="col-span-full">
           <CardHeader>
-            <CardTitle>Location Overview</CardTitle>
-            <CardDescription>Geographic distribution of active cards</CardDescription>
+            <CardTitle>{t("locationOverview")}</CardTitle>
+            <CardDescription>{t("geographicDistribution")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="relative h-[400px] bg-muted rounded-md flex items-center justify-center border border-dashed">
               <div className="text-center space-y-2">
                 <MapPin className="h-10 w-10 mx-auto text-muted-foreground" />
-                <p className="text-muted-foreground">Map view will be available once connected to Mapbox or Google Maps API</p>
+                <p className="text-muted-foreground">{t("mapViewAvailable")}</p>
                 <Button asChild size="sm">
-                  <Link to="/tracking">Go to Tracking</Link>
+                  <Link to="/tracking">{t("goToTracking")}</Link>
                 </Button>
               </div>
             </div>
