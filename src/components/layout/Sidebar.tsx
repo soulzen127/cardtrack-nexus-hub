@@ -12,7 +12,9 @@ import {
   Settings, 
   Users, 
   Menu,
-  LogOut
+  LogOut,
+  PanelLeftClose,
+  PanelLeftOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -53,14 +55,34 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
       
       <aside className={cn(
         "fixed top-0 left-0 z-50 h-screen w-64 bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-transform duration-300 ease-in-out",
-        isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0 lg:w-16"
       )}>
         <div className="flex items-center justify-between h-16 px-4 border-b border-sidebar-border">
-          <Link to="/dashboard" className="flex items-center space-x-2">
-            <span className="text-xl font-bold tracking-tight">CardTrack</span>
+          <Link to="/dashboard" className={cn(
+            "flex items-center space-x-2",
+            !isOpen && "lg:justify-center lg:w-full"
+          )}>
+            {isOpen ? (
+              <span className="text-xl font-bold tracking-tight">CardTrack</span>
+            ) : (
+              <span className="lg:text-xl lg:font-bold">CT</span>
+            )}
           </Link>
-          <Button variant="ghost" size="icon" onClick={onToggle} className="lg:hidden">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onToggle} 
+            className="lg:hidden"
+          >
             <Menu size={20} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggle}
+            className="hidden lg:flex"
+          >
+            {isOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
           </Button>
         </div>
         
@@ -74,11 +96,13 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   "flex items-center px-3 py-2 text-sm rounded-md transition-colors",
                   location.pathname === item.path
                     ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                    : "text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                    : "text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
+                  !isOpen && "lg:justify-center"
                 )}
+                title={!isOpen ? item.name : undefined}
               >
-                <span className="mr-3 text-lg">{item.icon}</span>
-                <span>{item.name}</span>
+                <span className="text-lg">{item.icon}</span>
+                {isOpen && <span className="ml-3">{item.name}</span>}
               </Link>
             ))}
           </nav>
@@ -93,11 +117,13 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                     "flex items-center px-3 py-2 text-sm rounded-md transition-colors",
                     location.pathname === item.path
                       ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                      : "text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                      : "text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
+                    !isOpen && "lg:justify-center"
                   )}
+                  title={!isOpen ? item.name : undefined}
                 >
-                  <span className="mr-3 text-lg">{item.icon}</span>
-                  <span>{item.name}</span>
+                  <span className="text-lg">{item.icon}</span>
+                  {isOpen && <span className="ml-3">{item.name}</span>}
                 </Link>
               ))}
             </nav>
@@ -105,9 +131,16 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
         </div>
         
         <div className="absolute bottom-0 w-full p-4 border-t border-sidebar-border">
-          <Link to="/login" className="flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-sidebar-accent/50">
-            <LogOut size={20} className="mr-3" />
-            <span>Logout</span>
+          <Link 
+            to="/login" 
+            className={cn(
+              "flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-sidebar-accent/50",
+              !isOpen && "lg:justify-center"
+            )}
+            title={!isOpen ? "Logout" : undefined}
+          >
+            <LogOut size={20} />
+            {isOpen && <span className="ml-3">Logout</span>}
           </Link>
         </div>
       </aside>
