@@ -1,7 +1,6 @@
-
 import mapboxgl from 'mapbox-gl';
-import { CardLocation } from "../MapMarker";
-import { createMarkers } from "../MapMarker";
+import { CardLocation } from "../map/types";
+import { createMarkers } from "../map/createMarkers";
 
 interface InitializeMapboxOptions {
   mapContainer: React.RefObject<HTMLDivElement>;

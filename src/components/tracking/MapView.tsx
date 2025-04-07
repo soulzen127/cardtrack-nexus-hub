@@ -1,10 +1,8 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useI18n } from "@/hooks/use-i18n";
-import { CardLocation } from "./MapMarker";
-import { createMarkers } from "./MapMarker";
+import { CardLocation, createMarkers } from "./MapMarker";
 import { MapboxControls } from './map/MapboxControls';
 import { MapProviderSelector } from './map/MapProviderSelector';
 import { TokenInputScreen, GoogleMapSetupScreen } from './map/MapSetupScreens';
