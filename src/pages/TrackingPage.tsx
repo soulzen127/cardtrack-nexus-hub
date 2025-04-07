@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { MapSection, MapActions } from "@/components/tracking/MapSection";
 import { TrackedCardsPanel } from "@/components/tracking/TrackedCardsPanel";
+import { AlertConfigurationPanel } from "@/components/tracking/AlertConfigurationPanel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useI18n } from "@/hooks/use-i18n";
 
 export default function TrackingPage() {
@@ -28,7 +30,23 @@ export default function TrackingPage() {
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
           />
-          <TrackedCardsPanel />
+          
+          <div className="space-y-6">
+            <Tabs defaultValue="cards">
+              <TabsList className="w-full">
+                <TabsTrigger value="cards" className="flex-1">{t("trackedCards")}</TabsTrigger>
+                <TabsTrigger value="alerts" className="flex-1">{t("alerts")}</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="cards">
+                <TrackedCardsPanel />
+              </TabsContent>
+              
+              <TabsContent value="alerts">
+                <AlertConfigurationPanel />
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </div>
     </MainLayout>

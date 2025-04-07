@@ -26,7 +26,7 @@ export default function SettingsPage() {
   const { t } = useI18n();
   
   const handleSaveSettings = () => {
-    toast.success("Settings saved successfully");
+    toast.success(t("settingsSaved"));
   };
 
   return (
@@ -54,7 +54,7 @@ export default function SettingsPage() {
             <Tabs defaultValue="general">
               <TabsList className="mb-4">
                 <TabsTrigger value="general">{t("generalSettings")}</TabsTrigger>
-                <TabsTrigger value="maps">Maps & Location</TabsTrigger>
+                <TabsTrigger value="maps">{t("mapsAndLocation")}</TabsTrigger>
                 <TabsTrigger value="notifications">{t("notificationSettings")}</TabsTrigger>
                 <TabsTrigger value="security">{t("securitySettings")}</TabsTrigger>
                 <TabsTrigger value="appearance">{t("appearance")}</TabsTrigger>
@@ -82,7 +82,7 @@ export default function SettingsPage() {
             </Tabs>
           </CardContent>
           <CardFooter className="flex justify-end space-x-2">
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">{t("cancel")}</Button>
             <Button onClick={handleSaveSettings}>
               <Save className="h-4 w-4 mr-2" />
               {t("saveChanges")}

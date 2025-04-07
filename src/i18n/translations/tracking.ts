@@ -57,7 +57,10 @@ export const trackingTranslations: TranslationCategory = {
     floor: "Floor",
     buildingName: "Building",
     ground: "Ground Floor",
-    basement: "Basement"
+    basement: "Basement",
+    // Additional translations for dashboard
+    goToTracking: "Go to Tracking",
+    goToSettings: "Go to Settings"
   },
   zh_TW: {
     locationTracking: "位置追蹤",
@@ -113,7 +116,10 @@ export const trackingTranslations: TranslationCategory = {
     floor: "樓層",
     buildingName: "建築物",
     ground: "一樓",
-    basement: "地下室"
+    basement: "地下室",
+    // Additional translations for dashboard
+    goToTracking: "前往追蹤",
+    goToSettings: "前往設置"
   },
   ja: {
     locationTracking: "位置追跡",
@@ -169,6 +175,9 @@ export const trackingTranslations: TranslationCategory = {
     floor: "階",
     buildingName: "建物",
     ground: "1階",
-    basement: "地下"
+    basement: "地下",
+    // Additional translations for dashboard
+    goToTracking: "追跡に移動",
+    goToSettings: "設定に移動"
   }
 };

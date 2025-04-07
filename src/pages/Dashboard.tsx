@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,8 @@ import { BarChart as BarChartIcon, MapPin, CreditCard, AlertCircle, TrendingUp, 
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "@/i18n/translations";
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import {
   ChartContainer,
   ChartTooltip,
@@ -30,6 +31,59 @@ import {
 export default function Dashboard() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
+
+  // Load overview map
+  useEffect(() => {
+    // Check if token exists in localStorage
+    const mapboxToken = localStorage.getItem("mapbox_api_key");
+    
+    if (mapContainer.current && mapboxToken && !map.current) {
+      mapboxgl.accessToken = mapboxToken;
+      
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [120.9738, 23.9739], // Taiwan center
+        zoom: 5,
+        interactive: false, // Disable interactions for overview map
+      });
+      
+      map.current.on('load', () => {
+        setMapLoaded(true);
+        
+        // Add some sample markers for demonstration
+        const markers = [
+          { lng: 121.5654, lat: 25.0330 }, // Taipei
+          { lng: 120.6478, lat: 24.1477 }, // Taichung
+          { lng: 120.3133, lat: 22.6273 }, // Kaohsiung
+        ];
+        
+        markers.forEach(position => {
+          const el = document.createElement('div');
+          el.className = 'marker';
+          el.style.backgroundColor = '#3b82f6';
+          el.style.width = '15px';
+          el.style.height = '15px';
+          el.style.borderRadius = '50%';
+          el.style.boxShadow = '0 0 0 5px rgba(59, 130, 246, 0.3)';
+          
+          new mapboxgl.Marker(el)
+            .setLngLat([position.lng, position.lat])
+            .addTo(map.current!);
+        });
+      });
+    }
+    
+    return () => {
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
+  }, []);
 
   // Mock data for dashboard
   const stats = [
@@ -233,11 +287,22 @@ export default function Dashboard() {
             <CardDescription>{t("geographicDistribution")}</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="relative h-[400px] bg-muted rounded-md flex items-center justify-center border border-dashed">
-              <div className="text-center space-y-2">
-                <MapPin className="h-10 w-10 mx-auto text-muted-foreground" />
-                <p className="text-muted-foreground">{t("mapViewAvailable")}</p>
-                <Button asChild size="sm">
+            <div className="relative h-[400px] rounded-md">
+              {mapboxToken ? (
+                <div ref={mapContainer} className="absolute inset-0 rounded-md overflow-hidden border border-border" />
+              ) : (
+                <div className="h-full flex items-center justify-center bg-muted rounded-md border border-dashed">
+                  <div className="text-center space-y-2">
+                    <MapPin className="h-10 w-10 mx-auto text-muted-foreground" />
+                    <p className="text-muted-foreground">{t("mapboxTokenRequired")}</p>
+                    <Button asChild size="sm">
+                      <Link to="/settings">{t("goToSettings")}</Link>
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <div className="absolute bottom-4 right-4 z-10">
+                <Button asChild size="sm" variant="secondary">
                   <Link to="/tracking">{t("goToTracking")}</Link>
                 </Button>
               </div>
@@ -248,3 +313,6 @@ export default function Dashboard() {
     </MainLayout>
   );
 }
+
+// Helper to check if Mapbox token is available
+const mapboxToken = localStorage.getItem("mapbox_api_key");
