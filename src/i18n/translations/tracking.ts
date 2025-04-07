@@ -1,4 +1,3 @@
-
 import { TranslationCategory } from "./utils";
 
 // Tracking-specific translations
@@ -60,7 +59,13 @@ export const trackingTranslations: TranslationCategory = {
     basement: "Basement",
     // Additional translations for dashboard
     goToTracking: "Go to Tracking",
-    goToSettings: "Go to Settings"
+    goToSettings: "Go to Settings",
+    // Access control
+    accessRestricted: "Access Restricted",
+    insufficientPermissions: "You don't have sufficient permissions to access the map view. Please contact an administrator for access.",
+    requestAccess: "Request Access",
+    // Indoor mode
+    indoorMode: "Indoor Mode"
   },
   zh_TW: {
     locationTracking: "位置追蹤",
@@ -119,7 +124,11 @@ export const trackingTranslations: TranslationCategory = {
     basement: "地下室",
     // Additional translations for dashboard
     goToTracking: "前往追蹤",
-    goToSettings: "前往設置"
+    goToSettings: "前往設置",
+    accessRestricted: "訪問受限",
+    insufficientPermissions: "您沒有足夠的權限訪問地圖視圖。請聯繫管理員獲取訪問權限。",
+    requestAccess: "請求訪問",
+    indoorMode: "室內模式"
   },
   ja: {
     locationTracking: "位置追跡",
@@ -178,6 +187,10 @@ export const trackingTranslations: TranslationCategory = {
     basement: "地下",
     // Additional translations for dashboard
     goToTracking: "追跡に移動",
-    goToSettings: "設定に移動"
+    goToSettings: "設定に移動",
+    accessRestricted: "アクセス制限",
+    insufficientPermissions: "マップビューにアクセスするための十分な権限がありません。管理者に連絡してアクセス権を取得してください。",
+    requestAccess: "アクセスをリクエスト",
+    indoorMode: "室内モード"
   }
 };
