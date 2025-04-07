@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -32,6 +33,14 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     { id: "C002", name: "Jane Doe", location: "Kaohsiung, Taiwan", coordinates: [120.3010, 22.6273] as [number, number] },
     { id: "C003", name: "Charlie Brown", location: "Tainan, Taiwan", coordinates: [120.2175, 22.9997] as [number, number] },
   ];
+
+  useEffect(() => {
+    // Try to get API keys from localStorage
+    const storedMapboxToken = localStorage.getItem("mapbox_api_key");
+    if (storedMapboxToken) {
+      setMapboxToken(storedMapboxToken);
+    }
+  }, []);
 
   const initializeMapbox = () => {
     if (!mapContainer.current || !mapboxToken) return;
@@ -75,7 +84,7 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     if (!document.getElementById('google-maps-script')) {
       const script = document.createElement('script');
       script.id = 'google-maps-script';
-      script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&callback=initGoogleMap`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBDw9haW4EjqqUMvmx7CUj1vGyQ1t120Lw&callback=initGoogleMap`;
       script.async = true;
       script.defer = true;
       
