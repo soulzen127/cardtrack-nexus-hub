@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export const MapsSettings = () => {
-  const [mapboxApiKey, setMapboxApiKey] = useState<string>("");
-  const [googleApiKey, setGoogleApiKey] = useState<string>("AIzaSyBDw9haW4EjqqUMvmx7CUj1vGyQ1t120Lw");
+  const [mapboxApiKey, setMapboxApiKey] = useState<string>("pk.eyJ1Ijoic291bHplbjEyNyIsImEiOiJjbGVicXJtdzAwc2lvM29udWt2NDBmam4zIn0.iUnrE5JYKhXFw45GAFvixA");
+  const [googleApiKey, setGoogleApiKey] = useState<string>("");
   
   const handleSaveApiKeys = () => {
     // Save API keys to localStorage for use in MapView
