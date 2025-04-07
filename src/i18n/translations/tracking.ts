@@ -50,7 +50,14 @@ export const trackingTranslations: TranslationCategory = {
     googleMapsExplanation: "You need a Google Maps API key to use Google Maps",
     googleMapsApiKeyNeeded: "Get your API key from",
     initializeGoogleMap: "Initialize Google Map",
-    filter: "Filter"
+    filter: "Filter",
+    // Indoor map translations
+    indoorMap: "Indoor Map",
+    outdoorMap: "Outdoor Map",
+    floor: "Floor",
+    buildingName: "Building",
+    ground: "Ground Floor",
+    basement: "Basement"
   },
   zh_TW: {
     locationTracking: "位置追蹤",
@@ -99,7 +106,14 @@ export const trackingTranslations: TranslationCategory = {
     googleMapsExplanation: "您需要 Google 地圖 API 密鑰才能使用 Google 地圖",
     googleMapsApiKeyNeeded: "從以下網址獲取您的 API 密鑰",
     initializeGoogleMap: "初始化 Google 地圖",
-    filter: "過濾"
+    filter: "過濾",
+    // Indoor map translations
+    indoorMap: "室內地圖",
+    outdoorMap: "室外地圖",
+    floor: "樓層",
+    buildingName: "建築物",
+    ground: "一樓",
+    basement: "地下室"
   },
   ja: {
     locationTracking: "位置追跡",
@@ -148,6 +162,13 @@ export const trackingTranslations: TranslationCategory = {
     googleMapsExplanation: "Google マップを使用するには Google マップ API キーが必要です",
     googleMapsApiKeyNeeded: "API キーの取得先",
     initializeGoogleMap: "Google マップを初期化",
-    filter: "フィルター"
+    filter: "フィルター",
+    // Indoor map translations
+    indoorMap: "屋内マップ",
+    outdoorMap: "屋外マップ",
+    floor: "階",
+    buildingName: "建物",
+    ground: "1階",
+    basement: "地下"
   }
 };
