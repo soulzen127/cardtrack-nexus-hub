@@ -28,9 +28,15 @@ export const MapsSettings = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="apiKey">API Key</Label>
+              <Label htmlFor="apiKey">Mapbox API Key</Label>
               <Input id="apiKey" type="password" defaultValue="••••••••••••••••" />
             </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="googleApiKey">Google Maps API Key</Label>
+            <Input id="googleApiKey" type="password" placeholder="Enter Google Maps API key" />
+            <p className="text-xs text-muted-foreground mt-1">Obtain a Google Maps API key from <a href="https://console.cloud.google.com/" target="_blank" rel="noopener" className="text-primary">Google Cloud Console</a></p>
           </div>
           
           <div className="space-y-2">
