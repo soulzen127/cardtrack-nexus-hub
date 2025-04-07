@@ -1,12 +1,30 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export const MapsSettings = () => {
+  const [mapboxApiKey, setMapboxApiKey] = useState<string>("");
+  const [googleApiKey, setGoogleApiKey] = useState<string>("");
+  
+  const handleSaveApiKeys = () => {
+    // Save API keys to localStorage for use in MapView
+    if (mapboxApiKey) {
+      localStorage.setItem("mapbox_api_key", mapboxApiKey);
+    }
+    
+    if (googleApiKey) {
+      localStorage.setItem("google_maps_api_key", googleApiKey);
+    }
+    
+    toast.success("API keys saved successfully");
+  };
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -29,14 +47,31 @@ export const MapsSettings = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="apiKey">Mapbox API Key</Label>
-              <Input id="apiKey" type="password" defaultValue="••••••••••••••••" />
+              <Input 
+                id="apiKey" 
+                type="password" 
+                placeholder="Enter Mapbox API key"
+                value={mapboxApiKey}
+                onChange={(e) => setMapboxApiKey(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground mt-1">Obtain a Mapbox API key from <a href="https://www.mapbox.com/account/" target="_blank" rel="noopener" className="text-primary">Mapbox</a></p>
             </div>
           </div>
           
           <div className="space-y-2">
             <Label htmlFor="googleApiKey">Google Maps API Key</Label>
-            <Input id="googleApiKey" type="password" placeholder="Enter Google Maps API key" />
+            <Input 
+              id="googleApiKey" 
+              type="password" 
+              placeholder="Enter Google Maps API key"
+              value={googleApiKey}
+              onChange={(e) => setGoogleApiKey(e.target.value)}
+            />
             <p className="text-xs text-muted-foreground mt-1">Obtain a Google Maps API key from <a href="https://console.cloud.google.com/" target="_blank" rel="noopener" className="text-primary">Google Cloud Console</a></p>
+          </div>
+          
+          <div className="flex justify-end">
+            <Button onClick={handleSaveApiKeys}>Save API Keys</Button>
           </div>
           
           <div className="space-y-2">
