@@ -1,9 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ZoomIn, ZoomOut, Locate } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 import mapboxgl from 'mapbox-gl';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 interface MapboxControlsProps {
   map: mapboxgl.Map | null;
@@ -21,8 +27,25 @@ export function MapboxControls({
   handleStyleChange
 }: MapboxControlsProps) {
   const { t } = useI18n();
+  const [styleDropdownOpen, setStyleDropdownOpen] = useState(false);
   
   if (!map) return null;
+  
+  // Function to handle style selection and close dropdown
+  const onStyleSelect = (style: string) => {
+    handleStyleChange(style);
+    setStyleDropdownOpen(false);
+  };
+
+  // Get the display name for current map style
+  const getStyleDisplayName = (style: string) => {
+    switch(style) {
+      case 'streets-v12': return t("streets");
+      case 'satellite-streets-v12': return t("satellite");
+      case 'light-v11': return t("light");
+      default: return t("streets");
+    }
+  };
   
   return (
     <>
@@ -59,34 +82,39 @@ export function MapboxControls({
         </div>
       </div>
       
-      {/* Map Style Toggle */}
-      <div className="absolute top-3 right-12 bg-white p-2 rounded-md shadow-md z-10">
-        <div className="flex flex-col gap-2">
-          <Button 
-            variant={mapStyle === 'streets-v12' ? 'default' : 'outline'} 
-            size="sm" 
-            className="text-xs h-7" 
-            onClick={() => handleStyleChange('streets-v12')}
-          >
-            {t("streets")}
-          </Button>
-          <Button 
-            variant={mapStyle === 'satellite-streets-v12' ? 'default' : 'outline'} 
-            size="sm" 
-            className="text-xs h-7" 
-            onClick={() => handleStyleChange('satellite-streets-v12')}
-          >
-            {t("satellite")}
-          </Button>
-          <Button 
-            variant={mapStyle === 'light-v11' ? 'default' : 'outline'} 
-            size="sm" 
-            className="text-xs h-7" 
-            onClick={() => handleStyleChange('light-v11')}
-          >
-            {t("light")}
-          </Button>
-        </div>
+      {/* Map Style Toggle - Replaced with Dropdown */}
+      <div className="absolute top-3 right-12 z-10">
+        <DropdownMenu open={styleDropdownOpen} onOpenChange={setStyleDropdownOpen}>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="secondary" 
+              size="sm" 
+              className="bg-white shadow-md h-8"
+            >
+              {getStyleDisplayName(mapStyle)}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-white p-1 rounded-md shadow-md">
+            <DropdownMenuItem 
+              className={mapStyle === 'streets-v12' ? 'bg-primary/10' : ''}
+              onClick={() => onStyleSelect('streets-v12')}
+            >
+              {t("streets")}
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              className={mapStyle === 'satellite-streets-v12' ? 'bg-primary/10' : ''}
+              onClick={() => onStyleSelect('satellite-streets-v12')}
+            >
+              {t("satellite")}
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              className={mapStyle === 'light-v11' ? 'bg-primary/10' : ''}
+              onClick={() => onStyleSelect('light-v11')}
+            >
+              {t("light")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </>
   );
