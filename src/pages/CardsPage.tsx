@@ -39,11 +39,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import CardDetailsDialog from "@/components/cards/CardDetailsDialog";
+import CardHistoryDialog from "@/components/cards/CardHistoryDialog";
 import RegisterCardDialog from "@/components/cards/RegisterCardDialog";
 import { useI18n } from "@/hooks/use-i18n";
 
 // Mock card data
-const cards = [
+const initialCards = [
   { id: "C001", cardNumber: "1234-5678-9012-3456", status: "active", holder: "John Smith", issueDate: "2023-01-15", lastSeen: "5 minutes ago", location: "Taipei, Taiwan" },
   { id: "C002", cardNumber: "2345-6789-0123-4567", status: "active", holder: "Jane Doe", issueDate: "2023-02-20", lastSeen: "1 hour ago", location: "Kaohsiung, Taiwan" },
   { id: "C003", cardNumber: "3456-7890-1234-5678", status: "suspended", holder: "Bob Johnson", issueDate: "2023-03-10", lastSeen: "2 days ago", location: "Taichung, Taiwan" },
@@ -55,7 +56,9 @@ export default function CardsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [cards, setCards] = useState(initialCards);
   const { t } = useI18n();
 
   const filteredCards = cards.filter(card => 
@@ -64,7 +67,16 @@ export default function CardsPage() {
   );
 
   const handleStatusChange = (cardId: string, newStatus: string) => {
-    toast.success(`Card ${cardId} status changed to ${newStatus}`);
+    // Update card status in local state
+    setCards(prevCards => 
+      prevCards.map(card => 
+        card.id === cardId ? { ...card, status: newStatus } : card
+      )
+    );
+    
+    toast.success(`${t("card")} ${cardId} ${t("statusChangedTo")} ${t(newStatus)}`, {
+      description: t("cardStatusUpdatedSuccessfully"),
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -83,6 +95,11 @@ export default function CardsPage() {
   const openCardDetails = (card: any) => {
     setSelectedCard(card);
     setIsDetailsOpen(true);
+  };
+
+  const openCardHistory = (card: any) => {
+    setSelectedCard(card);
+    setIsHistoryOpen(true);
   };
 
   return (
@@ -172,6 +189,9 @@ export default function CardsPage() {
                               <DropdownMenuItem onClick={() => openCardDetails(card)}>
                                 {t("viewDetails")}
                               </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => openCardHistory(card)}>
+                                {t("viewHistory")}
+                              </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               {card.status !== "active" && (
                                 <DropdownMenuItem onClick={() => handleStatusChange(card.id, "active")}>
@@ -212,6 +232,13 @@ export default function CardsPage() {
         card={selectedCard}
         open={isDetailsOpen}
         onOpenChange={setIsDetailsOpen}
+      />
+
+      {/* Card History Dialog */}
+      <CardHistoryDialog
+        card={selectedCard}
+        open={isHistoryOpen}
+        onOpenChange={setIsHistoryOpen}
       />
 
       {/* Register Card Dialog */}

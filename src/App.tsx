@@ -18,6 +18,7 @@ import AlertsPage from "./pages/AlertsPage";
 import UsersPage from "./pages/UsersPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
+import PortalPage from "./pages/PortalPage";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/portal" element={<PortalPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/cards" element={<CardsPage />} />
             <Route path="/tracking" element={<TrackingPage />} />

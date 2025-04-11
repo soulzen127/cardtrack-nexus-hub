@@ -1,13 +1,17 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart as BarChartIcon, MapPin, CreditCard, AlertCircle, TrendingUp, TrendingDown } from "lucide-react";
+import { BarChart as BarChartIcon, MapPin, CreditCard, AlertCircle, TrendingUp, TrendingDown, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "@/i18n/translations";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { mockCardLocations } from "@/components/tracking/map/mockData";
+import { createMarkers } from "@/components/tracking/map/createMarkers";
+import ExportDialog from "@/components/dashboard/ExportDialog";
 import {
   ChartContainer,
   ChartTooltip,
@@ -33,9 +37,11 @@ export default function Dashboard() {
   const { t } = useTranslation(language);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const markers = useRef<mapboxgl.Marker[]>([]);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
 
-  // Load overview map
+  // Load overview map with real-time location data
   useEffect(() => {
     // Check if token exists in localStorage
     const mapboxToken = localStorage.getItem("mapbox_api_key");
@@ -48,33 +54,26 @@ export default function Dashboard() {
         style: 'mapbox://styles/mapbox/light-v11',
         center: [120.9738, 23.9739], // Taiwan center
         zoom: 5,
-        interactive: false, // Disable interactions for overview map
       });
       
       map.current.on('load', () => {
         setMapLoaded(true);
         
-        // Add some sample markers for demonstration
-        const markers = [
-          { lng: 121.5654, lat: 25.0330 }, // Taipei
-          { lng: 120.6478, lat: 24.1477 }, // Taichung
-          { lng: 120.3133, lat: 22.6273 }, // Kaohsiung
-        ];
-        
-        markers.forEach(position => {
-          const el = document.createElement('div');
-          el.className = 'marker';
-          el.style.backgroundColor = '#3b82f6';
-          el.style.width = '15px';
-          el.style.height = '15px';
-          el.style.borderRadius = '50%';
-          el.style.boxShadow = '0 0 0 5px rgba(59, 130, 246, 0.3)';
-          
-          new mapboxgl.Marker(el)
-            .setLngLat([position.lng, position.lat])
-            .addTo(map.current!);
-        });
+        // Add markers using the createMarkers function
+        if (map.current) {
+          createMarkers({
+            map: map.current,
+            locations: mockCardLocations,
+            markerRef: markers
+          });
+        }
       });
+      
+      // Add navigation controls
+      map.current.addControl(
+        new mapboxgl.NavigationControl(),
+        'top-right'
+      );
     }
     
     return () => {
@@ -84,6 +83,30 @@ export default function Dashboard() {
       }
     };
   }, []);
+
+  // Simulate real-time updates
+  useEffect(() => {
+    if (!mapLoaded || !map.current) return;
+    
+    const interval = setInterval(() => {
+      // Update markers with slightly modified positions to simulate movement
+      const updatedLocations = mockCardLocations.map(location => ({
+        ...location,
+        coordinates: [
+          location.coordinates[0] + (Math.random() - 0.5) * 0.005,
+          location.coordinates[1] + (Math.random() - 0.5) * 0.005
+        ]
+      }));
+      
+      createMarkers({
+        map: map.current!,
+        locations: updatedLocations,
+        markerRef: markers
+      });
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [mapLoaded]);
 
   // Mock data for dashboard
   const stats = [
@@ -130,7 +153,8 @@ export default function Dashboard() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
           <h1 className="text-2xl font-bold tracking-tight">{t("dashboard")}</h1>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => setIsExportDialogOpen(true)}>
+              <Download className="h-4 w-4 mr-2" />
               {t("export")}
             </Button>
             <Button size="sm">
@@ -310,6 +334,11 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <ExportDialog
+        open={isExportDialogOpen}
+        onOpenChange={setIsExportDialogOpen}
+      />
     </MainLayout>
   );
 }

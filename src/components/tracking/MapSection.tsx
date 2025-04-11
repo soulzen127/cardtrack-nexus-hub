@@ -12,6 +12,7 @@ import { Filter, Layers } from "lucide-react";
 import { MapView } from "@/components/tracking/MapView";
 import { MapControls } from "@/components/tracking/MapControls";
 import { useI18n } from "@/hooks/use-i18n";
+import { CardLocation } from "./map/types";
 
 interface MapSectionProps {
   isRealtime: boolean;
@@ -20,6 +21,7 @@ interface MapSectionProps {
   setTimeSliderValue: (value: number[]) => void;
   selectedDate: string;
   setSelectedDate: (value: string) => void;
+  cardLocations?: CardLocation[];
 }
 
 export function MapSection({
@@ -29,13 +31,14 @@ export function MapSection({
   setTimeSliderValue,
   selectedDate,
   setSelectedDate,
+  cardLocations,
 }: MapSectionProps) {
   const { t } = useI18n();
 
   return (
     <Card className="lg:col-span-2">
       <CardHeader>
-        <CardTitle>{t("mapView")}</CardTitle>
+        <CardTitle>{t("geographicLocation")}</CardTitle>
         <CardDescription>{t("realtimeGeographicVisualization")}</CardDescription>
       </CardHeader>
       <CardContent>
@@ -43,6 +46,7 @@ export function MapSection({
           isRealtime={isRealtime}
           timeSliderValue={timeSliderValue}
           selectedDate={selectedDate}
+          cardLocations={cardLocations}
         />
         
         <MapControls 
