@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,6 +30,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { CardLocation } from "@/components/tracking/map/types";
 
 export default function Dashboard() {
   const { language } = useLanguage();
@@ -90,12 +90,12 @@ export default function Dashboard() {
     
     const interval = setInterval(() => {
       // Update markers with slightly modified positions to simulate movement
-      const updatedLocations = mockCardLocations.map(location => ({
+      const updatedLocations: CardLocation[] = mockCardLocations.map(location => ({
         ...location,
         coordinates: [
           location.coordinates[0] + (Math.random() - 0.5) * 0.005,
           location.coordinates[1] + (Math.random() - 0.5) * 0.005
-        ]
+        ] as [number, number]
       }));
       
       createMarkers({
@@ -108,7 +108,6 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [mapLoaded]);
 
-  // Mock data for dashboard
   const stats = [
     { title: t("totalActiveCards"), value: "1,254", trend: "up", percent: "12%", icon: <CreditCard className="h-5 w-5" /> },
     { title: t("trackedLocations"), value: "867", trend: "up", percent: "8%", icon: <MapPin className="h-5 w-5" /> },
