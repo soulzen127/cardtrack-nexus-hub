@@ -13,16 +13,7 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
-
-interface ActiveAlert {
-  id: number;
-  type: string;
-  description: string;
-  timestamp: string;
-  priority: string;
-  location?: string;
-  cardId?: string | null;
-}
+import { ActiveAlert } from "./AlertsData";
 
 interface ActiveAlertsListProps {
   alerts: ActiveAlert[];

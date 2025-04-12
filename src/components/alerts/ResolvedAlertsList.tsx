@@ -9,16 +9,7 @@ import {
   User 
 } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
-
-interface ResolvedAlert {
-  id: number;
-  type: string;
-  description: string;
-  timestamp: string;
-  resolvedBy: string;
-  resolvedAt: string;
-  notes?: string;
-}
+import { ResolvedAlert } from "./AlertsData";
 
 interface ResolvedAlertsListProps {
   alerts: ResolvedAlert[];

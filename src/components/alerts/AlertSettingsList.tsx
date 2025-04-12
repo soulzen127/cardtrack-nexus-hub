@@ -5,17 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShieldAlert } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
-
-interface AlertConfig {
-  id: number;
-  name: string;
-  description: string;
-  channels: string[];
-  enabled: boolean;
-}
+import { AlertConfiguration } from "./AlertsData";
 
 interface AlertSettingsListProps {
-  configurations: AlertConfig[];
+  configurations: AlertConfiguration[];
 }
 
 export function AlertSettingsList({ configurations }: AlertSettingsListProps) {
