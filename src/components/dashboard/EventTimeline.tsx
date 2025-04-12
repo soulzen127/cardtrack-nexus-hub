@@ -100,7 +100,7 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
           <CardDescription>{t("browseRecentAlertsAndActivities")}</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center items-center p-10">
-          <p className="text-muted-foreground">No events available</p>
+          <p className="text-muted-foreground">{t("noEventsAvailable")}</p>
         </CardContent>
       </Card>
     );

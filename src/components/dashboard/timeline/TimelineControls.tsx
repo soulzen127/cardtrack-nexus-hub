@@ -55,16 +55,20 @@ export const TimelineControls: React.FC<TimelineControlsProps> = ({
             size="icon" 
             onClick={() => onZoomAdjust('out')}
             disabled={zoomLevel <= 0.5}
+            title={t("zoomOut")}
           >
             <ZoomOut className="h-4 w-4" />
+            <span className="sr-only">{t("zoomOut")}</span>
           </Button>
           <Button 
             variant="outline" 
             size="icon" 
             onClick={() => onZoomAdjust('in')}
             disabled={zoomLevel >= 3}
+            title={t("zoomIn")}
           >
             <ZoomIn className="h-4 w-4" />
+            <span className="sr-only">{t("zoomIn")}</span>
           </Button>
         </div>
       )}

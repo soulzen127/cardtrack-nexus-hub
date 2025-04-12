@@ -81,11 +81,18 @@ export const dashboardTranslations: TranslationCategory = {
     clear: "Clear",
     search: "Search",
     advancedSearch: "Advanced Search",
+    
+    // Timeline specific translations
     eventTimeline: "Event Timeline",
     browseRecentAlertsAndActivities: "Browse recent alerts and activities",
     viewDetails: "View Details",
     all: "All",
-    activities: "Activities"
+    activities: "Activities",
+    noEventsAvailable: "No events available",
+    
+    // Timeline controls
+    zoomIn: "Zoom In",
+    zoomOut: "Zoom Out"
   },
   zh_TW: {
     totalActiveCards: "使用中卡片總數",
@@ -166,11 +173,18 @@ export const dashboardTranslations: TranslationCategory = {
     clear: "清除",
     search: "搜索",
     advancedSearch: "高級搜索",
+    
+    // Timeline specific translations
     eventTimeline: "事件時間軸",
     browseRecentAlertsAndActivities: "瀏覽最近警報和活動",
     viewDetails: "查看詳情",
     all: "全部",
-    activities: "活動"
+    activities: "活動",
+    noEventsAvailable: "沒有可用的事件",
+    
+    // Timeline controls
+    zoomIn: "放大",
+    zoomOut: "縮小"
   },
   ja: {
     totalActiveCards: "有効なカードの合計",
@@ -251,10 +265,17 @@ export const dashboardTranslations: TranslationCategory = {
     clear: "クリア",
     search: "検索",
     advancedSearch: "詳細検索",
+    
+    // Timeline specific translations
     eventTimeline: "イベントタイムライン",
     browseRecentAlertsAndActivities: "最近のアラートとアクティビティを閲覧",
     viewDetails: "詳細を表示",
     all: "すべて",
-    activities: "アクティビティ"
+    activities: "アクティビティ",
+    noEventsAvailable: "利用可能なイベントはありません",
+    
+    // Timeline controls
+    zoomIn: "拡大",
+    zoomOut: "縮小"
   }
 };
