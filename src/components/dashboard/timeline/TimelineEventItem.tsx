@@ -2,8 +2,8 @@
 import React from "react";
 import { TimelineEvent } from "../../tracking/map/mockData";
 import { AlertCircle, Activity } from "lucide-react";
-import { format, parseISO, isValid } from "date-fns";
 import { useI18n } from "@/hooks/use-i18n";
+import { safeFormatDate } from "@/utils/dateUtils";
 
 interface TimelineEventItemProps {
   event: TimelineEvent;
@@ -33,20 +33,6 @@ export const TimelineEventItem: React.FC<TimelineEventItemProps> = ({
   const borderColorClass = isSelected ? 
     (isAlert ? 'border-red-500 bg-red-100/20' : 'border-green-500 bg-green-100/20') : 
     'border-border';
-    
-  // Safe date formatting helper
-  const safeFormatDate = (dateString: string, formatString: string): string => {
-    try {
-      const date = parseISO(dateString);
-      if (!isValid(date)) {
-        return "Invalid date";
-      }
-      return format(date, formatString);
-    } catch (error) {
-      console.error("Error formatting date:", error, dateString);
-      return "Invalid date";
-    }
-  };
 
   return (
     <div 

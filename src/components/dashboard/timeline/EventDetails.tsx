@@ -1,11 +1,11 @@
 
 import React from "react";
 import { TimelineEvent } from "../../tracking/map/mockData";
-import { format, parseISO, isValid } from "date-fns";
 import { Link } from "react-router-dom";
 import { useI18n } from "@/hooks/use-i18n";
 import { AlertCircle, Activity, Clock, Calendar } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { safeFormatDate } from "@/utils/dateUtils";
 
 interface EventDetailsProps {
   event: TimelineEvent;
@@ -32,20 +32,6 @@ export const EventDetails: React.FC<EventDetailsProps> = ({ event }) => {
       return 'bg-blue-100 text-blue-800';
     }
     return 'bg-green-100 text-green-800';
-  };
-  
-  // Safe date formatting helper
-  const safeFormatDate = (dateString: string, formatString: string): string => {
-    try {
-      const date = parseISO(dateString);
-      if (!isValid(date)) {
-        return "Invalid date";
-      }
-      return format(date, formatString);
-    } catch (error) {
-      console.error("Error formatting date:", error, dateString);
-      return "Invalid date";
-    }
   };
   
   return (
