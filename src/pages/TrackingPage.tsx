@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { MapSection, MapActions } from "@/components/tracking/MapSection";
 import { TrackedCardsPanel } from "@/components/tracking/TrackedCardsPanel";
-import { AlertConfigurationPanel } from "@/components/tracking/AlertConfigurationPanel";
+import { AlertConfigurationPanel } from "@/components/tracking/alerts/AlertConfigurationPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useI18n } from "@/hooks/use-i18n";
 import { AdvancedSearch } from "@/components/tracking/AdvancedSearch";
