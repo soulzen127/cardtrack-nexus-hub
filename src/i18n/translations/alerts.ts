@@ -23,7 +23,7 @@ export const alertsTranslations: TranslationCategory = {
     whenEnteringOrLeaving: "When entering or leaving",
     radiusMeters: "Radius (meters)",
     createAlert: "Create Alert",
-    // Renamed duplicate property
+    // Using newAlert instead of the duplicate
     newAlert: "Add New Alert",
     enter: "Enter",
     exit: "Exit",
@@ -58,7 +58,7 @@ export const alertsTranslations: TranslationCategory = {
     whenEnteringOrLeaving: "進入或離開時",
     radiusMeters: "半徑（米）",
     createAlert: "創建警報",
-    // Renamed duplicate property
+    // Using newAlert instead of the duplicate
     newAlert: "添加新警報",
     enter: "進入",
     exit: "離開",
@@ -93,7 +93,7 @@ export const alertsTranslations: TranslationCategory = {
     whenEnteringOrLeaving: "入場または退場時",
     radiusMeters: "半径（メートル）",
     createAlert: "アラートを作成",
-    // Renamed duplicate property
+    // Using newAlert instead of the duplicate
     newAlert: "新しいアラートを追加",
     enter: "入場",
     exit: "退場",

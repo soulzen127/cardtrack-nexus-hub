@@ -36,6 +36,25 @@ export const TimelineContent: React.FC<TimelineContentProps> = ({
   return (
     <div className="relative overflow-hidden">
       <ScrollArea className="h-auto">
+        <div className="flex space-x-2 mb-2">
+          {/* Date labels on X-axis */}
+          <div className="w-24"></div> {/* Space for Y-axis labels */}
+          {dates.map((date, index) => (
+            <div 
+              key={`date-${index}`}
+              className={`min-w-[100px] text-center font-medium ${!visibleDates[index] ? 'opacity-50' : ''}`}
+            >
+              {date}
+              <button 
+                className="flex items-center justify-center text-xs text-muted-foreground ml-1"
+                onClick={() => toggleShow(index)}
+              >
+                {t("show")}
+              </button>
+            </div>
+          ))}
+        </div>
+        
         {/* Alert Events Row */}
         {(selectedEventType === 'all' || selectedEventType === 'alert') && (
           <TimelineRow

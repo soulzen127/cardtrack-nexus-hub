@@ -6,6 +6,7 @@ import { useI18n } from "@/hooks/use-i18n";
 import { groupEventsByDate } from "@/utils/eventUtils";
 import { isDateToday, safeFormatDate } from "@/utils/dateUtils";
 import { ColoredEvent } from "./ColoredEvent";
+import { TimelineEventItem } from "./TimelineEventItem";
 
 interface TimelineRowProps {
   title: string;
@@ -56,59 +57,48 @@ export const TimelineRow: React.FC<TimelineRowProps> = ({
   };
   
   return (
-    <div className="mb-6">
-      <div className="font-medium mb-2 flex items-center">
+    <div className="flex mb-4" onWheel={onWheel}>
+      {/* Y-axis label */}
+      <div className="w-24 flex items-center">
         <ColoredEvent 
           type={type} 
           icon={getEventIcon()} 
           size="sm"
         />
-        <span className="ml-1">{title}</span>
+        <span className="ml-1 font-medium">{title}</span>
       </div>
-      <div className="relative">
-        <div className="flex space-x-12 overflow-x-auto py-2 scrollbar-hide" onWheel={onWheel}>
-          {dates.map((date, dateIndex) => {
-            const dayEvents = eventsByDate[dateIndex];
-            const count = dayEvents.length;
-            
-            let displayDate = "Invalid date";
-            // Check if the date is today
-            const isToday = isDateToday(date);
-            
-            if (isToday) {
-              displayDate = t("today");
-            } else {
-              // Try to safely format the date
-              displayDate = safeFormatDate(date, 'MM/dd');
-            }
-            
-            return (
-              <div key={date} className="flex flex-col items-center">
-                <div className="text-sm mb-2">
-                  {displayDate}
-                </div>
-                <div className="text-xs text-center mb-1">
-                  {count}
-                </div>
-                <div 
-                  className={`w-4 h-4 rounded-full flex items-center justify-center ${isSelected ? 'bg-blue-500' : 'bg-gray-300'} cursor-pointer mb-2`}
-                  onClick={() => {
-                    if (dayEvents.length > 0) {
-                      onEventSelect(dayEvents[0], 0, type);
-                    }
-                  }}
-                />
-                <button 
-                  className="flex items-center text-xs text-muted-foreground"
-                  onClick={() => toggleShow(dateIndex)}
-                >
-                  {t("show")}
-                  <ChevronDown className="h-3 w-3 ml-1" />
-                </button>
+      
+      {/* Timeline events by date (X-axis) */}
+      <div className="flex flex-1 space-x-2">
+        {dates.map((date, dateIndex) => {
+          if (!visibleDates[dateIndex]) return (
+            <div key={`date-${dateIndex}-empty`} className="min-w-[100px] opacity-50"></div>
+          );
+          
+          const dayEvents = eventsByDate[dateIndex];
+          
+          return (
+            <div key={`date-${dateIndex}`} className="min-w-[100px] border-l pl-2">
+              <div className="space-y-1">
+                {dayEvents.map((event, eventIndex) => (
+                  <TimelineEventItem
+                    key={`${event.id}-${eventIndex}`}
+                    event={event}
+                    isSelected={isSelected && selectedEventIndex === eventIndex}
+                    eventType={type}
+                    onSelect={() => onEventSelect(event, eventIndex, type)}
+                    zoomLevel={zoomLevel}
+                  />
+                ))}
+                {dayEvents.length === 0 && (
+                  <div className="text-xs text-muted-foreground py-1 px-2">
+                    {t("noEventsAvailable")}
+                  </div>
+                )}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
