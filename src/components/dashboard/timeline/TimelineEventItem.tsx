@@ -22,13 +22,10 @@ export const TimelineEventItem: React.FC<TimelineEventItemProps> = ({
 }) => {
   const { t } = useI18n();
   
-  // Calculate timeline item width based on zoom level
+  // Timeline item styling is now simplified since we're using a different layout
   const getTimelineItemStyle = () => {
-    const baseWidth = 140; // Base width in pixels
     return {
-      width: `${baseWidth * zoomLevel}px`,
-      minWidth: `${baseWidth * zoomLevel}px`,
-      transition: 'width 0.2s ease-out'
+      transition: 'all 0.2s ease-out'
     };
   };
 
@@ -39,7 +36,7 @@ export const TimelineEventItem: React.FC<TimelineEventItemProps> = ({
 
   return (
     <div 
-      className={`timeline-event flex-shrink-0 cursor-pointer p-2 rounded-md border ${borderColorClass} hover:shadow-md transition-all`}
+      className={`timeline-event p-2 rounded-md border ${borderColorClass} hover:shadow-md transition-all mb-2`}
       onClick={() => onSelect(event)}
       style={getTimelineItemStyle()}
       title={t("timelineEvent")}

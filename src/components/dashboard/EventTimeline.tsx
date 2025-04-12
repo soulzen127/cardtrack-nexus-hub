@@ -3,11 +3,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { useI18n } from "@/hooks/use-i18n";
 import { timelineEvents, TimelineEvent } from "../tracking/map/mockData";
-import { AlertCircle, Activity } from "lucide-react";
-import { format, parseISO } from "date-fns";
+import { AlertCircle, Activity, ChevronLeft, ChevronRight } from "lucide-react";
 import { TimelineRow } from "./timeline/TimelineRow";
 import { EventDetails } from "./timeline/EventDetails";
 import { TimelineControls } from "./timeline/TimelineControls";
+import { format, parseISO, subDays, addDays } from "date-fns";
+import { Button } from "../ui/button";
+import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "../ui/pagination";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface EventTimelineProps {
   onEventSelect: (event: TimelineEvent) => void;
@@ -17,9 +20,20 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
   const { t } = useI18n();
   const timelineRef = useRef<HTMLDivElement>(null);
   const [selectedEventIndex, setSelectedEventIndex] = useState(0);
-  const [zoomLevel, setZoomLevel] = useState(1); // 1 = normal, > 1 = zoomed in
+  const [zoomLevel, setZoomLevel] = useState(1);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [selectedEventType, setSelectedEventType] = useState<'all' | 'alert' | 'activity'>('all');
+  
+  // State for the visible dates
+  const today = new Date();
+  const [visibleDates, setVisibleDates] = useState<boolean[]>([true, true, true, true, true]);
+  const [dates, setDates] = useState<string[]>([
+    format(subDays(today, 2), 'yyyy/MM/dd'),
+    format(subDays(today, 1), 'yyyy/MM/dd'),
+    format(today, 'yyyy/MM/dd'),
+    format(addDays(today, 1), 'yyyy/MM/dd'),
+    format(addDays(today, 2), 'yyyy/MM/dd'),
+  ]);
   
   // Detect touch devices
   useEffect(() => {
@@ -63,18 +77,6 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
     setSelectedEventType(type);
     setSelectedEventIndex(index);
     onEventSelect(event);
-    
-    // Scroll to the event in the timeline
-    if (timelineRef.current) {
-      const eventElements = timelineRef.current.querySelectorAll('.timeline-event');
-      if (eventElements[index]) {
-        eventElements[index].scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'nearest', 
-          inline: 'center' 
-        });
-      }
-    }
   };
   
   // Filter events by type
@@ -91,6 +93,30 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
       setSelectedEventIndex(0);
       onEventSelect(sortedEvents[0]);
     }
+  };
+  
+  // Toggle showing/hiding events for a date
+  const toggleShowDate = (dateIndex: number) => {
+    const newVisibleDates = [...visibleDates];
+    newVisibleDates[dateIndex] = !newVisibleDates[dateIndex];
+    setVisibleDates(newVisibleDates);
+  };
+  
+  // Navigate timeline dates
+  const navigateDates = (direction: 'prev' | 'next') => {
+    const newDates = [...dates];
+    if (direction === 'prev') {
+      const firstDate = parseISO(dates[0]);
+      const newFirstDate = subDays(firstDate, dates.length);
+      newDates.unshift(format(newFirstDate, 'yyyy/MM/dd'));
+      newDates.pop();
+    } else {
+      const lastDate = parseISO(dates[dates.length - 1]);
+      const newLastDate = addDays(lastDate, 1);
+      newDates.push(format(newLastDate, 'yyyy/MM/dd'));
+      newDates.shift();
+    }
+    setDates(newDates);
   };
   
   if (filteredEvents.length === 0) {
@@ -125,14 +151,29 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Timeline title and navigation */}
+        <div className="flex justify-between items-center">
+          <h3 className="text-sm font-medium">{t("eventTimelineDate")}</h3>
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious onClick={() => navigateDates('prev')} />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext onClick={() => navigateDates('next')} />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+        
         {/* Horizontal Timeline View with Y-axis categories */}
-        <div className="relative overflow-hidden">
-          <div className="flex flex-col space-y-6" ref={timelineRef}>
+        <div className="relative overflow-hidden" ref={timelineRef}>
+          <ScrollArea className="h-auto">
             {/* Alert Events Row */}
             {(selectedEventType === 'all' || selectedEventType === 'alert') && (
               <TimelineRow
                 title={t("alerts")}
-                icon={<AlertCircle className="h-4 w-4 mr-1 text-red-500" />}
+                icon={<AlertCircle className="h-4 w-4 text-red-500" />}
                 events={alertEvents}
                 selectedEventType={selectedEventType}
                 selectedEventIndex={selectedEventIndex}
@@ -140,6 +181,9 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
                 type="alert"
                 zoomLevel={zoomLevel}
                 onWheel={!isMobileDevice ? handleWheel : undefined}
+                dates={dates}
+                toggleShow={toggleShowDate}
+                visibleDates={visibleDates}
               />
             )}
             
@@ -147,7 +191,7 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
             {(selectedEventType === 'all' || selectedEventType === 'activity') && (
               <TimelineRow
                 title={t("activities")}
-                icon={<Activity className="h-4 w-4 mr-1 text-green-500" />}
+                icon={<Activity className="h-4 w-4 text-green-500" />}
                 events={activityEvents}
                 selectedEventType={selectedEventType}
                 selectedEventIndex={selectedEventIndex}
@@ -155,19 +199,12 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
                 type="activity"
                 zoomLevel={zoomLevel}
                 onWheel={!isMobileDevice ? handleWheel : undefined}
+                dates={dates}
+                toggleShow={toggleShowDate}
+                visibleDates={visibleDates}
               />
             )}
-          </div>
-          
-          {/* Time legend - showing the time scale on X-axis */}
-          <div className="mt-2 flex justify-between px-24">
-            <span className="text-xs text-muted-foreground">
-              {filteredEvents.length > 0 && format(parseISO(filteredEvents[0].timestamp), 'yyyy/MM/dd HH:mm')}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {filteredEvents.length > 0 && format(parseISO(filteredEvents[filteredEvents.length - 1].timestamp), 'yyyy/MM/dd HH:mm')}
-            </span>
-          </div>
+          </ScrollArea>
         </div>
         
         {/* Event details section - shown when an event is selected */}

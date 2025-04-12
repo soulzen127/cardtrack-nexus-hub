@@ -5,6 +5,7 @@ import { TranslationCategory } from "../utils";
 export const dashboardTimelineTranslations: TranslationCategory = {
   en: {
     eventTimeline: "Event Timeline",
+    eventTimelineDate: "Event Timeline Date",
     browseRecentAlertsAndActivities: "Browse recent alerts and activities",
     viewDetails: "View Details",
     all: "All",
@@ -13,10 +14,14 @@ export const dashboardTimelineTranslations: TranslationCategory = {
     noEventsAvailable: "No events available",
     zoomIn: "Zoom In",
     zoomOut: "Zoom Out",
-    timelineEvent: "Timeline Event"
+    timelineEvent: "Timeline Event",
+    show: "show",
+    today: "Today",
+    yesterday: "Yesterday"
   },
   zh_TW: {
     eventTimeline: "事件時間軸",
+    eventTimelineDate: "事件時間軸日期",
     browseRecentAlertsAndActivities: "瀏覽最近警報和活動",
     viewDetails: "查看詳情",
     all: "全部",
@@ -25,10 +30,14 @@ export const dashboardTimelineTranslations: TranslationCategory = {
     noEventsAvailable: "沒有可用的事件",
     zoomIn: "放大",
     zoomOut: "縮小",
-    timelineEvent: "時間軸事件"
+    timelineEvent: "時間軸事件",
+    show: "顯示",
+    today: "今天",
+    yesterday: "昨天"
   },
   ja: {
     eventTimeline: "イベントタイムライン",
+    eventTimelineDate: "イベントタイムライン日付",
     browseRecentAlertsAndActivities: "最近のアラートとアクティビティを閲覧",
     viewDetails: "詳細を表示",
     all: "すべて",
@@ -37,6 +46,9 @@ export const dashboardTimelineTranslations: TranslationCategory = {
     noEventsAvailable: "利用可能なイベントはありません",
     zoomIn: "拡大",
     zoomOut: "縮小",
-    timelineEvent: "タイムラインイベント"
+    timelineEvent: "タイムラインイベント",
+    show: "表示",
+    today: "今日",
+    yesterday: "昨日"
   }
 };
