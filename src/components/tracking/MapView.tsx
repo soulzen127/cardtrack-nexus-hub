@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useMapState } from './map/hooks/useMapState';
 import { useI18n } from "@/hooks/use-i18n";
 import { MapProviderSelector } from './map/MapProviderSelector';
@@ -31,6 +31,9 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     currentFloor, setCurrentFloor,
     availableFloors, currentBuilding
   } = useMapState();
+  
+  // Add state for hiding indoor map controller
+  const [indoorControllerHidden, setIndoorControllerHidden] = useState(false);
   
   // Access control integration
   const { hasAccess, isLoading: accessCheckLoading } = useAccessControl({
@@ -94,7 +97,7 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
         handleMapProviderChange={handleMapProviderChange}
       />
       
-      {/* Indoor Mode Controller */}
+      {/* Indoor Mode Controller - Now positioned outside the map container */}
       <IndoorMapController
         isIndoorMode={isIndoorMode}
         setIsIndoorMode={setIsIndoorMode}
@@ -102,6 +105,9 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
         setCurrentFloor={setCurrentFloor}
         availableFloors={availableFloors}
         buildingName={currentBuilding}
+        hidden={indoorControllerHidden}
+        setHidden={setIndoorControllerHidden}
+        position="right"
       />
       
       {/* Map Containers */}
@@ -124,7 +130,7 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
       )}
       
       {/* Indoor Mode Indicator */}
-      {isIndoorMode && (
+      {isIndoorMode && !indoorControllerHidden && (
         <div className="absolute left-2 bottom-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-sm">
           {t("indoorMode")}: {currentBuilding}, {t("floor")} {currentFloor}
         </div>

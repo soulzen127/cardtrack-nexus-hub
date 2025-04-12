@@ -1,4 +1,3 @@
-
 import { TranslationCategory } from "./utils";
 
 // Tracking-specific translations
@@ -58,6 +57,8 @@ export const trackingTranslations: TranslationCategory = {
     buildingName: "Building",
     ground: "Ground Floor",
     basement: "Basement",
+    hideIndoorMap: "Hide Indoor Map",
+    showIndoorMap: "Show Indoor Map",
     // Additional translations for dashboard
     goToTracking: "Go to Tracking",
     goToSettings: "Go to Settings",
@@ -123,6 +124,8 @@ export const trackingTranslations: TranslationCategory = {
     buildingName: "建築物",
     ground: "一樓",
     basement: "地下室",
+    hideIndoorMap: "隱藏室內地圖",
+    showIndoorMap: "顯示室內地圖",
     // Additional translations for dashboard
     goToTracking: "前往追蹤",
     goToSettings: "前往設置",
@@ -186,6 +189,8 @@ export const trackingTranslations: TranslationCategory = {
     buildingName: "建物",
     ground: "1階",
     basement: "地下",
+    hideIndoorMap: "屋内マップを隠す",
+    showIndoorMap: "屋内マップを表示する",
     // Additional translations for dashboard
     goToTracking: "追跡に移動",
     goToSettings: "設定に移動",
