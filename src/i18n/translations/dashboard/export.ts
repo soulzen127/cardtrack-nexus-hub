@@ -1,0 +1,57 @@
+
+import { TranslationCategory } from "../utils";
+
+// Export functionality translations
+export const dashboardExportTranslations: TranslationCategory = {
+  en: {
+    exportDashboardData: "Export Dashboard Data",
+    selectDataAndFormatToExport: "Select the data and format you want to export",
+    exportFormat: "Export Format",
+    dataToInclude: "Data to Include",
+    cardActivityData: "Card Activity Data",
+    locationData: "Location Data",
+    alertsData: "Alerts Data",
+    systemEvents: "System Events",
+    dateRange: "Date Range",
+    selectDateRange: "Select date range",
+    fileName: "File Name",
+    cancel: "Cancel",
+    exportNow: "Export Now",
+    exportStarted: "Export Started",
+    exportWillBeReadySoon: "Your export will be ready to download shortly",
+  },
+  zh_TW: {
+    exportDashboardData: "導出儀表板數據",
+    selectDataAndFormatToExport: "選擇您要導出的數據和格式",
+    exportFormat: "導出格式",
+    dataToInclude: "包含的數據",
+    cardActivityData: "卡片活動數據",
+    locationData: "位置數據",
+    alertsData: "警報數據",
+    systemEvents: "系統事件",
+    dateRange: "日期範圍",
+    selectDateRange: "選擇日期範圍",
+    fileName: "文件名",
+    cancel: "取消",
+    exportNow: "立即導出",
+    exportStarted: "導出已開始",
+    exportWillBeReadySoon: "您的導出文件即將準備就緒",
+  },
+  ja: {
+    exportDashboardData: "ダッシュボードデータのエクスポート",
+    selectDataAndFormatToExport: "エクスポートするデータと形式を選択",
+    exportFormat: "エクスポート形式",
+    dataToInclude: "含めるデータ",
+    cardActivityData: "カードアクティビティデータ",
+    locationData: "位置データ",
+    alertsData: "アラートデータ",
+    systemEvents: "システムイベント",
+    dateRange: "日付範囲",
+    selectDateRange: "日付範囲を選択",
+    fileName: "ファイル名",
+    cancel: "キャンセル",
+    exportNow: "今すぐエクスポート",
+    exportStarted: "エクスポート開始",
+    exportWillBeReadySoon: "エクスポートがまもなくダウンロード可能になります",
+  }
+};
