@@ -28,6 +28,8 @@ export const TimelineRow: React.FC<TimelineRowProps> = ({
 }) => {
   if (events.length === 0) return null;
   
+  const isSelected = selectedEventType === type || selectedEventType === 'all';
+  
   return (
     <div className="flex items-center space-x-2">
       <div className="w-24 font-medium flex items-center">
@@ -36,7 +38,7 @@ export const TimelineRow: React.FC<TimelineRowProps> = ({
       </div>
       <div className="relative flex-1">
         <div 
-          className="flex space-x-3 overflow-x-auto py-2 scrollbar-hide"
+          className={`flex space-x-3 overflow-x-auto py-2 scrollbar-hide ${isSelected ? 'bg-muted/20 rounded-md p-1' : ''}`}
           onWheel={onWheel}
         >
           {events.map((event, index) => (

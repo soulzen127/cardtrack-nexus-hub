@@ -80,14 +80,15 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
   // Filter events by type
   const handleEventTypeChange = (type: 'all' | 'alert' | 'activity') => {
     setSelectedEventType(type);
-    setSelectedEventIndex(0);
+    
     if (type !== 'all') {
-      const firstEventOfType = sortedEvents.findIndex(event => event.type === type);
-      if (firstEventOfType !== -1) {
+      const eventsOfType = type === 'alert' ? alertEvents : activityEvents;
+      if (eventsOfType.length > 0) {
         setSelectedEventIndex(0);
-        onEventSelect(sortedEvents.filter(event => event.type === type)[0]);
+        onEventSelect(eventsOfType[0]);
       }
-    } else {
+    } else if (sortedEvents.length > 0) {
+      setSelectedEventIndex(0);
       onEventSelect(sortedEvents[0]);
     }
   };
@@ -125,7 +126,7 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Horizontal Timeline View with Y-axis categories */}
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <div className="flex flex-col space-y-6" ref={timelineRef}>
             {/* Alert Events Row */}
             {(selectedEventType === 'all' || selectedEventType === 'alert') && (
@@ -158,22 +159,28 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
             )}
           </div>
           
-          {/* Time legend */}
+          {/* Time legend - showing the time scale on X-axis */}
           <div className="mt-2 flex justify-between px-24">
             <span className="text-xs text-muted-foreground">
-              {filteredEvents.length > 0 && format(parseISO(filteredEvents[0].timestamp), 'HH:mm')}
+              {filteredEvents.length > 0 && format(parseISO(filteredEvents[0].timestamp), 'yyyy/MM/dd HH:mm')}
             </span>
             <span className="text-xs text-muted-foreground">
-              {filteredEvents.length > 0 && format(parseISO(filteredEvents[filteredEvents.length - 1].timestamp), 'HH:mm')}
+              {filteredEvents.length > 0 && format(parseISO(filteredEvents[filteredEvents.length - 1].timestamp), 'yyyy/MM/dd HH:mm')}
             </span>
           </div>
         </div>
         
-        {/* Event details section */}
+        {/* Event details section - shown when an event is selected */}
         <div className="pt-4 border-t">
           <div className="space-y-4">
             {filteredEvents.length > 0 && (
-              <EventDetails event={filteredEvents[selectedEventIndex]} />
+              <EventDetails event={
+                selectedEventType === 'all' ? 
+                  filteredEvents[selectedEventIndex] : 
+                  selectedEventType === 'alert' ? 
+                    alertEvents[selectedEventIndex] : 
+                    activityEvents[selectedEventIndex]
+              } />
             )}
           </div>
         </div>

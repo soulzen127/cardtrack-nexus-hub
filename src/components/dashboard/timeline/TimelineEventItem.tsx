@@ -3,6 +3,7 @@ import React from "react";
 import { TimelineEvent } from "../../tracking/map/mockData";
 import { AlertCircle, Activity } from "lucide-react";
 import { format, parseISO } from "date-fns";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface TimelineEventItemProps {
   event: TimelineEvent;
@@ -19,6 +20,8 @@ export const TimelineEventItem: React.FC<TimelineEventItemProps> = ({
   onSelect,
   zoomLevel
 }) => {
+  const { t } = useI18n();
+  
   // Calculate timeline item width based on zoom level
   const getTimelineItemStyle = () => {
     const baseWidth = 140; // Base width in pixels
@@ -36,9 +39,10 @@ export const TimelineEventItem: React.FC<TimelineEventItemProps> = ({
 
   return (
     <div 
-      className={`timeline-event flex-shrink-0 cursor-pointer p-2 rounded-md border ${borderColorClass}`}
+      className={`timeline-event flex-shrink-0 cursor-pointer p-2 rounded-md border ${borderColorClass} hover:shadow-md transition-all`}
       onClick={() => onSelect(event)}
       style={getTimelineItemStyle()}
+      title={t("timelineEvent")}
     >
       <div className="flex items-start gap-2">
         <div className={`p-1 rounded-full ${
