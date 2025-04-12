@@ -15,12 +15,14 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
-  Languages
+  Languages,
+  LayoutGrid
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "@/i18n/translations";
 import { LanguageSelector } from "@/components/language/LanguageSelector";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -38,20 +40,40 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const location = useLocation();
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  
+  // Company logo state
+  const [companyLogo, setCompanyLogo] = React.useState<string | null>(localStorage.getItem('companyLogo'));
 
   const mainItems: SidebarItem[] = [
-    { name: "Dashboard", translationKey: "dashboard", path: "/dashboard", icon: <Home size={20} /> },
+    { name: "Management Overview", translationKey: "managementOverview", path: "/dashboard", icon: <Home size={20} /> },
     { name: "Cards", translationKey: "cards", path: "/cards", icon: <CreditCard size={20} /> },
     { name: "Tracking", translationKey: "tracking", path: "/tracking", icon: <Map size={20} /> },
     { name: "Records", translationKey: "records", path: "/records", icon: <Search size={20} /> },
     { name: "Reports", translationKey: "reports", path: "/reports", icon: <BarChart size={20} /> },
-    { name: "Alerts", translationKey: "alerts", path: "/alerts", icon: <Bell size={20} /> }
+    { name: "Alerts", translationKey: "alerts", path: "/alerts", icon: <Bell size={20} /> },
+    { name: "System Function Portal", translationKey: "systemFunctionPortal", path: "/portal", icon: <LayoutGrid size={20} /> }
   ];
 
   const secondaryItems: SidebarItem[] = [
     { name: "Users", translationKey: "users", path: "/users", icon: <Users size={20} /> },
     { name: "Settings", translationKey: "settings", path: "/settings", icon: <Settings size={20} /> }
   ];
+  
+  // Function to handle logo upload
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        if (result) {
+          setCompanyLogo(result);
+          localStorage.setItem('companyLogo', result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <>
@@ -64,13 +86,37 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
         "fixed top-0 left-0 z-50 h-screen w-64 bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-transform duration-300 ease-in-out",
         isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0 lg:w-16"
       )}>
-        <div className="flex items-center justify-between h-16 px-4 border-b border-sidebar-border">
+        <div className="flex flex-col items-center justify-between h-28 px-4 border-b border-sidebar-border">
+          {companyLogo && (
+            <div className={cn(
+              "w-full flex justify-center my-2",
+              !isOpen && "lg:hidden"
+            )}>
+              <Avatar className="h-12 w-12">
+                <AvatarImage src={companyLogo} alt="Company Logo" />
+                <AvatarFallback>CL</AvatarFallback>
+              </Avatar>
+            </div>
+          )}
+          
           <Link to="/dashboard" className={cn(
             "flex items-center space-x-2",
             !isOpen && "lg:justify-center lg:w-full"
           )}>
             {isOpen ? (
-              <span className="text-xl font-bold tracking-tight">CardTrack</span>
+              <>
+                <span className="text-xl font-bold tracking-tight">CardTrack</span>
+                <label htmlFor="logo-upload" className="cursor-pointer ml-2">
+                  <Settings size={14} className="text-sidebar-foreground/60 hover:text-sidebar-foreground" />
+                  <input 
+                    id="logo-upload" 
+                    type="file" 
+                    className="hidden" 
+                    accept="image/*" 
+                    onChange={handleLogoUpload}
+                  />
+                </label>
+              </>
             ) : (
               <span className="lg:text-xl lg:font-bold">CT</span>
             )}
