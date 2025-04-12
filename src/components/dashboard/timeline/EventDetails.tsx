@@ -6,7 +6,7 @@ import { useI18n } from "@/hooks/use-i18n";
 import { AlertCircle, Activity, Clock, Calendar, Info, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { safeFormatDate } from "@/utils/dateUtils";
-import { ColoredEvent } from "./ColoredEvent";
+import { ColoredEvent, EventType } from "./ColoredEvent";
 
 interface EventDetailsProps {
   event: TimelineEvent;
@@ -24,7 +24,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({ event }) => {
       return 'bg-blue-50 dark:bg-blue-950/20';
     }
     
-    switch(event.type) {
+    switch(event.type as EventType) {
       case 'activity':
         return 'bg-green-50 dark:bg-green-950/20';
       case 'info':
@@ -47,7 +47,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({ event }) => {
       return 'bg-blue-100 text-blue-800';
     }
     
-    switch(event.type) {
+    switch(event.type as EventType) {
       case 'activity':
         return 'bg-green-100 text-green-800';
       case 'info':
@@ -65,7 +65,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({ event }) => {
   
   // Get the appropriate icon based on event type
   const getEventIcon = () => {
-    if (isAlert) {
+    if (event.type === 'alert') {
       return AlertCircle;
     } else if (event.type === 'activity') {
       return Activity;
@@ -86,7 +86,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({ event }) => {
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-2">
           <ColoredEvent 
-            type={event.type} 
+            type={event.type as EventType} 
             priority={event.priority} 
             icon={getEventIcon()} 
             size="md"

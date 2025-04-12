@@ -1,6 +1,7 @@
 
 import { TimelineEvent } from "../components/tracking/map/mockData";
 import { format, parseISO } from "date-fns";
+import { EventType } from "../components/dashboard/timeline/ColoredEvent";
 
 // Sort events by timestamp
 export const sortEventsByTimestamp = (events: TimelineEvent[]): TimelineEvent[] => {
@@ -12,7 +13,7 @@ export const sortEventsByTimestamp = (events: TimelineEvent[]): TimelineEvent[] 
 // Filter events by type
 export const filterEventsByType = (
   events: TimelineEvent[], 
-  type: 'all' | 'alert' | 'activity' | 'info' | 'warning' | 'success' | 'error'
+  type: 'all' | EventType
 ): TimelineEvent[] => {
   if (type === 'all') {
     return events;

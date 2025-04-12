@@ -4,7 +4,7 @@ import { TimelineEvent } from "../../tracking/map/mockData";
 import { AlertCircle, Activity, Info, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 import { safeFormatDate } from "@/utils/dateUtils";
-import { ColoredEvent } from "./ColoredEvent";
+import { ColoredEvent, EventType } from "./ColoredEvent";
 
 interface TimelineEventItemProps {
   event: TimelineEvent;
@@ -37,7 +37,7 @@ export const TimelineEventItem: React.FC<TimelineEventItemProps> = ({
 
   // Determine icon based on event type and priority
   const getEventIcon = () => {
-    if (isAlert) {
+    if (event.type === 'alert') {
       return AlertCircle;
     } else if (event.type === 'activity') {
       return Activity;
@@ -62,7 +62,7 @@ export const TimelineEventItem: React.FC<TimelineEventItemProps> = ({
     >
       <div className="flex items-start gap-2">
         <ColoredEvent 
-          type={event.type} 
+          type={event.type as EventType} 
           priority={event.priority} 
           icon={getEventIcon()} 
           size="sm"
