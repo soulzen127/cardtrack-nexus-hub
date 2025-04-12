@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Bell, Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -10,8 +10,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
 import { useI18n } from "@/hooks/use-i18n";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue 
+} from "@/components/ui/select";
 
 interface TopbarProps {
   onToggleSidebar: () => void;
@@ -19,6 +36,7 @@ interface TopbarProps {
 
 export function Topbar({ onToggleSidebar }: TopbarProps) {
   const { t } = useI18n();
+  const [isAlertSettingsOpen, setIsAlertSettingsOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-30 h-16 w-full border-b bg-background/95 backdrop-blur">
@@ -60,6 +78,10 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
                   {t("viewAllAlerts")}
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setIsAlertSettingsOpen(true)}>
+                {t("alertSettings")}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -86,6 +108,63 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
           </DropdownMenu>
         </div>
       </div>
+      
+      {/* Alert Settings Dialog */}
+      <Dialog open={isAlertSettingsOpen} onOpenChange={setIsAlertSettingsOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t("alertSettings")}</DialogTitle>
+            <DialogDescription>
+              {t("configureAlertPreferences")}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">{t("notificationChannels")}</h3>
+              <div className="flex items-start space-x-2">
+                <Checkbox id="email-alerts-top" />
+                <div className="grid gap-1.5">
+                  <Label htmlFor="email-alerts-top">{t("emailAlerts")}</Label>
+                  <p className="text-sm text-muted-foreground">
+                    {t("receiveAlertsViaEmail")}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-2">
+                <Checkbox id="app-alerts-top" defaultChecked />
+                <div className="grid gap-1.5">
+                  <Label htmlFor="app-alerts-top">{t("inAppAlerts")}</Label>
+                  <p className="text-sm text-muted-foreground">
+                    {t("showAlertsInApplication")}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">{t("alertFrequency")}</h3>
+              <Select defaultValue="realtime">
+                <SelectTrigger>
+                  <SelectValue placeholder={t("selectFrequency")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="realtime">{t("realtime")}</SelectItem>
+                  <SelectItem value="hourly">{t("hourly")}</SelectItem>
+                  <SelectItem value="daily">{t("daily")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button onClick={() => setIsAlertSettingsOpen(false)}>
+              {t("save")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }
