@@ -29,25 +29,31 @@ interface LanguageProviderProps {
   children: ReactNode;
 }
 
-export const LanguageProvider = ({ children }: LanguageProviderProps) => {
-  const [language, setLanguage] = useState<Language>(
-    // Try to get from localStorage or use browser language or default to English
-    () => {
+export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
+  // Check if we're in a browser environment before using localStorage
+  const getInitialLanguage = (): Language => {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       const savedLanguage = localStorage.getItem("language") as Language;
       if (savedLanguage && ["en", "zh_TW", "ja"].includes(savedLanguage)) {
         return savedLanguage;
       }
       
-      const browserLang = navigator.language;
-      if (browserLang.startsWith("zh")) return "zh_TW";
-      if (browserLang.startsWith("ja")) return "ja";
-      return "en";
+      if (typeof navigator !== 'undefined') {
+        const browserLang = navigator.language;
+        if (browserLang.startsWith("zh")) return "zh_TW";
+        if (browserLang.startsWith("ja")) return "ja";
+      }
     }
-  );
+    return "en";
+  };
+
+  const [language, setLanguage] = useState<Language>(getInitialLanguage);
 
   const handleSetLanguage = (newLanguage: Language) => {
     setLanguage(newLanguage);
-    localStorage.setItem("language", newLanguage);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem("language", newLanguage);
+    }
   };
 
   return (
