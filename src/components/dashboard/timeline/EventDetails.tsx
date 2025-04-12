@@ -1,7 +1,7 @@
 
 import React from "react";
 import { TimelineEvent } from "../../tracking/map/mockData";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import { Link } from "react-router-dom";
 import { useI18n } from "@/hooks/use-i18n";
 import { AlertCircle, Activity, Clock, Calendar } from "lucide-react";
@@ -34,6 +34,20 @@ export const EventDetails: React.FC<EventDetailsProps> = ({ event }) => {
     return 'bg-green-100 text-green-800';
   };
   
+  // Safe date formatting helper
+  const safeFormatDate = (dateString: string, formatString: string): string => {
+    try {
+      const date = parseISO(dateString);
+      if (!isValid(date)) {
+        return "Invalid date";
+      }
+      return format(date, formatString);
+    } catch (error) {
+      console.error("Error formatting date:", error, dateString);
+      return "Invalid date";
+    }
+  };
+  
   return (
     <div className={`p-4 rounded-md ${getBgColor()}`}>
       <div className="flex justify-between items-start mb-3">
@@ -53,9 +67,9 @@ export const EventDetails: React.FC<EventDetailsProps> = ({ event }) => {
         </div>
         <div className="flex items-center text-xs bg-background rounded-md px-2 py-1">
           <Calendar className="h-3 w-3 mr-1" />
-          <span>{format(parseISO(event.timestamp), 'yyyy/MM/dd')}</span>
+          <span>{safeFormatDate(event.timestamp, 'yyyy/MM/dd')}</span>
           <Clock className="h-3 w-3 mx-1" />
-          <span>{format(parseISO(event.timestamp), 'HH:mm:ss')}</span>
+          <span>{safeFormatDate(event.timestamp, 'HH:mm:ss')}</span>
         </div>
       </div>
       

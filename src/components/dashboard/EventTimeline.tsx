@@ -7,7 +7,7 @@ import { AlertCircle, Activity, ChevronLeft, ChevronRight } from "lucide-react";
 import { TimelineRow } from "./timeline/TimelineRow";
 import { EventDetails } from "./timeline/EventDetails";
 import { TimelineControls } from "./timeline/TimelineControls";
-import { format, parseISO, subDays, addDays } from "date-fns";
+import { format, parseISO, subDays, addDays, isValid } from "date-fns";
 import { Button } from "../ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "../ui/pagination";
 import { ScrollArea } from "../ui/scroll-area";
@@ -27,12 +27,27 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
   // State for the visible dates
   const today = new Date();
   const [visibleDates, setVisibleDates] = useState<boolean[]>([true, true, true, true, true]);
+  
+  // Create dates safely
+  const createFormattedDate = (date: Date): string => {
+    try {
+      if (!isValid(date)) {
+        console.error("Invalid date object:", date);
+        return format(new Date(), 'yyyy/MM/dd'); // Default to today if invalid
+      }
+      return format(date, 'yyyy/MM/dd');
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return format(new Date(), 'yyyy/MM/dd'); // Default to today if error
+    }
+  };
+  
   const [dates, setDates] = useState<string[]>([
-    format(subDays(today, 2), 'yyyy/MM/dd'),
-    format(subDays(today, 1), 'yyyy/MM/dd'),
-    format(today, 'yyyy/MM/dd'),
-    format(addDays(today, 1), 'yyyy/MM/dd'),
-    format(addDays(today, 2), 'yyyy/MM/dd'),
+    createFormattedDate(subDays(today, 2)),
+    createFormattedDate(subDays(today, 1)),
+    createFormattedDate(today),
+    createFormattedDate(addDays(today, 1)),
+    createFormattedDate(addDays(today, 2)),
   ]);
   
   // Detect touch devices
@@ -102,18 +117,41 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
     setVisibleDates(newVisibleDates);
   };
   
+  // Safely create a date from a string
+  const safelyCreateDate = (dateStr: string): Date => {
+    try {
+      // Check if it's a yyyy/MM/dd format
+      const parts = dateStr.split('/');
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // 0-indexed months
+        const day = parseInt(parts[2], 10);
+        
+        const result = new Date(year, month, day);
+        if (isValid(result)) {
+          return result;
+        }
+      }
+      console.warn("Could not parse date string:", dateStr);
+      return new Date(); // fallback to today
+    } catch (error) {
+      console.error("Error parsing date:", error);
+      return new Date(); // fallback to today
+    }
+  };
+  
   // Navigate timeline dates
   const navigateDates = (direction: 'prev' | 'next') => {
     const newDates = [...dates];
     if (direction === 'prev') {
-      const firstDate = parseISO(dates[0]);
+      const firstDate = safelyCreateDate(dates[0]);
       const newFirstDate = subDays(firstDate, dates.length);
-      newDates.unshift(format(newFirstDate, 'yyyy/MM/dd'));
+      newDates.unshift(createFormattedDate(newFirstDate));
       newDates.pop();
     } else {
-      const lastDate = parseISO(dates[dates.length - 1]);
+      const lastDate = safelyCreateDate(dates[dates.length - 1]);
       const newLastDate = addDays(lastDate, 1);
-      newDates.push(format(newLastDate, 'yyyy/MM/dd'));
+      newDates.push(createFormattedDate(newLastDate));
       newDates.shift();
     }
     setDates(newDates);
@@ -132,6 +170,16 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
       </Card>
     );
   }
+  
+  // Get the selected event based on the current filters
+  const getSelectedEvent = (): TimelineEvent => {
+    if (selectedEventType === 'all') {
+      return filteredEvents[selectedEventIndex] || filteredEvents[0];
+    } else {
+      const eventsOfType = selectedEventType === 'alert' ? alertEvents : activityEvents;
+      return eventsOfType[selectedEventIndex] || eventsOfType[0] || filteredEvents[0];
+    }
+  };
   
   return (
     <Card className="col-span-1 lg:col-span-2">
@@ -211,13 +259,7 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
         <div className="pt-4 border-t">
           <div className="space-y-4">
             {filteredEvents.length > 0 && (
-              <EventDetails event={
-                selectedEventType === 'all' ? 
-                  filteredEvents[selectedEventIndex] : 
-                  selectedEventType === 'alert' ? 
-                    alertEvents[selectedEventIndex] : 
-                    activityEvents[selectedEventIndex]
-              } />
+              <EventDetails event={getSelectedEvent()} />
             )}
           </div>
         </div>
