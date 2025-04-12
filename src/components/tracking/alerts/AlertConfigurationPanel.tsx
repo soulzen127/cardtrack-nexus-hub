@@ -1,12 +1,14 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bell } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MapPin, Bell, Settings } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
 import { AlertsList } from './AlertsList';
-import { AlertCreationForm } from './AlertCreationForm';
 
 interface GeofenceAlert {
   id: string;
@@ -100,18 +102,76 @@ export function AlertConfigurationPanel() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <AlertsList alerts={alerts} onToggleActive={toggleAlertActive} />
+        <AlertsList 
+          alerts={alerts} 
+          onToggleActive={toggleAlertActive} 
+        />
         
         {isCreating ? (
-          <AlertCreationForm 
-            newAlert={newAlert}
-            setNewAlert={setNewAlert}
-            onCancel={() => setIsCreating(false)}
-            onSave={handleCreateAlert}
-          />
+          <div className="border rounded-md p-4 space-y-4">
+            <h3 className="font-medium">{t("createNewAlert")}</h3>
+            
+            <div className="space-y-2">
+              <Label htmlFor="alertName">{t("name")}</Label>
+              <Input 
+                id="alertName" 
+                value={newAlert.name || ''} 
+                onChange={e => setNewAlert({...newAlert, name: e.target.value})}
+                placeholder={t("enterAlertName")}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="alertDescription">{t("description")}</Label>
+              <Input 
+                id="alertDescription" 
+                value={newAlert.description || ''} 
+                onChange={e => setNewAlert({...newAlert, description: e.target.value})}
+                placeholder={t("enterAlertDescription")}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="alertType">{t("alertType")}</Label>
+                <Select 
+                  value={newAlert.type} 
+                  onValueChange={value => setNewAlert({...newAlert, type: value as 'enter' | 'exit' | 'both'})}
+                >
+                  <SelectTrigger id="alertType">
+                    <SelectValue placeholder={t("selectType")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="enter">{t("whenEntering")}</SelectItem>
+                    <SelectItem value="exit">{t("whenLeaving")}</SelectItem>
+                    <SelectItem value="both">{t("whenEnteringOrLeaving")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="alertRadius">{t("radiusMeters")}</Label>
+                <Input 
+                  id="alertRadius" 
+                  type="number" 
+                  value={newAlert.radius || 500} 
+                  onChange={e => setNewAlert({...newAlert, radius: parseInt(e.target.value)})}
+                />
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-2 pt-2">
+              <Button variant="outline" onClick={() => setIsCreating(false)}>
+                {t("cancel")}
+              </Button>
+              <Button onClick={handleCreateAlert}>
+                {t("createAlert")}
+              </Button>
+            </div>
+          </div>
         ) : (
           <Button onClick={() => setIsCreating(true)}>
-            {t("addNewAlert")}
+            {t("newAlert")}
           </Button>
         )}
       </CardContent>

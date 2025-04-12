@@ -1,3 +1,4 @@
+
 import { TranslationCategory } from "./utils";
 
 export const alertsTranslations: TranslationCategory = {
@@ -22,7 +23,8 @@ export const alertsTranslations: TranslationCategory = {
     whenEnteringOrLeaving: "When entering or leaving",
     radiusMeters: "Radius (meters)",
     createAlert: "Create Alert",
-    addNewAlert: "Add New Alert",
+    // Renamed duplicate property
+    newAlert: "Add New Alert",
     enter: "Enter",
     exit: "Exit",
     enterAndExit: "Enter & Exit",
@@ -33,8 +35,7 @@ export const alertsTranslations: TranslationCategory = {
     alertWhenCardsEnterOrLeave: "Alert when cards enter or leave this area",
     alertWhenCardsEnter: "Alert when cards enter this area",
     alertWhenCardsLeave: "Alert when cards leave this area",
-    geofenceAlerts: "Geofence Alerts",
-    addNewAlert: "Add New Alert"
+    geofenceAlerts: "Geofence Alerts"
   },
   zh_TW: {
     geofenceAlert: "地理圍欄警報",
@@ -57,7 +58,8 @@ export const alertsTranslations: TranslationCategory = {
     whenEnteringOrLeaving: "進入或離開時",
     radiusMeters: "半徑（米）",
     createAlert: "創建警報",
-    addNewAlert: "添加新警報",
+    // Renamed duplicate property
+    newAlert: "添加新警報",
     enter: "進入",
     exit: "離開",
     enterAndExit: "進入和離開",
@@ -68,8 +70,7 @@ export const alertsTranslations: TranslationCategory = {
     alertWhenCardsEnterOrLeave: "當卡片進入或離開此區域時發出警報",
     alertWhenCardsEnter: "當卡片進入此區域時發出警報",
     alertWhenCardsLeave: "當卡片離開此區域時發出警報",
-    geofenceAlerts: "地理圍欄警報",
-    addNewAlert: "添加新警報"
+    geofenceAlerts: "地理圍欄警報"
   },
   ja: {
     geofenceAlert: "ジオフェンスアラート",
@@ -92,7 +93,8 @@ export const alertsTranslations: TranslationCategory = {
     whenEnteringOrLeaving: "入場または退場時",
     radiusMeters: "半径（メートル）",
     createAlert: "アラートを作成",
-    addNewAlert: "新しいアラートを追加",
+    // Renamed duplicate property
+    newAlert: "新しいアラートを追加",
     enter: "入場",
     exit: "退場",
     enterAndExit: "入退場",
@@ -103,7 +105,6 @@ export const alertsTranslations: TranslationCategory = {
     alertWhenCardsEnterOrLeave: "カードがこのエリアに入るか、または出るときにアラート",
     alertWhenCardsEnter: "カードがこのエリアに入るときにアラート",
     alertWhenCardsLeave: "カードがこのエリアを離れるときにアラート",
-    geofenceAlerts: "ジオフェンスアラート",
-    addNewAlert: "新しいアラートを追加"
+    geofenceAlerts: "ジオフェンスアラート"
   }
 };
