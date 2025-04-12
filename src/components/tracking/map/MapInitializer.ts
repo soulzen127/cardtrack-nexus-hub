@@ -1,103 +1,38 @@
-import mapboxgl from 'mapbox-gl';
-import { CardLocation } from "../map/types";
-import { createMarkers } from "../map/createMarkers";
 
-interface InitializeMapboxOptions {
-  mapContainer: React.RefObject<HTMLDivElement>;
-  mapboxToken: string;
-  mapStyle: string;
-  markerRef: React.MutableRefObject<mapboxgl.Marker[]>;
-  cardLocations: CardLocation[];
-  setIsMapInitialized: (value: boolean) => void;
+import mapboxgl from 'mapbox-gl';
+
+// Helper function to check if mapbox token is valid
+export function isValidMapboxToken(token: string): boolean {
+  return token.startsWith('pk.') && token.length > 20;
 }
 
-export const initializeMapbox = ({
-  mapContainer,
-  mapboxToken,
-  mapStyle,
-  markerRef,
-  cardLocations,
-  setIsMapInitialized
-}: InitializeMapboxOptions) => {
-  if (!mapContainer.current || !mapboxToken) return null;
-  
-  // Initialize Mapbox
-  mapboxgl.accessToken = mapboxToken;
-  
-  const map = new mapboxgl.Map({
-    container: mapContainer.current,
-    style: `mapbox://styles/mapbox/${mapStyle}`,
-    center: [120.9738, 23.9739], // Center on Taiwan
-    zoom: 7,
-  });
-
-  // Add navigation controls
-  map.addControl(
-    new mapboxgl.NavigationControl(),
-    'top-right'
-  );
-
-  // Add markers when map loads
-  map.on('load', () => {
-    setIsMapInitialized(true);
-    
-    // Add markers using the extracted function
-    createMarkers({
-      map: map,
-      locations: cardLocations,
-      markerRef: markerRef
-    });
-  });
-  
-  return map;
-};
-
-// Google Maps initialization
-export const initializeGoogleMap = (
-  mapContainer: React.RefObject<HTMLDivElement>,
-  cardLocations: CardLocation[],
-  setGoogleMapLoaded: (value: boolean) => void
-) => {
-  if (!mapContainer.current) return;
-
-  // Load Google Maps API script if not already loaded
-  if (!document.getElementById('google-maps-script')) {
-    const script = document.createElement('script');
-    script.id = 'google-maps-script';
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBDw9haW4EjqqUMvmx7CUj1vGyQ1t120Lw&callback=initGoogleMap`;
-    script.async = true;
-    script.defer = true;
-    
-    // Define the callback function in the global scope
-    window.initGoogleMap = () => {
-      if (!mapContainer.current) return;
-      
-      if (window.google && window.google.maps) {
-        const googleMap = new window.google.maps.Map(mapContainer.current, {
-          center: { lat: 23.9739, lng: 120.9738 }, // Taiwan center
-          zoom: 7,
-          mapTypeId: 'roadmap',
-        });
-        
-        // Add markers
-        cardLocations.forEach(location => {
-          const [lng, lat] = location.coordinates;
-          if (window.google && window.google.maps) {
-            new window.google.maps.Marker({
-              position: { lat, lng },
-              map: googleMap,
-              title: location.name,
-            });
-          }
-        });
-        
-        setGoogleMapLoaded(true);
-      }
-    };
-    
-    document.head.appendChild(script);
-  } else if (window.initGoogleMap) {
-    // If script is already loaded, just initialize the map
-    window.initGoogleMap();
+// Initialize mapbox with token
+export function initializeMapbox(token: string): boolean {
+  if (!isValidMapboxToken(token)) {
+    console.error('Invalid Mapbox token format');
+    return false;
   }
-};
+  
+  try {
+    mapboxgl.accessToken = token;
+    
+    // Store token in localStorage for future use
+    localStorage.setItem('mapbox_api_key', token);
+    
+    return true;
+  } catch (error) {
+    console.error('Error initializing Mapbox:', error);
+    return false;
+  }
+}
+
+// Utility function to convert coordinates to string format
+export function formatCoordinates(coordinates: [number, number]): string {
+  return `${coordinates[1].toFixed(4)}, ${coordinates[0].toFixed(4)}`;
+}
+
+// Convert raw coordinates to appropriate format for display
+export function formatLatLng(coordinates: [number, number]): string {
+  const [lng, lat] = coordinates;
+  return `${lat.toFixed(6)}°N, ${lng.toFixed(6)}°E`;
+}
