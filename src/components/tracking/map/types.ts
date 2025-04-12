@@ -8,6 +8,7 @@ export interface CardLocation {
   floor?: number; // Optional floor number for indoor positioning
   indoorOnly?: boolean; // Whether this marker is only for indoor maps
   building?: string; // Optional building identifier
+  lastUpdated?: string; // Timestamp for when the location was last updated
 }
 
 export interface CreateMarkersOptions {
