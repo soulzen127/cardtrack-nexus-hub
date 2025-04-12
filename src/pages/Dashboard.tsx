@@ -4,8 +4,6 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import ExportDialog from "@/components/dashboard/ExportDialog";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
-import { RecentAlerts } from "@/components/dashboard/RecentAlerts";
-import { RecentActivities } from "@/components/dashboard/RecentActivities";
 import { CardActivityChart, AlertsTypeChart } from "@/components/dashboard/ChartCards";
 import { LocationOverview } from "@/components/dashboard/LocationOverview";
 import { EventTimeline } from "@/components/dashboard/EventTimeline";
@@ -29,11 +27,6 @@ export default function Dashboard() {
         <DashboardStats />
         
         <EventTimeline onEventSelect={handleTimelineEventSelect} />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RecentAlerts />
-          <RecentActivities />
-        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <CardActivityChart />

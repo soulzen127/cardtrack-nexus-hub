@@ -1,4 +1,3 @@
-
 import { TranslationCategory } from "./utils";
 
 // Dashboard-specific translations
@@ -81,7 +80,12 @@ export const dashboardTranslations: TranslationCategory = {
     pickDate: "Pick a date",
     clear: "Clear",
     search: "Search",
-    advancedSearch: "Advanced Search"
+    advancedSearch: "Advanced Search",
+    eventTimeline: "Event Timeline",
+    browseRecentAlertsAndActivities: "Browse recent alerts and activities",
+    viewDetails: "View Details",
+    all: "All",
+    activities: "Activities"
   },
   zh_TW: {
     totalActiveCards: "使用中卡片總數",
@@ -161,7 +165,12 @@ export const dashboardTranslations: TranslationCategory = {
     pickDate: "選擇日期",
     clear: "清除",
     search: "搜索",
-    advancedSearch: "高級搜索"
+    advancedSearch: "高級搜索",
+    eventTimeline: "事件時間軸",
+    browseRecentAlertsAndActivities: "瀏覽最近警報和活動",
+    viewDetails: "查看詳情",
+    all: "全部",
+    activities: "活動"
   },
   ja: {
     totalActiveCards: "有効なカードの合計",
@@ -241,6 +250,11 @@ export const dashboardTranslations: TranslationCategory = {
     pickDate: "日付を選択",
     clear: "クリア",
     search: "検索",
-    advancedSearch: "詳細検索"
+    advancedSearch: "詳細検索",
+    eventTimeline: "イベントタイムライン",
+    browseRecentAlertsAndActivities: "最近のアラートとアクティビティを閲覧",
+    viewDetails: "詳細を表示",
+    all: "すべて",
+    activities: "アクティビティ"
   }
 };
