@@ -1,10 +1,11 @@
 
 import React from "react";
 import { TimelineEvent } from "../../tracking/map/mockData";
-import { Circle, ChevronDown } from "lucide-react";
+import { Circle, ChevronDown, AlertCircle, Activity, Info, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 import { groupEventsByDate } from "@/utils/eventUtils";
 import { isDateToday, safeFormatDate } from "@/utils/dateUtils";
+import { ColoredEvent } from "./ColoredEvent";
 
 interface TimelineRowProps {
   title: string;
@@ -44,10 +45,24 @@ export const TimelineRow: React.FC<TimelineRowProps> = ({
   // Group events by date
   const eventsByDate = groupEventsByDate(events, dates);
   
+  // Get the appropriate icon based on event type
+  const getEventIcon = () => {
+    if (type === 'alert') {
+      return AlertCircle;
+    } else if (type === 'activity') {
+      return Activity;
+    }
+    return Activity;
+  };
+  
   return (
     <div className="mb-6">
       <div className="font-medium mb-2 flex items-center">
-        {icon}
+        <ColoredEvent 
+          type={type} 
+          icon={getEventIcon()} 
+          size="sm"
+        />
         <span className="ml-1">{title}</span>
       </div>
       <div className="relative">

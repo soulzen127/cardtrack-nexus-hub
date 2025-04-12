@@ -12,7 +12,7 @@ export const sortEventsByTimestamp = (events: TimelineEvent[]): TimelineEvent[] 
 // Filter events by type
 export const filterEventsByType = (
   events: TimelineEvent[], 
-  type: 'all' | 'alert' | 'activity'
+  type: 'all' | 'alert' | 'activity' | 'info' | 'warning' | 'success' | 'error'
 ): TimelineEvent[] => {
   if (type === 'all') {
     return events;
@@ -24,11 +24,26 @@ export const filterEventsByType = (
 export const groupEventsByType = (events: TimelineEvent[]): {
   alertEvents: TimelineEvent[];
   activityEvents: TimelineEvent[];
+  infoEvents: TimelineEvent[];
+  warningEvents: TimelineEvent[];
+  successEvents: TimelineEvent[];
+  errorEvents: TimelineEvent[];
 } => {
   const alertEvents = events.filter(event => event.type === 'alert');
   const activityEvents = events.filter(event => event.type === 'activity');
+  const infoEvents = events.filter(event => event.type === 'info');
+  const warningEvents = events.filter(event => event.type === 'warning');
+  const successEvents = events.filter(event => event.type === 'success');
+  const errorEvents = events.filter(event => event.type === 'error');
   
-  return { alertEvents, activityEvents };
+  return { 
+    alertEvents, 
+    activityEvents,
+    infoEvents,
+    warningEvents,
+    successEvents,
+    errorEvents
+  };
 };
 
 // Group events by date
