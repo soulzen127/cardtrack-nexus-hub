@@ -3,6 +3,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { SidebarNavItem } from "./SidebarNavItem";
 import { LanguageSelector } from "@/components/language/LanguageSelector";
+import { TranslationKeys } from "@/i18n/translations";
 
 interface SidebarItem {
   name: string;
@@ -15,10 +16,10 @@ interface SidebarNavigationProps {
   mainItems: SidebarItem[];
   secondaryItems: SidebarItem[];
   isOpen: boolean;
-  translations: Record<string, string>;
+  t: (key: TranslationKeys) => string;
 }
 
-export function SidebarNavigation({ mainItems, secondaryItems, isOpen, translations }: SidebarNavigationProps) {
+export function SidebarNavigation({ mainItems, secondaryItems, isOpen, t }: SidebarNavigationProps) {
   const location = useLocation();
   
   return (
@@ -29,7 +30,7 @@ export function SidebarNavigation({ mainItems, secondaryItems, isOpen, translati
             key={item.path}
             path={item.path}
             icon={item.icon}
-            label={translations[item.translationKey as keyof typeof translations] || item.name}
+            label={t(item.translationKey as TranslationKeys)}
             isActive={location.pathname === item.path}
             isOpen={isOpen}
           />
@@ -43,7 +44,7 @@ export function SidebarNavigation({ mainItems, secondaryItems, isOpen, translati
               key={item.path}
               path={item.path}
               icon={item.icon}
-              label={translations[item.translationKey as keyof typeof translations] || item.name}
+              label={t(item.translationKey as TranslationKeys)}
               isActive={location.pathname === item.path}
               isOpen={isOpen}
             />

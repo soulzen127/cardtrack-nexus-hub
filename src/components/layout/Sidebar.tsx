@@ -88,7 +88,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           mainItems={mainItems}
           secondaryItems={secondaryItems}
           isOpen={isOpen}
-          translations={t}
+          t={t}
         />
         
         <SidebarFooter isOpen={isOpen} logoutLabel={t("logout")} />
