@@ -21,7 +21,7 @@ export default function PortalPage() {
 
   const menuItems = [
     {
-      title: t("dashboard"),
+      title: t("managementOverview"),
       icon: <LayoutDashboard className="h-12 w-12 mb-4 text-primary" />,
       description: t("dashboardDescription"),
       path: "/dashboard",
@@ -80,7 +80,7 @@ export default function PortalPage() {
     <MainLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-          <h1 className="text-2xl font-bold tracking-tight">{t("portal")}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("systemFunctionPortal")}</h1>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

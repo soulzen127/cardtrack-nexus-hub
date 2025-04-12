@@ -45,13 +45,13 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [companyLogo, setCompanyLogo] = React.useState<string | null>(localStorage.getItem('companyLogo'));
 
   const mainItems: SidebarItem[] = [
+    { name: "System Function Portal", translationKey: "systemFunctionPortal", path: "/portal", icon: <LayoutGrid size={20} /> },
     { name: "Management Overview", translationKey: "managementOverview", path: "/dashboard", icon: <Home size={20} /> },
     { name: "Cards", translationKey: "cards", path: "/cards", icon: <CreditCard size={20} /> },
     { name: "Tracking", translationKey: "tracking", path: "/tracking", icon: <Map size={20} /> },
     { name: "Records", translationKey: "records", path: "/records", icon: <Search size={20} /> },
     { name: "Reports", translationKey: "reports", path: "/reports", icon: <BarChart size={20} /> },
     { name: "Alerts", translationKey: "alerts", path: "/alerts", icon: <Bell size={20} /> },
-    { name: "System Function Portal", translationKey: "systemFunctionPortal", path: "/portal", icon: <LayoutGrid size={20} /> }
   ];
 
   const secondaryItems: SidebarItem[] = [

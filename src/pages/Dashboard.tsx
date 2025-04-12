@@ -10,8 +10,10 @@ import { CardActivityChart, AlertsTypeChart } from "@/components/dashboard/Chart
 import { LocationOverview } from "@/components/dashboard/LocationOverview";
 import { EventTimeline } from "@/components/dashboard/EventTimeline";
 import { TimelineEvent } from "@/components/tracking/map/mockData";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function Dashboard() {
+  const { t } = useI18n();
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const [selectedTimelineEvent, setSelectedTimelineEvent] = useState<TimelineEvent | null>(null);
 

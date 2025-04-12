@@ -1,12 +1,13 @@
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { useI18n } from "@/hooks/use-i18n";
 import { timelineEvents, TimelineEvent } from "../tracking/map/mockData";
-import { AlertCircle, Activity, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { AlertCircle, Activity, Calendar, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 interface EventTimelineProps {
   onEventSelect: (event: TimelineEvent) => void;
@@ -16,6 +17,13 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
   const { t } = useI18n();
   const timelineRef = useRef<HTMLDivElement>(null);
   const [selectedEventIndex, setSelectedEventIndex] = useState(0);
+  const [zoomLevel, setZoomLevel] = useState(1); // 1 = normal, > 1 = zoomed in
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  
+  // Detect touch devices
+  useEffect(() => {
+    setIsMobileDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
   
   // Sort events by timestamp
   const sortedEvents = [...timelineEvents].sort((a, b) => 
@@ -53,11 +61,62 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
     }
   };
   
+  // Handle zoom functionality with mouse wheel
+  const handleWheel = (e: React.WheelEvent) => {
+    if (!timelineRef.current) return;
+    e.preventDefault();
+    
+    // Zoom in/out based on wheel direction
+    const delta = e.deltaY * -0.01;
+    const newZoomLevel = Math.max(0.5, Math.min(3, zoomLevel + delta));
+    setZoomLevel(newZoomLevel);
+  };
+  
+  // Controls for zoom level
+  const adjustZoom = (direction: 'in' | 'out') => {
+    const delta = direction === 'in' ? 0.25 : -0.25;
+    const newZoomLevel = Math.max(0.5, Math.min(3, zoomLevel + delta));
+    setZoomLevel(newZoomLevel);
+  };
+  
+  // Calculate timeline item width based on zoom level
+  const getTimelineItemStyle = () => {
+    const baseWidth = 140; // Base width in pixels
+    return {
+      width: `${baseWidth * zoomLevel}px`,
+      transition: 'width 0.2s ease-out'
+    };
+  };
+  
   return (
     <Card className="col-span-1 lg:col-span-2">
       <CardHeader>
-        <CardTitle>{t("eventTimeline")}</CardTitle>
-        <CardDescription>{t("browseRecentAlertsAndActivities")}</CardDescription>
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle>{t("eventTimeline")}</CardTitle>
+            <CardDescription>{t("browseRecentAlertsAndActivities")}</CardDescription>
+          </div>
+          {isMobileDevice && (
+            <div className="flex space-x-2">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={() => adjustZoom('out')}
+                disabled={zoomLevel <= 0.5}
+              >
+                <ZoomOut className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={() => adjustZoom('in')}
+                disabled={zoomLevel >= 3}
+              >
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="relative">
@@ -74,6 +133,7 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
           <div 
             ref={timelineRef}
             className="flex space-x-3 overflow-x-auto py-2 px-6 scrollbar-hide"
+            onWheel={!isMobileDevice ? handleWheel : undefined}
           >
             {sortedEvents.map((event, index) => (
               <div 
@@ -85,8 +145,9 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
                   setSelectedEventIndex(index);
                   onEventSelect(event);
                 }}
+                style={getTimelineItemStyle()}
               >
-                <div className="flex items-center space-x-2">
+                <div className="flex items-start gap-2">
                   {event.type === 'alert' ? (
                     <div className={`p-1 rounded-full ${
                       event.priority === "high" ? "bg-red-100" :
@@ -102,8 +163,8 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
                       <Activity className="h-3 w-3 text-green-500" />
                     </div>
                   )}
-                  <div>
-                    <p className="text-xs font-medium">{event.title}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium truncate">{event.title}</p>
                     <p className="text-xs text-muted-foreground">
                       {format(parseISO(event.timestamp), 'HH:mm')}
                     </p>

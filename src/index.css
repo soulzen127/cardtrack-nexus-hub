@@ -64,6 +64,36 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-ring: 240 4.9% 83.9%;
   }
+  
+  .dark-tech {
+    --background: 240 20% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 17% 7%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 5%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 213 76% 56%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 217 91% 60%;
+    
+    /* Sidebar variables */
+    --sidebar: 240 20% 3%;
+    --sidebar-foreground: 213 100% 96%;
+    --sidebar-border: 240 13% 10%;
+    --sidebar-accent: 217 91% 60%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-ring: 217 91% 60%;
+  }
 }
 
 @layer base {
