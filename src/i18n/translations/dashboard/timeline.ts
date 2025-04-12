@@ -12,7 +12,8 @@ export const dashboardTimelineTranslations: TranslationCategory = {
     activities: "Activities",
     noEventsAvailable: "No events available",
     zoomIn: "Zoom In",
-    zoomOut: "Zoom Out"
+    zoomOut: "Zoom Out",
+    timelineEvent: "Timeline Event"
   },
   zh_TW: {
     eventTimeline: "事件時間軸",
@@ -23,7 +24,8 @@ export const dashboardTimelineTranslations: TranslationCategory = {
     activities: "活動",
     noEventsAvailable: "沒有可用的事件",
     zoomIn: "放大",
-    zoomOut: "縮小"
+    zoomOut: "縮小",
+    timelineEvent: "時間軸事件"
   },
   ja: {
     eventTimeline: "イベントタイムライン",
@@ -34,6 +36,7 @@ export const dashboardTimelineTranslations: TranslationCategory = {
     activities: "アクティビティ",
     noEventsAvailable: "利用可能なイベントはありません",
     zoomIn: "拡大",
-    zoomOut: "縮小"
+    zoomOut: "縮小",
+    timelineEvent: "タイムラインイベント"
   }
 };
