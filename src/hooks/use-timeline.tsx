@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { TimelineEvent } from "../components/tracking/map/mockData";
 import { generateTimelineDates, getNavigatedDates } from "../utils/dateUtils";
 import { sortEventsByTimestamp, filterEventsByType, groupEventsByType } from "../utils/eventUtils";
+import { EventType } from "../components/dashboard/timeline/ColoredEvent";
 
 export const useTimeline = (events: TimelineEvent[], onEventSelect: (event: TimelineEvent) => void) => {
   const timelineRef = useRef<HTMLDivElement>(null);

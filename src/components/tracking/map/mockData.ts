@@ -1,5 +1,6 @@
 
 import { CardLocation } from "./types";
+import { EventType } from "../../dashboard/timeline/ColoredEvent";
 
 // Mock data for card locations
 export const mockCardLocations: CardLocation[] = [
@@ -43,7 +44,7 @@ export const mockCardLocations: CardLocation[] = [
 // Mock data for timeline events
 export interface TimelineEvent {
   id: string;
-  type: "alert" | "activity";
+  type: EventType;
   title: string;
   description: string;
   timestamp: string;
