@@ -4,7 +4,7 @@ import { combineTranslations } from "./utils";
 import { commonTranslations } from "./common";
 import { dashboardTranslations } from "./dashboard";
 import { trackingTranslations } from "./tracking";
-import { cardsTranslations } from "./cards";
+import { cardsTranslations } from "./cards"; // Updated import
 import { recordsTranslations } from "./records";
 import { userManagementTranslations } from "./userManagement";
 import { settingsTranslations } from "./settings";
