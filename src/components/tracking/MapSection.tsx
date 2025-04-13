@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { 
   Card, 
   CardContent, 
@@ -34,6 +34,12 @@ export function MapSection({
   cardLocations,
 }: MapSectionProps) {
   const { t } = useI18n();
+  const [center, setCenter] = useState<[number, number] | null>(null);
+
+  // Function to handle focusing map on specific coordinates
+  const handleFocusLocation = (coordinates: [number, number]) => {
+    setCenter(coordinates);
+  };
 
   return (
     <Card className="lg:col-span-2">
@@ -47,6 +53,7 @@ export function MapSection({
           timeSliderValue={timeSliderValue}
           selectedDate={selectedDate}
           cardLocations={cardLocations}
+          center={center}
         />
         
         <MapControls 

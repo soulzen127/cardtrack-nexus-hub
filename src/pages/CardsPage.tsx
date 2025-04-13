@@ -18,7 +18,12 @@ import {
   Download, 
   Upload, 
   MoreHorizontal,
-  MapPin
+  MapPin,
+  FileUp,
+  Database,
+  FileCsv,
+  FileText,
+  FileSpreadsheet
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -36,6 +41,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import CardDetailsDialog from "@/components/cards/CardDetailsDialog";
@@ -59,6 +72,8 @@ export default function CardsPage() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [cards, setCards] = useState(initialCards);
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const { t } = useI18n();
 
   const filteredCards = cards.filter(card => 
@@ -102,6 +117,12 @@ export default function CardsPage() {
     setIsHistoryOpen(true);
   };
 
+  const handleViewHistory = (card: any) => {
+    setSelectedCard(card);
+    setIsDetailsOpen(false);
+    setIsHistoryOpen(true);
+  };
+
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -112,11 +133,11 @@ export default function CardsPage() {
               <Plus className="h-4 w-4 mr-2" />
               {t("registerCard")}
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => setIsImportDialogOpen(true)}>
               <Upload className="h-4 w-4 mr-2" />
               {t("import")}
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => setIsExportDialogOpen(true)}>
               <Download className="h-4 w-4 mr-2" />
               {t("export")}
             </Button>
@@ -232,6 +253,7 @@ export default function CardsPage() {
         card={selectedCard}
         open={isDetailsOpen}
         onOpenChange={setIsDetailsOpen}
+        onViewHistory={handleViewHistory}
       />
 
       {/* Card History Dialog */}
@@ -246,6 +268,118 @@ export default function CardsPage() {
         open={isRegisterOpen}
         onOpenChange={setIsRegisterOpen}
       />
+
+      {/* Import Dialog */}
+      <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{t("import")}</DialogTitle>
+            <DialogDescription>{t("selectImportSource")}</DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 gap-4 py-4">
+            <div className="flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+              <div className="p-2 bg-primary/10 rounded-full">
+                <FileUp className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium">{t("fileUpload")}</h3>
+                <p className="text-sm text-muted-foreground">{t("importFromFile")}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+              <div className="p-2 bg-primary/10 rounded-full">
+                <Database className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium">{t("databaseImport")}</h3>
+                <p className="text-sm text-muted-foreground">{t("importFromDatabase")}</p>
+              </div>
+            </div>
+            
+            <div className="space-y-4 pt-4 border-t">
+              <label className="block text-sm font-medium">{t("chooseFile")}</label>
+              <Input type="file" />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsImportDialogOpen(false)}>
+              {t("cancel")}
+            </Button>
+            <Button onClick={() => {
+              toast.success(t("importStarted"), {
+                description: t("processingYourImport")
+              });
+              setIsImportDialogOpen(false);
+            }}>
+              {t("processImport")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Export Dialog */}
+      <Dialog open={isExportDialogOpen} onOpenChange={setIsExportDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{t("export")}</DialogTitle>
+            <DialogDescription>{t("selectExportDestination")}</DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 gap-4 py-4">
+            <div className="flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+              <div className="p-2 bg-primary/10 rounded-full">
+                <FileCsv className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium">{t("csvExport")}</h3>
+                <p className="text-sm text-muted-foreground">{t("exportToFile")}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+              <div className="p-2 bg-primary/10 rounded-full">
+                <FileText className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium">{t("pdfExport")}</h3>
+                <p className="text-sm text-muted-foreground">{t("exportToFile")}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+              <div className="p-2 bg-primary/10 rounded-full">
+                <FileSpreadsheet className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium">{t("excelExport")}</h3>
+                <p className="text-sm text-muted-foreground">{t("exportToFile")}</p>
+              </div>
+            </div>
+            
+            <div className="space-y-4 pt-4 border-t">
+              <label className="block text-sm font-medium">{t("selectExportDestination")}</label>
+              <Input type="text" placeholder="C:/Users/Documents/Exports" />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsExportDialogOpen(false)}>
+              {t("cancel")}
+            </Button>
+            <Button onClick={() => {
+              toast.success(t("exportComplete"), {
+                description: t("yourExportIsReadyToDownload")
+              });
+              setIsExportDialogOpen(false);
+            }}>
+              {t("downloadExport")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 }

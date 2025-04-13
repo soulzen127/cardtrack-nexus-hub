@@ -17,9 +17,10 @@ interface MapViewProps {
   timeSliderValue?: number[];
   selectedDate?: string;
   cardLocations?: CardLocation[];
+  center?: [number, number] | null;
 }
 
-export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocations }: MapViewProps) {
+export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocations, center }: MapViewProps) {
   const { t } = useI18n();
   const {
     mapboxToken, setMapboxToken,
@@ -121,11 +122,13 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
           isMapInitialized={isMapInitialized}
           setIsMapInitialized={setIsMapInitialized}
           cardLocations={locationsToUse}
+          center={center}
         />
       ) : (
         <GoogleMap 
           setGoogleMapLoaded={setGoogleMapLoaded}
           cardLocations={locationsToUse}
+          center={center}
         />
       )}
       

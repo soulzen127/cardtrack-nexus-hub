@@ -15,6 +15,7 @@ interface MapboxMapProps {
   isMapInitialized: boolean;
   setIsMapInitialized: (value: boolean) => void;
   cardLocations?: CardLocation[];
+  center?: [number, number] | null;
 }
 
 export function MapboxMap({ 
@@ -25,7 +26,8 @@ export function MapboxMap({
   currentFloor, 
   isMapInitialized,
   setIsMapInitialized,
-  cardLocations 
+  cardLocations,
+  center
 }: MapboxMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -88,6 +90,18 @@ export function MapboxMap({
       });
     }
   }, [isIndoorMode, currentFloor, isMapInitialized, cardLocations]);
+
+  // Center map when center coordinates change
+  useEffect(() => {
+    if (map.current && center) {
+      map.current.flyTo({
+        center: center,
+        zoom: 15,
+        essential: true,
+        duration: 1000
+      });
+    }
+  }, [center]);
 
   // Handle style changes
   const handleStyleChange = (style: string) => {

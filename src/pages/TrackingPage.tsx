@@ -14,6 +14,7 @@ export default function TrackingPage() {
   const [timeSliderValue, setTimeSliderValue] = useState([50]);
   const [selectedDate, setSelectedDate] = useState("");
   const [filteredLocations, setFilteredLocations] = useState(mockCardLocations);
+  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const { t } = useI18n();
 
   const handleAdvancedSearch = (filters: any) => {
@@ -28,6 +29,10 @@ export default function TrackingPage() {
     );
     
     setFilteredLocations(filtered);
+  };
+
+  const handleCardSelect = (coordinates: [number, number]) => {
+    setMapCenter(coordinates);
   };
 
   return (
@@ -79,6 +84,7 @@ export default function TrackingPage() {
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
             cardLocations={filteredLocations}
+            center={mapCenter}
           />
           
           <div className="space-y-6">
@@ -89,7 +95,7 @@ export default function TrackingPage() {
               </TabsList>
               
               <TabsContent value="cards">
-                <TrackedCardsPanel />
+                <TrackedCardsPanel onCardSelect={handleCardSelect} />
               </TabsContent>
               
               <TabsContent value="alerts">
