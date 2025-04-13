@@ -21,6 +21,7 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
     timelineRef,
     selectedEventIndex,
     zoomLevel,
+    setZoomLevel,
     isMobileDevice,
     selectedEventType,
     visibleDates,
@@ -30,7 +31,6 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
     alertEvents,
     activityEvents,
     handleWheel,
-    adjustZoom,
     handleEventSelect,
     handleEventTypeChange,
     toggleShowDate,
@@ -44,8 +44,6 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
           selectedEventType={selectedEventType}
           onEventTypeChange={handleEventTypeChange}
           isMobileDevice={isMobileDevice}
-          onZoomAdjust={adjustZoom}
-          zoomLevel={zoomLevel}
         />
         <CardContent className="flex justify-center items-center p-10">
           <p className="text-muted-foreground">{t("noEventsAvailable")}</p>
@@ -69,13 +67,8 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
         selectedEventType={selectedEventType}
         onEventTypeChange={handleEventTypeChange}
         isMobileDevice={isMobileDevice}
-        onZoomAdjust={adjustZoom}
-        zoomLevel={zoomLevel}
       />
       <CardContent className="space-y-6">
-        {/* Timeline title and navigation */}
-        <TimelineNavigation onNavigate={navigateDates} />
-        
         {/* Horizontal Timeline View with Y-axis categories */}
         <TimelineContent
           alertEvents={alertEvents}
@@ -84,10 +77,12 @@ export const EventTimeline = ({ onEventSelect }: EventTimelineProps) => {
           selectedEventIndex={selectedEventIndex}
           onEventSelect={handleEventSelect}
           zoomLevel={zoomLevel}
+          setZoomLevel={setZoomLevel}
           onWheel={!isMobileDevice ? handleWheel : undefined}
           dates={dates}
           toggleShow={toggleShowDate}
           visibleDates={visibleDates}
+          navigateDates={navigateDates}
         />
         
         {/* Event details section - shown when an event is selected */}

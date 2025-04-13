@@ -17,9 +17,7 @@ interface TimelineRowProps {
   onEventSelect: (event: TimelineEvent, index: number, type: 'alert' | 'activity') => void;
   type: 'alert' | 'activity';
   zoomLevel: number;
-  onWheel?: (e: React.WheelEvent) => void;
   dates: string[];
-  toggleShow: (dateIndex: number) => void;
   visibleDates: boolean[];
 }
 
@@ -32,9 +30,7 @@ export const TimelineRow: React.FC<TimelineRowProps> = ({
   onEventSelect,
   type,
   zoomLevel,
-  onWheel,
   dates,
-  toggleShow,
   visibleDates
 }) => {
   const { t } = useI18n();
@@ -46,40 +42,22 @@ export const TimelineRow: React.FC<TimelineRowProps> = ({
   // Group events by date
   const eventsByDate = groupEventsByDate(events, dates);
   
-  // Get the appropriate icon based on event type
-  const getEventIcon = () => {
-    if (type === 'alert') {
-      return AlertCircle;
-    } else if (type === 'activity') {
-      return Activity;
-    }
-    return Activity;
-  };
-  
   return (
-    <div className="flex mb-4" onWheel={onWheel}>
-      {/* Y-axis label */}
-      <div className="w-24 flex items-center">
-        <ColoredEvent 
-          type={type} 
-          icon={getEventIcon()} 
-          size="sm"
-        />
-        <span className="ml-1 font-medium">{title}</span>
-      </div>
-      
-      {/* Timeline events by date (X-axis) */}
-      <div className="flex flex-1 space-x-2">
-        {dates.map((date, dateIndex) => {
-          if (!visibleDates[dateIndex]) return (
-            <div key={`date-${dateIndex}-empty`} className="min-w-[100px] opacity-50"></div>
-          );
-          
-          const dayEvents = eventsByDate[dateIndex];
-          
-          return (
-            <div key={`date-${dateIndex}`} className="min-w-[100px] border-l pl-2">
-              <div className="space-y-1">
+    <div className="flex h-full w-full absolute top-0 left-0">
+      {dates.map((date, dateIndex) => {
+        if (!visibleDates[dateIndex]) return (
+          <div key={`date-${dateIndex}-empty`} className="w-48 min-w-[12rem] h-full border-r last:border-r-0 opacity-50"></div>
+        );
+        
+        const dayEvents = eventsByDate[dateIndex];
+        
+        return (
+          <div 
+            key={`date-${dateIndex}`} 
+            className="w-48 min-w-[12rem] h-full border-r last:border-r-0 relative p-2 overflow-y-auto"
+          >
+            {dayEvents.length > 0 ? (
+              <div className="space-y-2">
                 {dayEvents.map((event, eventIndex) => (
                   <TimelineEventItem
                     key={`${event.id}-${eventIndex}`}
@@ -90,16 +68,15 @@ export const TimelineRow: React.FC<TimelineRowProps> = ({
                     zoomLevel={zoomLevel}
                   />
                 ))}
-                {dayEvents.length === 0 && (
-                  <div className="text-xs text-muted-foreground py-1 px-2">
-                    {t("noEventsAvailable")}
-                  </div>
-                )}
               </div>
-            </div>
-          );
-        })}
-      </div>
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <span className="text-xs text-muted-foreground">{t("noEventsAvailable")}</span>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

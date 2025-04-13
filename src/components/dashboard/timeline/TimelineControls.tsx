@@ -1,23 +1,19 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Activity, ZoomIn, ZoomOut } from "lucide-react";
+import { AlertCircle, Activity } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 
 interface TimelineControlsProps {
   selectedEventType: 'all' | 'alert' | 'activity';
   onEventTypeChange: (type: 'all' | 'alert' | 'activity') => void;
   isMobileDevice: boolean;
-  onZoomAdjust: (direction: 'in' | 'out') => void;
-  zoomLevel: number;
 }
 
 export const TimelineControls: React.FC<TimelineControlsProps> = ({
   selectedEventType,
   onEventTypeChange,
-  isMobileDevice,
-  onZoomAdjust,
-  zoomLevel
+  isMobileDevice
 }) => {
   const { t } = useI18n();
   
@@ -48,30 +44,6 @@ export const TimelineControls: React.FC<TimelineControlsProps> = ({
         <Activity className="h-4 w-4 mr-1" />
         {t("activities")}
       </Button>
-      {isMobileDevice && (
-        <div className="flex space-x-1">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={() => onZoomAdjust('out')}
-            disabled={zoomLevel <= 0.5}
-            title={t("zoomOut")}
-          >
-            <ZoomOut className="h-4 w-4" />
-            <span className="sr-only">{t("zoomOut")}</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={() => onZoomAdjust('in')}
-            disabled={zoomLevel >= 3}
-            title={t("zoomIn")}
-          >
-            <ZoomIn className="h-4 w-4" />
-            <span className="sr-only">{t("zoomIn")}</span>
-          </Button>
-        </div>
-      )}
     </div>
   );
 };

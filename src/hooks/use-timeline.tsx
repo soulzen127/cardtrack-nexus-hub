@@ -43,13 +43,6 @@ export const useTimeline = (events: TimelineEvent[], onEventSelect: (event: Time
     setZoomLevel(newZoomLevel);
   };
   
-  // Controls for zoom level
-  const adjustZoom = (direction: 'in' | 'out') => {
-    const delta = direction === 'in' ? 0.25 : -0.25;
-    const newZoomLevel = Math.max(0.5, Math.min(3, zoomLevel + delta));
-    setZoomLevel(newZoomLevel);
-  };
-  
   // Handle event selection
   const handleEventSelect = (event: TimelineEvent, index: number, type: 'alert' | 'activity') => {
     setSelectedEventType(type);
@@ -84,12 +77,16 @@ export const useTimeline = (events: TimelineEvent[], onEventSelect: (event: Time
   const navigateDates = (direction: 'prev' | 'next') => {
     const newDates = getNavigatedDates(dates, direction);
     setDates(newDates);
+    
+    // Reset visible dates when navigating
+    setVisibleDates(new Array(newDates.length).fill(true));
   };
 
   return {
     timelineRef,
     selectedEventIndex,
     zoomLevel,
+    setZoomLevel,
     isMobileDevice,
     selectedEventType,
     visibleDates,
@@ -99,7 +96,6 @@ export const useTimeline = (events: TimelineEvent[], onEventSelect: (event: Time
     alertEvents,
     activityEvents,
     handleWheel,
-    adjustZoom,
     handleEventSelect,
     handleEventTypeChange,
     toggleShowDate,

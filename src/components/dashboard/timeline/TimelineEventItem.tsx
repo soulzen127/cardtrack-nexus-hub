@@ -23,13 +23,6 @@ export const TimelineEventItem: React.FC<TimelineEventItemProps> = ({
 }) => {
   const { t } = useI18n();
   
-  // Timeline item styling is now simplified since we're using a different layout
-  const getTimelineItemStyle = () => {
-    return {
-      transition: 'all 0.2s ease-out'
-    };
-  };
-
   const isAlert = event.type === 'alert';
   const borderColorClass = isSelected ? 
     (isAlert ? 'border-red-500 bg-red-100/20' : 'border-green-500 bg-green-100/20') : 
@@ -53,11 +46,31 @@ export const TimelineEventItem: React.FC<TimelineEventItemProps> = ({
     return Activity;
   };
 
+  // Position the event based on its time
+  const getPositionStyle = () => {
+    try {
+      const timeString = safeFormatDate(event.timestamp, 'HH:mm');
+      const [hours, minutes] = timeString.split(':').map(Number);
+      
+      // Calculate position as percentage of the day (24 hours)
+      const timePercentage = (hours * 60 + minutes) / (24 * 60) * 100;
+      
+      return {
+        position: 'relative' as const
+      };
+    } catch (error) {
+      console.error("Error calculating position:", error);
+      return {
+        position: 'relative' as const
+      };
+    }
+  };
+
   return (
     <div 
-      className={`timeline-event p-2 rounded-md border ${borderColorClass} hover:shadow-md transition-all mb-2`}
+      className={`timeline-event p-2 rounded-md border ${borderColorClass} hover:shadow-md transition-all cursor-pointer relative`}
       onClick={() => onSelect(event)}
-      style={getTimelineItemStyle()}
+      style={getPositionStyle()}
       title={t("timelineEvent")}
     >
       <div className="flex items-start gap-2">

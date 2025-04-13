@@ -17,7 +17,12 @@ export const dashboardTimelineTranslations: TranslationCategory = {
     timelineEvent: "Timeline Event",
     show: "show",
     today: "Today",
-    yesterday: "Yesterday"
+    yesterday: "Yesterday",
+    dragToNavigate: "Drag to navigate",
+    previous: "Previous",
+    next: "Next",
+    timelineView: "Timeline View",
+    zoomInstructions: "Use mouse wheel to zoom or buttons on mobile"
   },
   zh_TW: {
     eventTimeline: "事件時間軸",
@@ -33,7 +38,12 @@ export const dashboardTimelineTranslations: TranslationCategory = {
     timelineEvent: "時間軸事件",
     show: "顯示",
     today: "今天",
-    yesterday: "昨天"
+    yesterday: "昨天",
+    dragToNavigate: "拖拉以導航",
+    previous: "上一個",
+    next: "下一個",
+    timelineView: "時間軸檢視",
+    zoomInstructions: "使用滑鼠滾輪縮放或在行動裝置上使用按鈕"
   },
   ja: {
     eventTimeline: "イベントタイムライン",
@@ -49,6 +59,11 @@ export const dashboardTimelineTranslations: TranslationCategory = {
     timelineEvent: "タイムラインイベント",
     show: "表示",
     today: "今日",
-    yesterday: "昨日"
+    yesterday: "昨日",
+    dragToNavigate: "ドラッグしてナビゲート",
+    previous: "前へ",
+    next: "次へ",
+    timelineView: "タイムラインビュー",
+    zoomInstructions: "ズームにはマウスホイールを使用するか、モバイルではボタンを使用します"
   }
 };
