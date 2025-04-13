@@ -74,13 +74,6 @@ export const TimelineContent: React.FC<TimelineContentProps> = ({
           toggleShow={toggleShow}
           cellWidth={cellWidth}
         />
-        
-        {/* Drag instruction overlay (shows briefly on load) */}
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center bg-black/5 animate-fade-out" style={{ animationDuration: '3s' }}>
-          <div className="bg-background/80 backdrop-blur-sm px-4 py-2 rounded-md shadow-lg">
-            <p className="text-sm font-medium">{t("dragToNavigate")}</p>
-          </div>
-        </div>
       </div>
     </div>
   );

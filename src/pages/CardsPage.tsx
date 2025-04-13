@@ -74,6 +74,10 @@ export default function CardsPage() {
   const [cards, setCards] = useState(initialCards);
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+  const [importSource, setImportSource] = useState<string | null>(null);
+  const [exportDestination, setExportDestination] = useState<string | null>(null);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [exportPath, setExportPath] = useState("C:/Users/Documents/Exports");
   const { t } = useI18n();
 
   const filteredCards = cards.filter(card => 
@@ -121,6 +125,52 @@ export default function CardsPage() {
     setSelectedCard(card);
     setIsDetailsOpen(false);
     setIsHistoryOpen(true);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImportFile(e.target.files[0]);
+    }
+  };
+
+  const handleImport = () => {
+    if (!importSource) {
+      toast.error(t("selectImportSource"), {
+        description: t("pleaseSelectAnImportSource"),
+      });
+      return;
+    }
+    
+    if (importSource === 'file' && !importFile) {
+      toast.error(t("fileRequired"), {
+        description: t("pleaseSelectAFileToImport"),
+      });
+      return;
+    }
+
+    toast.success(t("importStarted"), {
+      description: t("processingYourImport"),
+    });
+    
+    setIsImportDialogOpen(false);
+    setImportSource(null);
+    setImportFile(null);
+  };
+
+  const handleExport = () => {
+    if (!exportDestination) {
+      toast.error(t("selectExportDestination"), {
+        description: t("pleaseSelectAnExportDestination"),
+      });
+      return;
+    }
+
+    toast.success(t("exportComplete"), {
+      description: t("yourExportIsReadyToDownload"),
+    });
+    
+    setIsExportDialogOpen(false);
+    setExportDestination(null);
   };
 
   return (
@@ -278,7 +328,10 @@ export default function CardsPage() {
           </DialogHeader>
           
           <div className="grid grid-cols-1 gap-4 py-4">
-            <div className="flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+            <div 
+              className={`flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50 ${importSource === 'file' ? 'border-primary bg-primary/5' : ''}`}
+              onClick={() => setImportSource('file')}
+            >
               <div className="p-2 bg-primary/10 rounded-full">
                 <FileUp className="h-5 w-5 text-primary" />
               </div>
@@ -288,7 +341,10 @@ export default function CardsPage() {
               </div>
             </div>
             
-            <div className="flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+            <div 
+              className={`flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50 ${importSource === 'database' ? 'border-primary bg-primary/5' : ''}`}
+              onClick={() => setImportSource('database')}
+            >
               <div className="p-2 bg-primary/10 rounded-full">
                 <Database className="h-5 w-5 text-primary" />
               </div>
@@ -298,22 +354,44 @@ export default function CardsPage() {
               </div>
             </div>
             
-            <div className="space-y-4 pt-4 border-t">
-              <label className="block text-sm font-medium">{t("chooseFile")}</label>
-              <Input type="file" />
-            </div>
+            {importSource === 'file' && (
+              <div className="space-y-4 pt-4 border-t">
+                <label className="block text-sm font-medium">{t("chooseFile")}</label>
+                <Input type="file" onChange={handleFileChange} />
+                {importFile && (
+                  <p className="text-sm text-muted-foreground">
+                    {importFile.name} ({Math.round(importFile.size / 1024)} KB)
+                  </p>
+                )}
+              </div>
+            )}
+            
+            {importSource === 'database' && (
+              <div className="space-y-4 pt-4 border-t">
+                <label className="block text-sm font-medium">{t("selectDatabaseSource")}</label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("selectDatabaseSource")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="postgres">PostgreSQL</SelectItem>
+                    <SelectItem value="mysql">MySQL</SelectItem>
+                    <SelectItem value="sqlserver">SQL Server</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input placeholder="Connection String" type="password" />
+              </div>
+            )}
           </div>
           
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsImportDialogOpen(false)}>
               {t("cancel")}
             </Button>
-            <Button onClick={() => {
-              toast.success(t("importStarted"), {
-                description: t("processingYourImport")
-              });
-              setIsImportDialogOpen(false);
-            }}>
+            <Button 
+              onClick={handleImport}
+              disabled={!importSource || (importSource === 'file' && !importFile)}
+            >
               {t("processImport")}
             </Button>
           </DialogFooter>
@@ -329,7 +407,10 @@ export default function CardsPage() {
           </DialogHeader>
           
           <div className="grid grid-cols-1 gap-4 py-4">
-            <div className="flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+            <div 
+              className={`flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50 ${exportDestination === 'csv' ? 'border-primary bg-primary/5' : ''}`}
+              onClick={() => setExportDestination('csv')}
+            >
               <div className="p-2 bg-primary/10 rounded-full">
                 <Files className="h-5 w-5 text-primary" />
               </div>
@@ -339,7 +420,10 @@ export default function CardsPage() {
               </div>
             </div>
             
-            <div className="flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+            <div 
+              className={`flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50 ${exportDestination === 'pdf' ? 'border-primary bg-primary/5' : ''}`}
+              onClick={() => setExportDestination('pdf')}
+            >
               <div className="p-2 bg-primary/10 rounded-full">
                 <FileText className="h-5 w-5 text-primary" />
               </div>
@@ -349,7 +433,10 @@ export default function CardsPage() {
               </div>
             </div>
             
-            <div className="flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+            <div 
+              className={`flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50 ${exportDestination === 'excel' ? 'border-primary bg-primary/5' : ''}`}
+              onClick={() => setExportDestination('excel')}
+            >
               <div className="p-2 bg-primary/10 rounded-full">
                 <FileSpreadsheet className="h-5 w-5 text-primary" />
               </div>
@@ -359,22 +446,30 @@ export default function CardsPage() {
               </div>
             </div>
             
-            <div className="space-y-4 pt-4 border-t">
-              <label className="block text-sm font-medium">{t("selectExportDestination")}</label>
-              <Input type="text" placeholder="C:/Users/Documents/Exports" />
-            </div>
+            {exportDestination && (
+              <div className="space-y-4 pt-4 border-t">
+                <label className="block text-sm font-medium">{t("exportPath")}</label>
+                <Input 
+                  type="text" 
+                  placeholder={t("enterExportPath")} 
+                  value={exportPath}
+                  onChange={(e) => setExportPath(e.target.value)}
+                />
+                <div className="text-sm text-muted-foreground">
+                  {t("exportWillBeSavedTo")}: {exportPath}/{exportDestination === 'csv' ? 'cards.csv' : exportDestination === 'pdf' ? 'cards.pdf' : 'cards.xlsx'}
+                </div>
+              </div>
+            )}
           </div>
           
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsExportDialogOpen(false)}>
               {t("cancel")}
             </Button>
-            <Button onClick={() => {
-              toast.success(t("exportComplete"), {
-                description: t("yourExportIsReadyToDownload")
-              });
-              setIsExportDialogOpen(false);
-            }}>
+            <Button 
+              onClick={handleExport}
+              disabled={!exportDestination}
+            >
               {t("downloadExport")}
             </Button>
           </DialogFooter>

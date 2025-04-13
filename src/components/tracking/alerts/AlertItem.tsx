@@ -18,9 +18,10 @@ interface GeofenceAlert {
 interface AlertItemProps {
   alert: GeofenceAlert;
   onToggleActive: (id: string) => void;
+  onConfigure: () => void;
 }
 
-export function AlertItem({ alert, onToggleActive }: AlertItemProps) {
+export function AlertItem({ alert, onToggleActive, onConfigure }: AlertItemProps) {
   const { t } = useI18n();
   
   return (
@@ -43,7 +44,7 @@ export function AlertItem({ alert, onToggleActive }: AlertItemProps) {
         </div>
       </div>
       <div className="flex items-center space-x-2">
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" onClick={onConfigure}>
           <Settings className="h-4 w-4 mr-2" />
           {t("configure")}
         </Button>

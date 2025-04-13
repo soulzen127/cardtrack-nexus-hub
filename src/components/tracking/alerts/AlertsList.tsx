@@ -15,9 +15,10 @@ interface GeofenceAlert {
 interface AlertsListProps {
   alerts: GeofenceAlert[];
   onToggleActive: (id: string) => void;
+  onConfigure: (alert: GeofenceAlert) => void;
 }
 
-export function AlertsList({ alerts, onToggleActive }: AlertsListProps) {
+export function AlertsList({ alerts, onToggleActive, onConfigure }: AlertsListProps) {
   const { t } = useI18n();
   
   if (alerts.length === 0) {
@@ -35,6 +36,7 @@ export function AlertsList({ alerts, onToggleActive }: AlertsListProps) {
           key={alert.id} 
           alert={alert} 
           onToggleActive={onToggleActive} 
+          onConfigure={() => onConfigure(alert)}
         />
       ))}
     </div>

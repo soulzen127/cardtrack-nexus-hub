@@ -35,7 +35,14 @@ export const alertsTranslations: TranslationCategory = {
     alertWhenCardsEnterOrLeave: "Alert when cards enter or leave this area",
     alertWhenCardsEnter: "Alert when cards enter this area",
     alertWhenCardsLeave: "Alert when cards leave this area",
-    geofenceAlerts: "Geofence Alerts"
+    geofenceAlerts: "Geofence Alerts",
+    // New additions
+    configureAlert: "Configure Alert",
+    saveConfiguration: "Save Configuration",
+    geofenceLocation: "Geofence Location",
+    center: "Center",
+    alertConfigured: "Alert Configured",
+    alertConfigurationSaved: "Alert configuration has been saved"
   },
   zh_TW: {
     geofenceAlert: "地理圍欄警報",
@@ -70,7 +77,14 @@ export const alertsTranslations: TranslationCategory = {
     alertWhenCardsEnterOrLeave: "當卡片進入或離開此區域時發出警報",
     alertWhenCardsEnter: "當卡片進入此區域時發出警報",
     alertWhenCardsLeave: "當卡片離開此區域時發出警報",
-    geofenceAlerts: "地理圍欄警報"
+    geofenceAlerts: "地理圍欄警報",
+    // New additions
+    configureAlert: "配置警報",
+    saveConfiguration: "保存配置",
+    geofenceLocation: "地理圍欄位置",
+    center: "中心",
+    alertConfigured: "警報已配置",
+    alertConfigurationSaved: "警報配置已保存"
   },
   ja: {
     geofenceAlert: "ジオフェンスアラート",
@@ -105,6 +119,13 @@ export const alertsTranslations: TranslationCategory = {
     alertWhenCardsEnterOrLeave: "カードがこのエリアに入るか、または出るときにアラート",
     alertWhenCardsEnter: "カードがこのエリアに入るときにアラート",
     alertWhenCardsLeave: "カードがこのエリアを離れるときにアラート",
-    geofenceAlerts: "ジオフェンスアラート"
+    geofenceAlerts: "ジオフェンスアラート",
+    // New additions
+    configureAlert: "アラートを設定",
+    saveConfiguration: "設定を保存",
+    geofenceLocation: "ジオフェンス位置",
+    center: "中心",
+    alertConfigured: "アラートが設定されました",
+    alertConfigurationSaved: "アラート設定が保存されました"
   }
 };
