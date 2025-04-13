@@ -11,12 +11,20 @@ interface RealtimeQueryContentProps {
   onRunQuery: () => void;
 }
 
+interface QueryResult {
+  id: number;
+  name: string;
+  location: string;
+  timestamp: string;
+  [key: string]: string | number; // Add index signature for any other properties
+}
+
 export function RealtimeQueryContent({ onRunQuery }: RealtimeQueryContentProps) {
   const [queryType, setQueryType] = useState("sql");
-  const [queryResults, setQueryResults] = useState<any[] | null>(null);
+  const [queryResults, setQueryResults] = useState<QueryResult[] | null>(null);
   
   // Sample mock data for demo purposes
-  const mockResults = [
+  const mockResults: QueryResult[] = [
     { id: 1, name: "John Doe", location: "Building A", timestamp: "2023-04-18 09:32:45" },
     { id: 2, name: "Jane Smith", location: "Building B", timestamp: "2023-04-18 10:15:22" },
     { id: 3, name: "Robert Johnson", location: "Building A", timestamp: "2023-04-18 11:05:37" },
@@ -133,7 +141,7 @@ export function RealtimeQueryContent({ onRunQuery }: RealtimeQueryContentProps) 
             <Table>
               <TableHeader>
                 <TableRow>
-                  {Object.keys(queryResults[0]).map((key) => (
+                  {queryResults.length > 0 && Object.keys(queryResults[0]).map((key) => (
                     <TableHead key={key}>{key}</TableHead>
                   ))}
                 </TableRow>
@@ -142,7 +150,7 @@ export function RealtimeQueryContent({ onRunQuery }: RealtimeQueryContentProps) 
                 {queryResults.map((row, i) => (
                   <TableRow key={i}>
                     {Object.values(row).map((value, j) => (
-                      <TableCell key={j}>{value}</TableCell>
+                      <TableCell key={j}>{String(value)}</TableCell>
                     ))}
                   </TableRow>
                 ))}
