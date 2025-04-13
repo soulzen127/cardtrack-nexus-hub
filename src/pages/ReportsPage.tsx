@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Download, Share, FileText, BarChart } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useI18n } from "@/hooks/use-i18n";
+import { toast } from "sonner";
 import {
   ReportStatsCards,
   ReportTemplatesList,
@@ -14,10 +15,12 @@ import {
   AnalyticsContent,
   RealtimeQueryContent
 } from "@/components/reports";
+import { CreateReportDialog } from "@/components/reports/CreateReportDialog";
 
 export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState("templates");
   const [selectedTimeframe, setSelectedTimeframe] = useState("month");
+  const [showCreateReportDialog, setShowCreateReportDialog] = useState(false);
   const { t } = useI18n();
   
   // Mock reports data
@@ -42,12 +45,60 @@ export default function ReportsPage() {
     { id: 5, name: "System Audit Trail", generated: "Apr 14, 2023", format: "CSV", size: "2.3 MB" },
   ];
 
+  const handleGenerateReport = (reportId: number) => {
+    toast.success(`Generating report... This may take a few moments.`);
+    setTimeout(() => {
+      toast.success(`Report generated successfully! Ready for download.`);
+    }, 2000);
+  };
+
+  const handleScheduleReport = (reportId: number) => {
+    toast.success(`Report schedule configuration saved.`);
+  };
+
+  const handleViewReport = (reportId: number) => {
+    toast.success(`Opening report viewer...`);
+  };
+
+  const handleEditSchedule = (reportId: number) => {
+    toast.success(`Schedule updated successfully.`);
+  };
+
+  const handleDisableSchedule = (reportId: number) => {
+    toast.success(`Schedule disabled successfully.`);
+  };
+
+  const handleShareReport = (reportId: number) => {
+    toast.success(`Report sharing options displayed.`);
+  };
+
+  const handleDownloadReport = (reportId: number) => {
+    toast.success(`Downloading report...`);
+    setTimeout(() => {
+      toast.success(`Report downloaded successfully.`);
+    }, 1500);
+  };
+
+  const handleExportAnalytics = () => {
+    toast.success(`Exporting analytics data...`);
+    setTimeout(() => {
+      toast.success(`Analytics exported successfully.`);
+    }, 1500);
+  };
+
+  const handleRealtimeQuery = () => {
+    toast.success(`Running query...`);
+    setTimeout(() => {
+      toast.success(`Query completed successfully.`);
+    }, 2000);
+  };
+
   return (
     <MainLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
           <h1 className="text-2xl font-bold tracking-tight">{t("reportManagement")}</h1>
-          <Button>
+          <Button onClick={() => setShowCreateReportDialog(true)}>
             <Plus className="h-4 w-4 mr-2" />
             {t("createNewReport")}
           </Button>
@@ -77,31 +128,52 @@ export default function ReportsPage() {
               </TabsList>
               
               <TabsContent value="templates">
-                <ReportTemplatesList templates={reportTemplates} />
+                <ReportTemplatesList 
+                  templates={reportTemplates} 
+                  onGenerate={handleGenerateReport}
+                  onSchedule={handleScheduleReport}
+                  onView={handleViewReport}
+                />
               </TabsContent>
               
               <TabsContent value="scheduled">
-                <ScheduledReportsList reports={scheduledReports} />
+                <ScheduledReportsList 
+                  reports={scheduledReports}
+                  onEditSchedule={handleEditSchedule}
+                  onDisable={handleDisableSchedule}
+                />
               </TabsContent>
               
               <TabsContent value="recent">
-                <RecentReportsList reports={recentReports} />
+                <RecentReportsList 
+                  reports={recentReports}
+                  onShare={handleShareReport}
+                  onDownload={handleDownloadReport}
+                />
               </TabsContent>
               
               <TabsContent value="analytics">
                 <AnalyticsContent 
                   selectedTimeframe={selectedTimeframe}
                   setSelectedTimeframe={setSelectedTimeframe}
+                  onExport={handleExportAnalytics}
                 />
               </TabsContent>
               
               <TabsContent value="query">
-                <RealtimeQueryContent />
+                <RealtimeQueryContent 
+                  onRunQuery={handleRealtimeQuery}
+                />
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
       </div>
+      
+      <CreateReportDialog 
+        open={showCreateReportDialog}
+        onOpenChange={setShowCreateReportDialog}
+      />
     </MainLayout>
   );
 }

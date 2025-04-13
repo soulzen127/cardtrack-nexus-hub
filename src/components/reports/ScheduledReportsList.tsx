@@ -14,9 +14,11 @@ interface ScheduledReport {
 
 interface ScheduledReportsListProps {
   reports: ScheduledReport[];
+  onEditSchedule: (reportId: number) => void;
+  onDisable: (reportId: number) => void;
 }
 
-export function ScheduledReportsList({ reports }: ScheduledReportsListProps) {
+export function ScheduledReportsList({ reports, onEditSchedule, onDisable }: ScheduledReportsListProps) {
   return (
     <div className="space-y-4">
       {reports.map((report) => (
@@ -36,10 +38,15 @@ export function ScheduledReportsList({ reports }: ScheduledReportsListProps) {
                 </p>
               </div>
               <div className="flex space-x-2">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => onEditSchedule(report.id)}>
                   Edit Schedule
                 </Button>
-                <Button variant="outline" size="sm" className="text-cardtrack-red border-cardtrack-red/20 hover:bg-cardtrack-red/10">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="text-cardtrack-red border-cardtrack-red/20 hover:bg-cardtrack-red/10"
+                  onClick={() => onDisable(report.id)}
+                >
                   Disable
                 </Button>
               </div>

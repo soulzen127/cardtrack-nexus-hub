@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, ChevronRight } from "lucide-react";
-import { toast } from "sonner";
 
 interface ReportTemplate {
   id: number;
@@ -16,16 +15,12 @@ interface ReportTemplate {
 
 interface ReportTemplatesListProps {
   templates: ReportTemplate[];
+  onGenerate: (reportId: number) => void;
+  onSchedule: (reportId: number) => void;
+  onView: (reportId: number) => void;
 }
 
-export function ReportTemplatesList({ templates }: ReportTemplatesListProps) {
-  const handleGenerateReport = (reportId: number) => {
-    toast.success(`Generating report... This may take a few moments.`);
-    setTimeout(() => {
-      toast.success(`Report generated successfully! Ready for download.`);
-    }, 3000);
-  };
-
+export function ReportTemplatesList({ templates, onGenerate, onSchedule, onView }: ReportTemplatesListProps) {
   return (
     <div className="space-y-4">
       {templates.map((report) => (
@@ -45,13 +40,13 @@ export function ReportTemplatesList({ templates }: ReportTemplatesListProps) {
                 </p>
               </div>
               <div className="flex space-x-2">
-                <Button variant="outline" size="sm" onClick={() => handleGenerateReport(report.id)}>
+                <Button variant="outline" size="sm" onClick={() => onGenerate(report.id)}>
                   Generate
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => onSchedule(report.id)}>
                   Schedule
                 </Button>
-                <Button size="sm" asChild>
+                <Button size="sm" onClick={() => onView(report.id)}>
                   <span className="flex items-center">
                     View
                     <ChevronRight className="h-4 w-4 ml-1" />

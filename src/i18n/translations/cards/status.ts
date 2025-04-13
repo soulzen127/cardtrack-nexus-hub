@@ -13,6 +13,8 @@ export const cardStatusTranslations: TranslationCategory = {
     lost: "Lost",
     statusChangedTo: "status changed to",
     cardStatusUpdatedSuccessfully: "Card status updated successfully",
+    locked: "Locked",
+    expired: "Expired"
   },
   zh_TW: {
     active: "使用中",
@@ -24,6 +26,8 @@ export const cardStatusTranslations: TranslationCategory = {
     lost: "已遺失",
     statusChangedTo: "狀態已更改為",
     cardStatusUpdatedSuccessfully: "卡片狀態已成功更新",
+    locked: "已鎖定",
+    expired: "已過期"
   },
   ja: {
     active: "アクティブ",
@@ -35,5 +39,7 @@ export const cardStatusTranslations: TranslationCategory = {
     lost: "紛失",
     statusChangedTo: "ステータスが変更されました",
     cardStatusUpdatedSuccessfully: "カードステータスが正常に更新されました",
+    locked: "ロック済み",
+    expired: "期限切れ"
   }
 };

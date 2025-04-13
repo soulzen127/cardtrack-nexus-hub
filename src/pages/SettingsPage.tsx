@@ -14,16 +14,20 @@ import { Save, Settings } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/use-i18n";
+import { useAccessControl } from "@/hooks/use-access-control";
 import { 
   GeneralSettings, 
   MapsSettings, 
   NotificationSettings, 
   SecuritySettings, 
-  AppearanceSettings 
+  AppearanceSettings
 } from "@/components/settings";
+import { UserGroupSettings } from "@/components/settings/UserGroupSettings";
 
 export default function SettingsPage() {
   const { t } = useI18n();
+  const { currentUserRole } = useAccessControl();
+  const isAdmin = currentUserRole === "admin" || currentUserRole === "supervisor";
   
   const handleSaveSettings = () => {
     toast.success(t("settingsSaved"));
@@ -58,6 +62,7 @@ export default function SettingsPage() {
                 <TabsTrigger value="notifications">{t("notificationSettings")}</TabsTrigger>
                 <TabsTrigger value="security">{t("securitySettings")}</TabsTrigger>
                 <TabsTrigger value="appearance">{t("appearance")}</TabsTrigger>
+                {isAdmin && <TabsTrigger value="userGroups">User Account Control</TabsTrigger>}
               </TabsList>
               
               <TabsContent value="general">
@@ -79,6 +84,12 @@ export default function SettingsPage() {
               <TabsContent value="appearance">
                 <AppearanceSettings />
               </TabsContent>
+              
+              {isAdmin && (
+                <TabsContent value="userGroups">
+                  <UserGroupSettings />
+                </TabsContent>
+              )}
             </Tabs>
           </CardContent>
           <CardFooter className="flex justify-end space-x-2">

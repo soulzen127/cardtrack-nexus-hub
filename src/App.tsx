@@ -19,6 +19,7 @@ import UsersPage from "./pages/UsersPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import PortalPage from "./pages/PortalPage";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -30,20 +31,29 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/portal" element={<PortalPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/cards" element={<CardsPage />} />
-            <Route path="/tracking" element={<TrackingPage />} />
-            <Route path="/records" element={<RecordsPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/alerts" element={<AlertsPage />} />
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            
+            {/* Protected routes - require authentication */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/portal" element={<PortalPage />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/cards" element={<CardsPage />} />
+              <Route path="/tracking" element={<TrackingPage />} />
+              <Route path="/records" element={<RecordsPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/alerts" element={<AlertsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+            </Route>
+            
+            {/* Routes that require admin/supervisor access */}
+            <Route element={<ProtectedRoute requiredRole="admin" />}>
+              <Route path="/users" element={<UsersPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Route>
+            
+            {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
