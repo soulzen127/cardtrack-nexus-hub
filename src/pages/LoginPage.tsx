@@ -3,9 +3,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { LanguageSelector } from "@/components/language/LanguageSelector";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   
   // If user is already logged in, redirect to portal
   React.useEffect(() => {
@@ -17,6 +20,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <div className="absolute top-4 right-4">
+        <LanguageSelector minimal />
+      </div>
       <div className="w-full max-w-md">
         <Card>
           <CardHeader className="space-y-1">
@@ -31,13 +37,13 @@ export default function LoginPage() {
                     className="max-w-full max-h-full object-contain"
                   />
                 ) : (
-                  <div className="text-muted-foreground text-xs">Logo</div>
+                  <div className="text-muted-foreground text-xs">{t("logo")}</div>
                 )}
               </div>
             </div>
-            <CardTitle className="text-2xl text-center">Login to your account</CardTitle>
+            <CardTitle className="text-2xl text-center">{t("loginToYourAccount")}</CardTitle>
             <CardDescription className="text-center">
-              Enter your email and password to access the dashboard
+              {t("enterCredentials")}
             </CardDescription>
           </CardHeader>
           <LoginForm />

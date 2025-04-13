@@ -1,13 +1,14 @@
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
+import { Separator } from "@/components/ui/separator";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -27,31 +28,31 @@ export const LoginForm = () => {
       
       // Simple validation
       if (!email || !password) {
-        throw new Error("Email and password are required");
+        throw new Error(t("emailPasswordRequired"));
       }
       
       // Mock admin credentials for testing
       if (email === "admin@example.com" && password === "password") {
         localStorage.setItem("authenticated", "true");
         localStorage.setItem("user_role", "admin");
-        toast.success("Successfully logged in as Administrator");
+        toast.success(t("loginSuccessAdmin"));
         navigate("/portal");
       } else if (email === "supervisor@example.com" && password === "password") {
         localStorage.setItem("authenticated", "true");
         localStorage.setItem("user_role", "supervisor");
-        toast.success("Successfully logged in as Supervisor");
+        toast.success(t("loginSuccessSupervisor"));
         navigate("/portal");
       } else if (email.includes("@example.com") && password === "password") {
         localStorage.setItem("authenticated", "true");
         localStorage.setItem("user_role", "user");
-        toast.success("Successfully logged in");
+        toast.success(t("loginSuccess"));
         navigate("/portal");
       } else {
-        throw new Error("Invalid credentials");
+        throw new Error(t("invalidCredentials"));
       }
     } catch (error: any) {
       console.error("Login error:", error);
-      toast.error(error.message || "Failed to login. Please check your credentials.");
+      toast.error(error.message || t("loginFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -61,11 +62,76 @@ export const LoginForm = () => {
     setShowPassword(!showPassword);
   };
 
+  const handleSocialLogin = (provider: string) => {
+    setIsLoading(true);
+    // In a real implementation, this would use OAuth providers
+    console.log(`Logging in with ${provider}`);
+    setTimeout(() => {
+      localStorage.setItem("authenticated", "true");
+      localStorage.setItem("user_role", "user");
+      localStorage.setItem("loginProvider", provider);
+      toast.success(t("loginSuccessSocial", { provider }));
+      navigate("/portal");
+      setIsLoading(false);
+    }, 1000);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <CardContent className="space-y-4">
+        <div className="flex flex-col space-y-2">
+          {/* Social Login Buttons */}
+          <div className="grid grid-cols-2 gap-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => handleSocialLogin("Google")}
+              disabled={isLoading}
+              className="w-full"
+            >
+              <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" fill="#4285f4"/>
+              </svg>
+              Google
+            </Button>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => handleSocialLogin("Facebook")}
+              disabled={isLoading}
+              className="w-full"
+            >
+              <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path d="M504 256C504 119 393 8 256 8S8 119 8 256c0 123.78 90.69 226.38 209.25 245V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.28c-30.8 0-40.41 19.12-40.41 38.73V256h68.78l-11 71.69h-57.78V501C413.31 482.38 504 379.78 504 256z" fill="#1877f2"/>
+              </svg>
+              Facebook
+            </Button>
+          </div>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => handleSocialLogin("LINE")}
+            disabled={isLoading}
+            className="w-full"
+          >
+            <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M19.365 9.89c.50 0 .866.37.866.87s-.396.87-.866.87H18.24v.63h1.126c.48 0 .866.37.866.87s-.396.87-.866.87h-2c-.48 0-.867-.39-.867-.87V9.89c0-.5.387-.87.867-.87h2c.48 0 .866.37.866.87s-.396.87-.866.87H18.24v.13h1.126zm-3.97 3.24c.48 0 .867.39.867.87s-.387.87-.867.87h-2c-.48 0-.867-.39-.867-.87V9.89c0-.5.387-.87.867-.87s.867.37.867.87v2.37h1.133zm-3.63-2.39v.13h1.13c.48 0 .866.37.866.87s-.396.87-.866.87h-1.13v.5h1.13c.48 0 .866.37.866.87s-.396.87-.866.87h-2c-.48 0-.87-.39-.87-.87V9.89c0-.5.4-.87.87-.87h2c.48 0 .866.37.866.87s-.396.87-.866.87h-1.13zm-4.063 0v3.13c0 .48-.397.87-.867.87s-.867-.39-.867-.87V10.76H4.5c-.48 0-.867-.37-.867-.87s.387-.87.867-.87h3.11c.48 0 .866.37.866.87s-.396.87-.866.87h-1.54z" fill="#00B900"/>
+            </svg>
+            LINE
+          </Button>
+          
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              {t("orContinueWith")}
+            </span>
+            <div className="absolute inset-0 flex items-center">
+              <Separator className="w-full" />
+            </div>
+          </div>
+        </div>
+
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("email")}</Label>
           <Input
             id="email"
             type="email"
@@ -77,7 +143,13 @@ export const LoginForm = () => {
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("password")}</Label>
+            <Link 
+              to="/forgot-password" 
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              {t("forgotPassword")}
+            </Link>
           </div>
           <div className="relative">
             <Input
@@ -100,14 +172,17 @@ export const LoginForm = () => {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col">
+      <CardFooter className="flex flex-col space-y-4">
         <Button 
           type="submit" 
           className="w-full" 
           disabled={isLoading}
         >
-          {isLoading ? "Signing in..." : "Sign In"}
+          {isLoading ? t("signingIn") : t("signIn")}
         </Button>
+        <CardDescription className="text-center">
+          {t("dontHaveAccount")} <Link to="/signup" className="text-primary hover:underline">{t("createAccount")}</Link>
+        </CardDescription>
       </CardFooter>
     </form>
   );
