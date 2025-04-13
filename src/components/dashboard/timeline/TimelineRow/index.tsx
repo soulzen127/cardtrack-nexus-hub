@@ -1,6 +1,6 @@
 
 import React from "react";
-import { TimelineEvent } from "../../tracking/map/mockData";
+import { TimelineEvent } from "../../../tracking/map/mockData";
 import { Circle, ChevronDown, AlertCircle, Activity, Info, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 import { groupEventsByDate } from "@/utils/eventUtils";
