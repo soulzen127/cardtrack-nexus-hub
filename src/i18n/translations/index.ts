@@ -43,6 +43,17 @@ export const translations = combineTranslations([
 
 export const useTranslation = (language: Language) => {
   return {
-    t: (key: TranslationKeys) => translations[language][key] || key
+    t: (key: TranslationKeys, params?: Record<string, string>) => {
+      let translation = translations[language][key] || key;
+      
+      // Add interpolation support
+      if (params) {
+        Object.keys(params).forEach(param => {
+          translation = translation.replace(`{${param}}`, params[param]);
+        });
+      }
+      
+      return translation;
+    }
   };
 };
