@@ -105,6 +105,9 @@ export const TimelineContent: React.FC<TimelineContentProps> = ({
     setZoomLevel(newZoomLevel);
   };
 
+  // Calculate the cell width based on zoom level
+  const cellWidth = 12 * zoomLevel; // Base width is 12rem, scaled by zoom level
+
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center mb-2">
@@ -184,11 +187,7 @@ export const TimelineContent: React.FC<TimelineContentProps> = ({
         >
           <div 
             className="min-w-full"
-            style={{ 
-              transform: `scale(${zoomLevel})`,
-              transformOrigin: 'left center',
-              transition: 'transform 0.2s ease-out'
-            }}
+            style={{ transition: 'transform 0.2s ease-out' }}
           >
             <div className="flex">
               {/* Y-axis labels */}
@@ -225,7 +224,8 @@ export const TimelineContent: React.FC<TimelineContentProps> = ({
                   {dates.map((date, index) => (
                     <div 
                       key={`date-${index}`}
-                      className={`w-48 min-w-[12rem] flex flex-col items-center justify-center border-r last:border-r-0 px-2 ${!visibleDates[index] ? 'opacity-50' : ''}`}
+                      style={{ width: `${cellWidth}rem`, minWidth: `${cellWidth}rem` }}
+                      className={`flex flex-col items-center justify-center border-r last:border-r-0 px-2 ${!visibleDates[index] ? 'opacity-50' : ''}`}
                     >
                       <div className="font-medium text-sm">{date}</div>
                       <button 
@@ -254,6 +254,7 @@ export const TimelineContent: React.FC<TimelineContentProps> = ({
                         zoomLevel={zoomLevel}
                         dates={dates}
                         visibleDates={visibleDates}
+                        cellWidth={cellWidth}
                       />
                     </div>
                   )}
@@ -272,6 +273,7 @@ export const TimelineContent: React.FC<TimelineContentProps> = ({
                         zoomLevel={zoomLevel}
                         dates={dates}
                         visibleDates={visibleDates}
+                        cellWidth={cellWidth}
                       />
                     </div>
                   )}

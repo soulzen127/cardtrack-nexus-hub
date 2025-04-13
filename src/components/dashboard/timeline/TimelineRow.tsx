@@ -19,6 +19,7 @@ interface TimelineRowProps {
   zoomLevel: number;
   dates: string[];
   visibleDates: boolean[];
+  cellWidth: number;
 }
 
 export const TimelineRow: React.FC<TimelineRowProps> = ({
@@ -31,7 +32,8 @@ export const TimelineRow: React.FC<TimelineRowProps> = ({
   type,
   zoomLevel,
   dates,
-  visibleDates
+  visibleDates,
+  cellWidth
 }) => {
   const { t } = useI18n();
   
@@ -46,7 +48,11 @@ export const TimelineRow: React.FC<TimelineRowProps> = ({
     <div className="flex h-full w-full absolute top-0 left-0">
       {dates.map((date, dateIndex) => {
         if (!visibleDates[dateIndex]) return (
-          <div key={`date-${dateIndex}-empty`} className="w-48 min-w-[12rem] h-full border-r last:border-r-0 opacity-50"></div>
+          <div 
+            key={`date-${dateIndex}-empty`} 
+            style={{ width: `${cellWidth}rem`, minWidth: `${cellWidth}rem` }}
+            className="h-full border-r last:border-r-0 opacity-50"
+          ></div>
         );
         
         const dayEvents = eventsByDate[dateIndex];
@@ -54,7 +60,8 @@ export const TimelineRow: React.FC<TimelineRowProps> = ({
         return (
           <div 
             key={`date-${dateIndex}`} 
-            className="w-48 min-w-[12rem] h-full border-r last:border-r-0 relative p-2 overflow-y-auto"
+            style={{ width: `${cellWidth}rem`, minWidth: `${cellWidth}rem` }}
+            className="h-full border-r last:border-r-0 relative p-2 overflow-y-auto"
           >
             {dayEvents.length > 0 ? (
               <div className="space-y-2">
