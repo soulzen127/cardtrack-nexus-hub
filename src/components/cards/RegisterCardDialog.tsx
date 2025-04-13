@@ -9,17 +9,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/use-i18n";
+
+// Import our new components
+import {
+  CardInfoSection,
+  HolderInfoSection,
+  ValidityPeriodSection,
+  AccessLevelSection
+} from "./register";
 
 interface RegisterCardDialogProps {
   open: boolean;
@@ -68,122 +67,35 @@ export default function RegisterCardDialog({
         </DialogHeader>
         
         <div className="grid gap-6 py-4">
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium">{t("cardInformation")}</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="cardNumber">{t("cardNumber")}</Label>
-                <Input
-                  id="cardNumber"
-                  value={cardNumber}
-                  onChange={(e) => setCardNumber(e.target.value)}
-                  placeholder={t("enterCardNumber")}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="cardType">{t("cardType")}</Label>
-                <Select value={cardType} onValueChange={setCardType}>
-                  <SelectTrigger id="cardType">
-                    <SelectValue placeholder={t("selectCardType")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="standard">{t("standard")}</SelectItem>
-                    <SelectItem value="premium">{t("premium")}</SelectItem>
-                    <SelectItem value="temporary">{t("temporary")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
+          <CardInfoSection 
+            cardNumber={cardNumber}
+            setCardNumber={setCardNumber}
+            cardType={cardType}
+            setCardType={setCardType}
+          />
           
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium">{t("holderInformation")}</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="holderName">{t("holderName")}</Label>
-                <Input
-                  id="holderName"
-                  value={holderName}
-                  onChange={(e) => setHolderName(e.target.value)}
-                  placeholder={t("enterHolderName")}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="holderEmail">{t("holderEmail")}</Label>
-                <Input
-                  id="holderEmail"
-                  type="email"
-                  value={holderEmail}
-                  onChange={(e) => setHolderEmail(e.target.value)}
-                  placeholder={t("enterHolderEmail")}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="holderPhone">{t("holderPhone")}</Label>
-                <Input
-                  id="holderPhone"
-                  value={holderPhone}
-                  onChange={(e) => setHolderPhone(e.target.value)}
-                  placeholder={t("enterHolderPhone")}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="department">{t("department")}</Label>
-                <Input
-                  id="department"
-                  value={department}
-                  onChange={(e) => setDepartment(e.target.value)}
-                  placeholder={t("enterDepartment")}
-                />
-              </div>
-            </div>
-          </div>
+          <HolderInfoSection
+            holderName={holderName}
+            setHolderName={setHolderName}
+            holderEmail={holderEmail}
+            setHolderEmail={setHolderEmail}
+            holderPhone={holderPhone}
+            setHolderPhone={setHolderPhone}
+            department={department}
+            setDepartment={setDepartment}
+          />
           
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium">{t("validityPeriod")}</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="startDate">{t("startDate")}</Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="endDate">{t("endDate")}</Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
+          <ValidityPeriodSection
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+          />
           
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium">{t("additionalInfo")}</h3>
-            <div className="space-y-2">
-              <Label htmlFor="accessLevel">{t("accessLevel")}</Label>
-              <Select value={accessLevel} onValueChange={setAccessLevel}>
-                <SelectTrigger id="accessLevel">
-                  <SelectValue placeholder={t("accessLevel")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">{t("low")}</SelectItem>
-                  <SelectItem value="medium">{t("medium")}</SelectItem>
-                  <SelectItem value="high">{t("high")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <AccessLevelSection
+            accessLevel={accessLevel}
+            setAccessLevel={setAccessLevel}
+          />
         </div>
         
         <DialogFooter>
