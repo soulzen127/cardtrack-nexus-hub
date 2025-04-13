@@ -9,6 +9,8 @@ export interface CardLocation {
   indoorOnly?: boolean; // Whether this marker is only for indoor maps
   building?: string; // Optional building identifier
   lastUpdated?: string; // Timestamp for when the location was last updated
+  title?: string; // Title for the location marker
+  description?: string; // Description for the location marker
 }
 
 export interface CreateMarkersOptions {

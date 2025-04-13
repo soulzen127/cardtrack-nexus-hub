@@ -22,6 +22,7 @@ interface MapSectionProps {
   selectedDate: string;
   setSelectedDate: (value: string) => void;
   cardLocations?: CardLocation[];
+  center?: [number, number] | null;
 }
 
 export function MapSection({
@@ -32,14 +33,9 @@ export function MapSection({
   selectedDate,
   setSelectedDate,
   cardLocations,
+  center,
 }: MapSectionProps) {
   const { t } = useI18n();
-  const [center, setCenter] = useState<[number, number] | null>(null);
-
-  // Function to handle focusing map on specific coordinates
-  const handleFocusLocation = (coordinates: [number, number]) => {
-    setCenter(coordinates);
-  };
 
   return (
     <Card className="lg:col-span-2">

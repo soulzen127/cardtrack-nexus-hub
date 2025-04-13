@@ -21,7 +21,7 @@ import {
   MapPin,
   FileUp,
   Database,
-  FileCsv,
+  Files,
   FileText,
   FileSpreadsheet
 } from "lucide-react";
@@ -331,7 +331,7 @@ export default function CardsPage() {
           <div className="grid grid-cols-1 gap-4 py-4">
             <div className="flex items-center space-x-4 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
               <div className="p-2 bg-primary/10 rounded-full">
-                <FileCsv className="h-5 w-5 text-primary" />
+                <Files className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1">
                 <h3 className="font-medium">{t("csvExport")}</h3>

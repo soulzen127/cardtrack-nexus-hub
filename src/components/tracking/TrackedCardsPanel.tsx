@@ -67,9 +67,9 @@ export function TrackedCardsPanel({ onCardSelect }: TrackedCardsPanelProps) {
 
   // Custom geofence areas
   const geofenceAreas = [
-    { id: "office", name: t("officeArea"), description: t("alertWhenCardsEnterOrLeave"), coordinates: [121.5654, 25.0330] },
-    { id: "restricted", name: t("restrictedZone"), description: t("alertWhenCardsEnter"), coordinates: [120.3133, 22.6273] },
-    { id: "city", name: t("cityLimits"), description: t("alertWhenCardsLeave"), coordinates: [120.2133, 22.9997] }
+    { id: "office", name: t("officeArea"), description: t("alertWhenCardsEnterOrLeave"), coordinates: [121.5654, 25.0330] as [number, number] },
+    { id: "restricted", name: t("restrictedZone"), description: t("alertWhenCardsEnter"), coordinates: [120.3133, 22.6273] as [number, number] },
+    { id: "city", name: t("cityLimits"), description: t("alertWhenCardsLeave"), coordinates: [120.2133, 22.9997] as [number, number] }
   ];
 
   const handleGeofenceSelect = (geofenceId: string) => {
@@ -190,7 +190,7 @@ function CardHistoryTimeline({ card }: { card: TrackingCard }) {
         <div className="flex items-center space-x-2 mb-2">
           <CreditCard className="h-4 w-4 text-primary" />
           <span className="font-medium">{card.name}</span>
-          <Badge variant="outline" size="sm">{card.cardNumber}</Badge>
+          <Badge variant="outline">{card.cardNumber}</Badge>
         </div>
         <p className="text-sm text-muted-foreground">{t("todayRecords")}</p>
       </div>

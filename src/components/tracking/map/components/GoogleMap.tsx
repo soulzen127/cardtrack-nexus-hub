@@ -29,10 +29,10 @@ export function GoogleMap({ setGoogleMapLoaded, cardLocations, center }: GoogleM
 
     script.onload = () => {
       // Initialize Google Maps
-      map.current = new google.maps.Map(mapContainer.current!, {
+      map.current = new window.google.maps.Map(mapContainer.current!, {
         center: { lat: 23.9739, lng: 120.9738 }, // Taiwan center
         zoom: 7,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeId: window.google.maps.MapTypeId.ROADMAP,
       });
 
       // Add markers for each location
@@ -43,17 +43,17 @@ export function GoogleMap({ setGoogleMapLoaded, cardLocations, center }: GoogleM
 
         // Create new markers
         cardLocations.forEach(location => {
-          const marker = new google.maps.Marker({
+          const marker = new window.google.maps.Marker({
             position: { lat: location.coordinates[1], lng: location.coordinates[0] },
             map: map.current,
-            title: location.title || 'Card Location',
+            title: location.name || 'Card Location',
           });
 
           // Create info window
-          const infoWindow = new google.maps.InfoWindow({
+          const infoWindow = new window.google.maps.InfoWindow({
             content: `
               <div>
-                <h3>${location.title || 'Card Location'}</h3>
+                <h3>${location.name || 'Card Location'}</h3>
                 <p>${location.description || 'No description available'}</p>
               </div>
             `,
