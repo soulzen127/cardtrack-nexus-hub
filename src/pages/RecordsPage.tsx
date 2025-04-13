@@ -1,28 +1,22 @@
 
 import React, { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { AlertCircle, Check, Download, Eye, Filter, FileText, Search } from "lucide-react";
+import { useI18n } from "@/hooks/use-i18n";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { 
-  Search, 
-  Filter, 
-  Download, 
-  Calendar, 
-  CreditCard, 
-  MapPin, 
-  User, 
-  AlertCircle,
-  ChevronDown,
-  ChevronUp,
-  SlidersHorizontal
-} from "lucide-react";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -30,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -38,129 +33,175 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useI18n } from "@/hooks/use-i18n";
+
+export type RecordStatus = "pending" | "acknowledged" | "resolved";
+
+interface RecordItem {
+  id: number;
+  type: "card_event" | "system_log" | "alert";
+  title: string;
+  description: string;
+  timestamp: string;
+  status: RecordStatus;
+  cardId?: string;
+  cardHolder?: string;
+  user?: string;
+  ipAddress?: string;
+  location?: string;
+  details?: {
+    date: string;
+    time: string;
+    content: string;
+    reason: string;
+    process: string;
+    responsible: string;
+    location: string;
+    equipment: string;
+  };
+}
 
 export default function RecordsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const { t } = useI18n();
+  const [activeTab, setActiveTab] = useState("card_events");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<RecordItem | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isActionDialogOpen, setIsActionDialogOpen] = useState(false);
+  const [actionType, setActionType] = useState<"acknowledge" | "resolve">("acknowledge");
+  const [actionNote, setActionNote] = useState("");
   
-  // Mock records data
-  const cardRecords = [
-    { id: 1, cardId: "C001", cardHolder: "John Smith", eventType: "Access", location: "Main Building", timestamp: "2023-04-18 14:23:45" },
-    { id: 2, cardId: "C002", cardHolder: "Jane Doe", eventType: "Location Update", location: "Downtown Taipei", timestamp: "2023-04-18 13:15:22" },
-    { id: 3, cardId: "C003", cardHolder: "Bob Johnson", eventType: "Status Change", location: "Remote", timestamp: "2023-04-18 11:05:17" },
-    { id: 4, cardId: "C001", cardHolder: "John Smith", eventType: "Geofence Alert", location: "Restricted Zone", timestamp: "2023-04-18 10:42:33" },
-    { id: 5, cardId: "C005", cardHolder: "Charlie Brown", eventType: "Access", location: "Server Room", timestamp: "2023-04-18 09:30:11" },
+  const mockRecords: RecordItem[] = [
+    {
+      id: 1,
+      type: "alert",
+      title: "Geofence Violation",
+      description: "Card #C001 entered restricted area",
+      timestamp: "2023-04-18 10:42:33",
+      status: "pending",
+      cardId: "C001",
+      cardHolder: "John Smith",
+      location: "Building A, Restricted Zone",
+      details: {
+        date: "2023-04-18",
+        time: "10:42:33",
+        content: "Card entered a restricted area without proper authorization",
+        reason: "Unauthorized access attempt",
+        process: "Security team dispatched to location",
+        responsible: "Security Team Alpha",
+        location: "Building A, Level 3, Server Room",
+        equipment: "Card Reader #SR-04, Access Control Panel #A12"
+      }
+    },
+    {
+      id: 2,
+      type: "card_event",
+      title: "Card Registered",
+      description: "New card registered to system",
+      timestamp: "2023-04-17 09:15:22",
+      status: "acknowledged",
+      cardId: "C002",
+      cardHolder: "Jane Davis",
+      location: "Admin Office",
+    },
+    {
+      id: 3,
+      type: "system_log",
+      title: "System Backup",
+      description: "Automated database backup completed",
+      timestamp: "2023-04-17 03:00:00",
+      status: "resolved",
+      user: "system",
+      ipAddress: "192.168.1.5",
+    },
+    {
+      id: 4,
+      type: "alert",
+      title: "Suspicious Activity",
+      description: "Multiple failed access attempts",
+      timestamp: "2023-04-16 18:32:11",
+      status: "acknowledged",
+      cardId: "C005",
+      cardHolder: "Guest User",
+      location: "Main Entrance",
+    },
+    {
+      id: 5,
+      type: "system_log",
+      title: "User Login",
+      description: "Administrative login detected",
+      timestamp: "2023-04-16 14:22:05",
+      status: "resolved",
+      user: "admin@example.com",
+      ipAddress: "10.0.0.15",
+    },
   ];
   
-  const systemRecords = [
-    { id: 1, action: "User Login", user: "admin@example.com", ipAddress: "192.168.1.1", timestamp: "2023-04-18 15:30:45" },
-    { id: 2, action: "Card Registered", user: "operator@example.com", ipAddress: "192.168.1.2", timestamp: "2023-04-18 14:22:10" },
-    { id: 3, action: "Report Generated", user: "manager@example.com", ipAddress: "192.168.1.3", timestamp: "2023-04-18 13:17:23" },
-    { id: 4, action: "Settings Changed", user: "admin@example.com", ipAddress: "192.168.1.1", timestamp: "2023-04-18 12:05:56" },
-    { id: 5, action: "Database Backup", user: "system", ipAddress: "localhost", timestamp: "2023-04-18 01:00:00" },
-  ];
+  const filteredRecords = mockRecords.filter(record => {
+    // Filter by tab
+    if (activeTab === "card_events" && record.type !== "card_event") return false;
+    if (activeTab === "system_logs" && record.type !== "system_log") return false;
+    if (activeTab === "alerts" && record.type !== "alert") return false;
+    
+    // Search term can match title, description, cardId, etc.
+    if (searchTerm) {
+      const lowercaseSearch = searchTerm.toLowerCase();
+      return (
+        record.title.toLowerCase().includes(lowercaseSearch) ||
+        record.description.toLowerCase().includes(lowercaseSearch) ||
+        (record.cardId && record.cardId.toLowerCase().includes(lowercaseSearch)) ||
+        (record.cardHolder && record.cardHolder.toLowerCase().includes(lowercaseSearch)) ||
+        (record.user && record.user.toLowerCase().includes(lowercaseSearch))
+      );
+    }
+    
+    return true;
+  });
   
-  const alertRecords = [
-    { id: 1, type: "Geofence Violation", description: "Card #C001 entered restricted area", status: "Acknowledged", timestamp: "2023-04-18 10:42:33" },
-    { id: 2, type: "Suspicious Movement", description: "Card #C002 unusual movement pattern", status: "Pending", timestamp: "2023-04-18 11:15:22" },
-    { id: 3, type: "System Warning", description: "Database storage reaching capacity", status: "Resolved", timestamp: "2023-04-18 09:30:15" },
-    { id: 4, type: "Offline Card", description: "Card #C004 not seen for 48 hours", status: "Pending", timestamp: "2023-04-18 08:00:00" },
-  ];
-
-  const toggleFilter = () => {
-    setIsFilterExpanded(!isFilterExpanded);
+  const handleViewDetails = (record: RecordItem) => {
+    setSelectedRecord(record);
+    setIsDetailsOpen(true);
   };
-
+  
+  const handleAction = (record: RecordItem, action: "acknowledge" | "resolve") => {
+    setSelectedRecord(record);
+    setActionType(action);
+    setActionNote("");
+    setIsActionDialogOpen(true);
+  };
+  
+  const executeAction = () => {
+    if (!selectedRecord) return;
+    
+    if (actionType === "acknowledge") {
+      toast.success(`Record #${selectedRecord.id} has been acknowledged`);
+    } else {
+      toast.success(`Record #${selectedRecord.id} has been resolved`);
+    }
+    
+    setIsActionDialogOpen(false);
+  };
+  
+  const exportRecords = () => {
+    toast.success("Records exported successfully");
+  };
+  
   return (
     <MainLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
           <h1 className="text-2xl font-bold tracking-tight">{t("recordsAndLogs")}</h1>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={toggleFilter}>
+            <Button variant="outline" size="sm" onClick={() => setIsFilterOpen(true)}>
               <Filter className="h-4 w-4 mr-2" />
               {t("filters")}
-              {isFilterExpanded ? (
-                <ChevronUp className="h-4 w-4 ml-2" />
-              ) : (
-                <ChevronDown className="h-4 w-4 ml-2" />
-              )}
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={exportRecords}>
               <Download className="h-4 w-4 mr-2" />
               {t("export")}
             </Button>
           </div>
         </div>
-
-        {isFilterExpanded && (
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center">
-                <SlidersHorizontal className="h-5 w-5 mr-2" />
-                {t("advancedFilters")}
-              </CardTitle>
-              <CardDescription>
-                {t("narrowDownRecords")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("dateRange")}</label>
-                  <div className="flex space-x-2">
-                    <div className="w-1/2">
-                      <Input type="date" placeholder={t("from")} className="h-9" />
-                    </div>
-                    <div className="w-1/2">
-                      <Input type="date" placeholder={t("to")} className="h-9" />
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("recordType")}</label>
-                  <Select>
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder={t("allTypes")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t("allTypes")}</SelectItem>
-                      <SelectItem value="access">{t("accessEvents")}</SelectItem>
-                      <SelectItem value="location">{t("locationUpdates")}</SelectItem>
-                      <SelectItem value="status">{t("statusChanges")}</SelectItem>
-                      <SelectItem value="alert">{t("alerts")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("cardID")}</label>
-                  <Input placeholder={t("enterCardID")} className="h-9" />
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("location")}</label>
-                  <Input placeholder={t("enterLocation")} className="h-9" />
-                </div>
-              </div>
-              
-              <div className="flex justify-end mt-4 space-x-2">
-                <Button variant="outline" size="sm">{t("reset")}</Button>
-                <Button size="sm">{t("applyFilters")}</Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         <Card>
           <CardHeader>
@@ -170,201 +211,463 @@ export default function RecordsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <div className="space-y-4">
+              <div className="flex w-full max-w-sm items-center space-x-2">
                 <Input
                   placeholder={t("searchRecords")}
-                  className="pl-8"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full"
                 />
+                <Button type="submit" size="icon" variant="ghost">
+                  <Search className="h-4 w-4" />
+                </Button>
               </div>
-              <Select defaultValue="all">
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder={t("recordCategory")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("allRecords")}</SelectItem>
-                  <SelectItem value="today">{t("today")}</SelectItem>
-                  <SelectItem value="thisWeek">{t("thisWeek")}</SelectItem>
-                  <SelectItem value="thisMonth">{t("thisMonth")}</SelectItem>
-                  <SelectItem value="custom">{t("customRange")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Tabs defaultValue="cards">
-              <TabsList className="mb-4">
-                <TabsTrigger value="cards">{t("cardEvents")}</TabsTrigger>
-                <TabsTrigger value="system">{t("systemLogs")}</TabsTrigger>
-                <TabsTrigger value="alerts">{t("alerts")}</TabsTrigger>
-              </TabsList>
               
-              <TabsContent value="cards">
-                <div className="rounded-md border">
+              <Tabs defaultValue="card_events" onValueChange={setActiveTab}>
+                <TabsList>
+                  <TabsTrigger value="card_events">
+                    <FileText className="h-4 w-4 mr-2" />
+                    {t("cardEvents")}
+                  </TabsTrigger>
+                  <TabsTrigger value="system_logs">
+                    <FileText className="h-4 w-4 mr-2" />
+                    {t("systemLogs")}
+                  </TabsTrigger>
+                  <TabsTrigger value="alerts">
+                    <AlertCircle className="h-4 w-4 mr-2" />
+                    {t("alerts")}
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value={activeTab}>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Timestamp</TableHead>
-                        <TableHead>Card ID</TableHead>
-                        <TableHead className="hidden md:table-cell">Card Holder</TableHead>
-                        <TableHead>Event Type</TableHead>
-                        <TableHead className="hidden md:table-cell">Location</TableHead>
-                        <TableHead className="text-right">Details</TableHead>
+                        {activeTab === "card_events" && (
+                          <>
+                            <TableHead>{t("cardID")}</TableHead>
+                            <TableHead>{t("cardHolder")}</TableHead>
+                            <TableHead>{t("eventType")}</TableHead>
+                            <TableHead>{t("timestamp")}</TableHead>
+                            <TableHead>{t("location")}</TableHead>
+                          </>
+                        )}
+                        
+                        {activeTab === "system_logs" && (
+                          <>
+                            <TableHead>{t("eventType")}</TableHead>
+                            <TableHead>{t("description")}</TableHead>
+                            <TableHead>{t("timestamp")}</TableHead>
+                            <TableHead>{t("user")}</TableHead>
+                            <TableHead>{t("ipAddress")}</TableHead>
+                          </>
+                        )}
+                        
+                        {activeTab === "alerts" && (
+                          <>
+                            <TableHead>{t("eventType")}</TableHead>
+                            <TableHead>{t("description")}</TableHead>
+                            <TableHead>{t("timestamp")}</TableHead>
+                            <TableHead>{t("status")}</TableHead>
+                            <TableHead>{t("actions")}</TableHead>
+                          </>
+                        )}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {cardRecords.map((record) => (
+                      {filteredRecords.map((record) => (
                         <TableRow key={record.id}>
-                          <TableCell>
-                            <div className="flex items-center">
-                              <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                              {record.timestamp}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center">
-                              <CreditCard className="h-4 w-4 mr-2 text-muted-foreground" />
-                              {record.cardId}
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <div className="flex items-center">
-                              <User className="h-4 w-4 mr-2 text-muted-foreground" />
-                              {record.cardHolder}
-                            </div>
-                          </TableCell>
-                          <TableCell>{record.eventType}</TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <div className="flex items-center">
-                              <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
-                              {record.location}
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button variant="ghost" size="sm">
-                              View
-                            </Button>
-                          </TableCell>
+                          {activeTab === "card_events" && (
+                            <>
+                              <TableCell>{record.cardId}</TableCell>
+                              <TableCell>{record.cardHolder}</TableCell>
+                              <TableCell>{record.title}</TableCell>
+                              <TableCell>{record.timestamp}</TableCell>
+                              <TableCell>{record.location}</TableCell>
+                              <TableCell>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleViewDetails(record)}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </TableCell>
+                            </>
+                          )}
+                          
+                          {activeTab === "system_logs" && (
+                            <>
+                              <TableCell>{record.title}</TableCell>
+                              <TableCell>{record.description}</TableCell>
+                              <TableCell>{record.timestamp}</TableCell>
+                              <TableCell>{record.user}</TableCell>
+                              <TableCell>{record.ipAddress}</TableCell>
+                              <TableCell>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleViewDetails(record)}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </TableCell>
+                            </>
+                          )}
+                          
+                          {activeTab === "alerts" && (
+                            <>
+                              <TableCell>{record.title}</TableCell>
+                              <TableCell>{record.description}</TableCell>
+                              <TableCell>{record.timestamp}</TableCell>
+                              <TableCell>
+                                <span className={`px-2 py-1 rounded-full text-xs ${
+                                  record.status === "pending" ? "bg-yellow-100 text-yellow-800" :
+                                  record.status === "acknowledged" ? "bg-blue-100 text-blue-800" :
+                                  "bg-green-100 text-green-800"
+                                }`}>
+                                  {t(record.status)}
+                                </span>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex space-x-1">
+                                  {record.status === "pending" && (
+                                    <Button 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      onClick={() => handleAction(record, "acknowledge")}
+                                    >
+                                      {t("acknowledge")}
+                                    </Button>
+                                  )}
+                                  
+                                  {(record.status === "pending" || record.status === "acknowledged") && (
+                                    <Button 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      onClick={() => handleAction(record, "resolve")}
+                                    >
+                                      {t("resolve")}
+                                    </Button>
+                                  )}
+                                  
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    onClick={() => handleViewDetails(record)}
+                                  >
+                                    {t("viewDetails")}
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </>
+                          )}
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="system">
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Timestamp</TableHead>
-                        <TableHead>Action</TableHead>
-                        <TableHead className="hidden md:table-cell">User</TableHead>
-                        <TableHead className="hidden md:table-cell">IP Address</TableHead>
-                        <TableHead className="text-right">Details</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {systemRecords.map((record) => (
-                        <TableRow key={record.id}>
-                          <TableCell>
-                            <div className="flex items-center">
-                              <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                              {record.timestamp}
-                            </div>
-                          </TableCell>
-                          <TableCell>{record.action}</TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <div className="flex items-center">
-                              <User className="h-4 w-4 mr-2 text-muted-foreground" />
-                              {record.user}
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">{record.ipAddress}</TableCell>
-                          <TableCell className="text-right">
-                            <Button variant="ghost" size="sm">
-                              View
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="alerts">
-                <div className="space-y-4">
-                  <Accordion type="single" collapsible className="w-full">
-                    {alertRecords.map((alert) => (
-                      <AccordionItem key={alert.id} value={`alert-${alert.id}`}>
-                        <AccordionTrigger className="py-4 hover:no-underline">
-                          <div className="flex flex-1 items-center justify-between pr-4">
-                            <div className="flex items-center">
-                              <AlertCircle className="h-4 w-4 mr-2 text-cardtrack-red" />
-                              <span>{alert.type}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <span className="text-sm text-muted-foreground mr-4">{alert.timestamp}</span>
-                              <span className={`text-xs px-2 py-1 rounded-full ${
-                                alert.status === 'Pending' ? 'bg-amber-100 text-amber-800' :
-                                alert.status === 'Acknowledged' ? 'bg-blue-100 text-blue-800' :
-                                'bg-green-100 text-green-800'
-                              }`}>
-                                {alert.status}
-                              </span>
-                            </div>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="py-4 px-4 bg-muted/30">
-                          <div className="space-y-2">
-                            <div className="grid grid-cols-[120px_1fr] gap-2">
-                              <span className="text-sm font-medium">Description:</span>
-                              <span className="text-sm">{alert.description}</span>
-                            </div>
-                            <div className="grid grid-cols-[120px_1fr] gap-2">
-                              <span className="text-sm font-medium">Status:</span>
-                              <span className="text-sm">{alert.status}</span>
-                            </div>
-                            <div className="grid grid-cols-[120px_1fr] gap-2">
-                              <span className="text-sm font-medium">Timestamp:</span>
-                              <span className="text-sm">{alert.timestamp}</span>
-                            </div>
-                            <div className="grid grid-cols-[120px_1fr] gap-2">
-                              <span className="text-sm font-medium">Actions:</span>
-                              <div className="flex space-x-2">
-                                <Button size="sm" variant="outline">Acknowledge</Button>
-                                <Button size="sm" variant="outline">Resolve</Button>
-                                <Button size="sm">View Details</Button>
-                              </div>
-                            </div>
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-              </TabsContent>
-            </Tabs>
-            
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-muted-foreground">
-                {t("showingRecords")}
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" disabled>
-                  {t("previous")}
-                </Button>
-                <Button variant="outline" size="sm">
-                  {t("next")}
-                </Button>
-              </div>
+                  
+                  <div className="flex items-center justify-end space-x-2 py-4">
+                    <div className="text-sm text-muted-foreground">
+                      {t("showingRecords")}
+                    </div>
+                    <Button variant="outline" size="sm" disabled>
+                      {t("previous")}
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      {t("next")}
+                    </Button>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           </CardContent>
         </Card>
       </div>
+      
+      {/* Details Dialog */}
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{selectedRecord?.title}</DialogTitle>
+            <DialogDescription>
+              {selectedRecord?.description}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm text-muted-foreground">{t("timestamp")}</Label>
+                <p className="text-sm font-medium">{selectedRecord?.timestamp}</p>
+              </div>
+              
+              <div>
+                <Label className="text-sm text-muted-foreground">{t("status")}</Label>
+                <p className="text-sm font-medium">
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    selectedRecord?.status === "pending" ? "bg-yellow-100 text-yellow-800" :
+                    selectedRecord?.status === "acknowledged" ? "bg-blue-100 text-blue-800" :
+                    "bg-green-100 text-green-800"
+                  }`}>
+                    {selectedRecord?.status && t(selectedRecord.status)}
+                  </span>
+                </p>
+              </div>
+              
+              {selectedRecord?.type === "alert" && selectedRecord.details && (
+                <div className="col-span-2 space-y-4 border rounded-md p-4">
+                  <h3 className="font-medium">{t("detailedInformation")}</h3>
+                  <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-sm">
+                    <div>
+                      <Label className="text-xs text-muted-foreground">{t("date")}</Label>
+                      <p>{selectedRecord.details.date}</p>
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">{t("time")}</Label>
+                      <p>{selectedRecord.details.time}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <Label className="text-xs text-muted-foreground">{t("eventContent")}</Label>
+                      <p>{selectedRecord.details.content}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <Label className="text-xs text-muted-foreground">{t("eventReason")}</Label>
+                      <p>{selectedRecord.details.reason}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <Label className="text-xs text-muted-foreground">{t("handlingProcess")}</Label>
+                      <p>{selectedRecord.details.process}</p>
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">{t("responsiblePerson")}</Label>
+                      <p>{selectedRecord.details.responsible}</p>
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">{t("location")}</Label>
+                      <p>{selectedRecord.details.location}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <Label className="text-xs text-muted-foreground">{t("relatedEquipment")}</Label>
+                      <p>{selectedRecord.details.equipment}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {selectedRecord?.cardId && (
+                <div>
+                  <Label className="text-sm text-muted-foreground">{t("cardID")}</Label>
+                  <p className="text-sm font-medium">{selectedRecord.cardId}</p>
+                </div>
+              )}
+              
+              {selectedRecord?.cardHolder && (
+                <div>
+                  <Label className="text-sm text-muted-foreground">{t("cardHolder")}</Label>
+                  <p className="text-sm font-medium">{selectedRecord.cardHolder}</p>
+                </div>
+              )}
+              
+              {selectedRecord?.user && (
+                <div>
+                  <Label className="text-sm text-muted-foreground">{t("user")}</Label>
+                  <p className="text-sm font-medium">{selectedRecord.user}</p>
+                </div>
+              )}
+              
+              {selectedRecord?.ipAddress && (
+                <div>
+                  <Label className="text-sm text-muted-foreground">{t("ipAddress")}</Label>
+                  <p className="text-sm font-medium">{selectedRecord.ipAddress}</p>
+                </div>
+              )}
+              
+              {selectedRecord?.location && (
+                <div className="col-span-2">
+                  <Label className="text-sm text-muted-foreground">{t("location")}</Label>
+                  <p className="text-sm font-medium">{selectedRecord.location}</p>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDetailsOpen(false)}>
+              {t("close")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Action Dialog (Acknowledge/Resolve) */}
+      <Dialog open={isActionDialogOpen} onOpenChange={setIsActionDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {actionType === "acknowledge" ? t("acknowledgeRecord") : t("resolveRecord")}
+            </DialogTitle>
+            <DialogDescription>
+              {actionType === "acknowledge" 
+                ? t("markAsAcknowledged") 
+                : t("markAsResolved")}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">{selectedRecord?.title}</h3>
+              <p className="text-sm text-muted-foreground">{selectedRecord?.description}</p>
+              <p className="text-sm text-muted-foreground">{selectedRecord?.timestamp}</p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="action-note">
+                {actionType === "acknowledge" ? t("acknowledgementNote") : t("resolutionNote")}
+              </Label>
+              <Input 
+                id="action-note" 
+                placeholder={actionType === "acknowledge" ? t("enterAcknowledgementNote") : t("enterResolutionDetails")}
+                value={actionNote}
+                onChange={(e) => setActionNote(e.target.value)}
+              />
+            </div>
+            
+            {actionType === "resolve" && (
+              <div className="space-y-2">
+                <Label htmlFor="resolution-status">{t("resolutionStatus")}</Label>
+                <Select>
+                  <SelectTrigger id="resolution-status">
+                    <SelectValue placeholder={t("selectStatus")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="resolved">{t("fullyResolved")}</SelectItem>
+                    <SelectItem value="partial">{t("partiallyResolved")}</SelectItem>
+                    <SelectItem value="workaround">{t("workaroundApplied")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox id="notify-staff" />
+              <Label htmlFor="notify-staff">
+                {t("notifyRelevantStaff")}
+              </Label>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsActionDialogOpen(false)}>
+              {t("cancel")}
+            </Button>
+            <Button onClick={executeAction}>
+              {actionType === "acknowledge" ? (
+                <>
+                  <Check className="h-4 w-4 mr-2" />
+                  {t("acknowledge")}
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4 mr-2" />
+                  {t("resolve")}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Filter Dialog */}
+      <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t("advancedFilters")}</DialogTitle>
+            <DialogDescription>
+              {t("narrowDownRecords")}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="date-range">{t("dateRange")}</Label>
+              <Select defaultValue="today">
+                <SelectTrigger id="date-range">
+                  <SelectValue placeholder={t("selectDateRange")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">{t("today")}</SelectItem>
+                  <SelectItem value="this-week">{t("thisWeek")}</SelectItem>
+                  <SelectItem value="this-month">{t("thisMonth")}</SelectItem>
+                  <SelectItem value="custom">{t("customRange")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="record-type">{t("recordType")}</Label>
+              <Select defaultValue="all">
+                <SelectTrigger id="record-type">
+                  <SelectValue placeholder={t("selectType")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t("allTypes")}</SelectItem>
+                  <SelectItem value="access">{t("accessEvents")}</SelectItem>
+                  <SelectItem value="location">{t("locationUpdates")}</SelectItem>
+                  <SelectItem value="status">{t("statusChanges")}</SelectItem>
+                  <SelectItem value="alert">{t("alerts")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="card-id">{t("cardID")}</Label>
+                <Input id="card-id" placeholder={t("enterCardID")} />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="location">{t("location")}</Label>
+                <Input id="location" placeholder={t("enterLocation")} />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>{t("status")}</Label>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="status-pending" defaultChecked />
+                  <Label htmlFor="status-pending" className="text-sm font-normal">
+                    {t("pending")}
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="status-acknowledged" defaultChecked />
+                  <Label htmlFor="status-acknowledged" className="text-sm font-normal">
+                    {t("acknowledged")}
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="status-resolved" defaultChecked />
+                  <Label htmlFor="status-resolved" className="text-sm font-normal">
+                    {t("resolved")}
+                  </Label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsFilterOpen(false)}>
+              {t("reset")}
+            </Button>
+            <Button onClick={() => setIsFilterOpen(false)}>
+              {t("applyFilters")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 }

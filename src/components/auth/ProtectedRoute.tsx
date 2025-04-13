@@ -24,8 +24,18 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         return;
       }
       
+      // Check if system has been initialized
+      const isSystemInitialized = localStorage.getItem("system_initialized") === "true";
+      
+      // If system is not initialized, allow access to all routes
+      if (!isSystemInitialized) {
+        setHasAccess(true);
+        setIsChecking(false);
+        return;
+      }
+      
       // Check role if needed
-      if (requiredRole) {
+      if (requiredRole && requiredRole !== "user") {
         const userRole = localStorage.getItem("user_role") || "guest";
         const roleHierarchy = ["guest", "user", "supervisor", "admin"];
         const requiredRoleIndex = roleHierarchy.indexOf(requiredRole);
@@ -41,6 +51,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         setHasAccess(hasRoleAccess);
         setIsChecking(false);
       } else {
+        // For regular user routes, just check authentication
         setHasAccess(true);
         setIsChecking(false);
       }

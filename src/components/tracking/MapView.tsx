@@ -11,6 +11,8 @@ import { GoogleMap } from './map/components/GoogleMap';
 import { AccessDenied } from './map/components/AccessDenied';
 import { mockCardLocations } from './map/mockData';
 import { CardLocation } from "./map/types";
+import { Button } from '@/components/ui/button';
+import { Building, Globe } from 'lucide-react';
 
 interface MapViewProps {
   isRealtime: boolean;
@@ -58,6 +60,11 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
     setGoogleMapLoaded(false);
   };
 
+  // Toggle indoor/outdoor mode
+  const toggleIndoorMode = () => {
+    setIsIndoorMode(!isIndoorMode);
+  };
+
   // Display access denied screen if user doesn't have access
   if (!accessCheckLoading && !hasAccess) {
     return <AccessDenied />;
@@ -92,45 +99,71 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
 
   return (
     <div className="relative">
-      {/* Map Provider Selection */}
-      <MapProviderSelector 
-        mapProvider={mapProvider}
-        handleMapProviderChange={handleMapProviderChange}
-      />
-      
-      {/* Indoor Mode Controller - Now positioned outside the map container */}
-      <IndoorMapController
-        isIndoorMode={isIndoorMode}
-        setIsIndoorMode={setIsIndoorMode}
-        currentFloor={currentFloor}
-        setCurrentFloor={setCurrentFloor}
-        availableFloors={availableFloors}
-        buildingName={currentBuilding}
-        hidden={indoorControllerHidden}
-        setHidden={setIndoorControllerHidden}
-        position="right"
-      />
-      
-      {/* Map Containers */}
-      {mapProvider === 'mapbox' ? (
-        <MapboxMap 
-          mapboxToken={mapboxToken}
-          mapStyle={mapStyle}
-          setMapStyle={setMapStyle}
-          isIndoorMode={isIndoorMode}
-          currentFloor={currentFloor}
-          isMapInitialized={isMapInitialized}
-          setIsMapInitialized={setIsMapInitialized}
-          cardLocations={locationsToUse}
-          center={center}
+      <div className="flex items-center justify-between mb-2">
+        {/* Map Provider Selection */}
+        <MapProviderSelector 
+          mapProvider={mapProvider}
+          handleMapProviderChange={handleMapProviderChange}
         />
-      ) : (
-        <GoogleMap 
-          setGoogleMapLoaded={setGoogleMapLoaded}
-          cardLocations={locationsToUse}
-          center={center}
+        
+        {/* Indoor/Outdoor Toggle Button - Moved outside the map */}
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={toggleIndoorMode}
+          className="flex items-center"
+        >
+          {isIndoorMode ? (
+            <>
+              <Building className="h-4 w-4 mr-2" />
+              {t("indoorMode")}
+            </>
+          ) : (
+            <>
+              <Globe className="h-4 w-4 mr-2" />
+              {t("outdoorMode")}
+            </>
+          )}
+        </Button>
+      </div>
+      
+      {/* Indoor Map Controller - Now positioned outside the map container */}
+      {isIndoorMode && (
+        <IndoorMapController
+          isIndoorMode={isIndoorMode}
+          setIsIndoorMode={setIsIndoorMode}
+          currentFloor={currentFloor}
+          setCurrentFloor={setCurrentFloor}
+          availableFloors={availableFloors}
+          buildingName={currentBuilding}
+          hidden={indoorControllerHidden}
+          setHidden={setIndoorControllerHidden}
+          position="right"
         />
       )}
+      
+      {/* Map Containers */}
+      <div className="w-full h-full">
+        {mapProvider === 'mapbox' ? (
+          <MapboxMap 
+            mapboxToken={mapboxToken}
+            mapStyle={mapStyle}
+            setMapStyle={setMapStyle}
+            isIndoorMode={isIndoorMode}
+            currentFloor={currentFloor}
+            isMapInitialized={isMapInitialized}
+            setIsMapInitialized={setIsMapInitialized}
+            cardLocations={locationsToUse}
+            center={center}
+          />
+        ) : (
+          <GoogleMap 
+            setGoogleMapLoaded={setGoogleMapLoaded}
+            cardLocations={locationsToUse}
+            center={center}
+          />
+        )}
+      </div>
       
       {/* Indoor Mode Indicator */}
       {isIndoorMode && !indoorControllerHidden && (

@@ -47,12 +47,12 @@ const App = () => (
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/alerts" element={<AlertsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/settings" element={<SettingsPage />} /> {/* Settings now available to all users */}
             </Route>
             
             {/* Routes that require admin/supervisor access */}
             <Route element={<ProtectedRoute requiredRole="admin" />}>
               <Route path="/users" element={<UsersPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
             </Route>
             
             {/* Catch-all route */}

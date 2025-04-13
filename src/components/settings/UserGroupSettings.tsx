@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -9,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { UserPlus, Users, Shield, Trash, Edit, Plus, Save } from "lucide-react";
+import { UserPlus, Users, Shield, Trash, Edit, Plus, Save, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import {
   Table,
@@ -27,7 +26,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 // Mock data
 const userLevels = [
@@ -66,6 +67,14 @@ export const UserGroupSettings = () => {
   const [newGroup, setNewGroup] = useState({ name: "", code: "", level: "normal", description: "" });
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
   const [permissions, setPermissions] = useState<Record<number, boolean>>({});
+  
+  // Check if system is initialized
+  const [isSystemInitialized, setIsSystemInitialized] = useState(
+    localStorage.getItem("system_initialized") === "true"
+  );
+  const [showAdminSetupDialog, setShowAdminSetupDialog] = useState(
+    !isSystemInitialized
+  );
   
   // Initialize permissions
   React.useEffect(() => {
@@ -132,255 +141,319 @@ export const UserGroupSettings = () => {
   const handleSavePermissions = () => {
     toast.success("Permissions saved successfully");
   };
+
+  // Function to set the current user as admin
+  const handleSetAsAdmin = () => {
+    localStorage.setItem("user_role", "admin");
+    localStorage.setItem("system_initialized", "true");
+    setIsSystemInitialized(true);
+    setShowAdminSetupDialog(false);
+    toast.success("You have been set as the system administrator");
+  };
   
   return (
-    <Tabs defaultValue="user_levels" onValueChange={setActiveTab} className="w-full">
-      <TabsList className="mb-4 grid grid-cols-3">
-        <TabsTrigger value="user_levels">User Levels</TabsTrigger>
-        <TabsTrigger value="user_groups">User Groups</TabsTrigger>
-        <TabsTrigger value="group_permissions">Group Permissions</TabsTrigger>
-      </TabsList>
-      
-      {/* User Levels Tab */}
-      <TabsContent value="user_levels">
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium">User Access Levels</h3>
-          </div>
-          <Separator />
-          
-          <div className="grid gap-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Level Name</TableHead>
-                  <TableHead>Access Level</TableHead>
-                  <TableHead>Description</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">High Level</TableCell>
-                  <TableCell>Administrator/Supervisor</TableCell>
-                  <TableCell>Complete system access including administration</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Advanced</TableCell>
-                  <TableCell>Manager</TableCell>
-                  <TableCell>Access to most features except administration</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Normal</TableCell>
-                  <TableCell>Staff</TableCell>
-                  <TableCell>Basic operational access</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Guest</TableCell>
-                  <TableCell>Limited</TableCell>
-                  <TableCell>View-only access to specific features</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-      </TabsContent>
-      
-      {/* User Groups Tab */}
-      <TabsContent value="user_groups">
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium">User Groups</h3>
-            <Button variant="outline" onClick={() => {
-              setEditGroupId(null);
-              setNewGroup({ name: "", code: "", level: "normal", description: "" });
-              setShowAddDialog(true);
-            }}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Group
-            </Button>
-          </div>
-          <Separator />
-          
-          <div className="grid gap-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Group Name</TableHead>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Level</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {userGroups.map(group => (
-                  <TableRow key={group.id}>
-                    <TableCell className="font-medium">{group.name}</TableCell>
-                    <TableCell>{group.code}</TableCell>
-                    <TableCell>
-                      {userLevels.find(level => level.value === group.level)?.name || group.level}
-                    </TableCell>
-                    <TableCell>{group.description}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end space-x-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleEditGroup(group)}>
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDeleteGroup(group.id)}>
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+    <>
+      <Tabs defaultValue="user_levels" onValueChange={setActiveTab} className="w-full">
+        <TabsList className="mb-4 grid grid-cols-3">
+          <TabsTrigger value="user_levels">User Levels</TabsTrigger>
+          <TabsTrigger value="user_groups">User Groups</TabsTrigger>
+          <TabsTrigger value="group_permissions">Group Permissions</TabsTrigger>
+        </TabsList>
+        
+        {/* User Levels Tab */}
+        <TabsContent value="user_levels">
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium">User Access Levels</h3>
+              
+              {/* Show "Set as Admin" button if system is not initialized */}
+              {!isSystemInitialized && (
+                <Button onClick={() => setShowAdminSetupDialog(true)} variant="default">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Setup Administrator
+                </Button>
+              )}
+            </div>
+            <Separator />
+            
+            <div className="grid gap-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Level Name</TableHead>
+                    <TableHead>Access Level</TableHead>
+                    <TableHead>Description</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-medium">High Level</TableCell>
+                    <TableCell>Administrator/Supervisor</TableCell>
+                    <TableCell>Complete system access including administration</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Advanced</TableCell>
+                    <TableCell>Manager</TableCell>
+                    <TableCell>Access to most features except administration</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Normal</TableCell>
+                    <TableCell>Staff</TableCell>
+                    <TableCell>Basic operational access</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Guest</TableCell>
+                    <TableCell>Limited</TableCell>
+                    <TableCell>View-only access to specific features</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
           </div>
-        </div>
-      </TabsContent>
-      
-      {/* Group Permissions Tab */}
-      <TabsContent value="group_permissions">
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium">Group Permissions</h3>
-            <div>
-              <Select 
-                value={selectedGroupId?.toString() || ""}
-                onValueChange={(value) => setSelectedGroupId(Number(value))}
-              >
-                <SelectTrigger className="w-[240px]">
-                  <SelectValue placeholder="Select a group" />
-                </SelectTrigger>
-                <SelectContent>
+        </TabsContent>
+        
+        {/* User Groups Tab */}
+        <TabsContent value="user_groups">
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium">User Groups</h3>
+              <Button variant="outline" onClick={() => {
+                setEditGroupId(null);
+                setNewGroup({ name: "", code: "", level: "normal", description: "" });
+                setShowAddDialog(true);
+              }}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Group
+              </Button>
+            </div>
+            <Separator />
+            
+            <div className="grid gap-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Group Name</TableHead>
+                    <TableHead>Code</TableHead>
+                    <TableHead>Level</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {userGroups.map(group => (
-                    <SelectItem key={group.id} value={group.id.toString()}>
-                      {group.name}
-                    </SelectItem>
+                    <TableRow key={group.id}>
+                      <TableCell className="font-medium">{group.name}</TableCell>
+                      <TableCell>{group.code}</TableCell>
+                      <TableCell>
+                        {userLevels.find(level => level.value === group.level)?.name || group.level}
+                      </TableCell>
+                      <TableCell>{group.description}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="ghost" size="icon" onClick={() => handleEditGroup(group)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDeleteGroup(group.id)}>
+                            <Trash className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </SelectContent>
-              </Select>
+                </TableBody>
+              </Table>
             </div>
           </div>
-          <Separator />
-          
-          {selectedGroupId ? (
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Feature Access Permissions</CardTitle>
-                  <CardDescription>
-                    Select which features this group can access
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <h4 className="text-sm font-semibold">Core Features</h4>
-                      {systemFeatures.filter(f => f.category === "core").map(feature => (
-                        <div key={feature.id} className="flex items-center space-x-2">
-                          <Checkbox 
-                            id={`feature-${feature.id}`} 
-                            checked={permissions[feature.id] || false}
-                            onCheckedChange={(checked) => {
-                              setPermissions(prev => ({
-                                ...prev,
-                                [feature.id]: checked === true
-                              }));
-                            }}
-                          />
-                          <label htmlFor={`feature-${feature.id}`} className="text-sm">
-                            {feature.name}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <h4 className="text-sm font-semibold">Data Management</h4>
-                      {systemFeatures.filter(f => f.category === "data").map(feature => (
-                        <div key={feature.id} className="flex items-center space-x-2">
-                          <Checkbox 
-                            id={`feature-${feature.id}`} 
-                            checked={permissions[feature.id] || false}
-                            onCheckedChange={(checked) => {
-                              setPermissions(prev => ({
-                                ...prev,
-                                [feature.id]: checked === true
-                              }));
-                            }}
-                          />
-                          <label htmlFor={`feature-${feature.id}`} className="text-sm">
-                            {feature.name}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <h4 className="text-sm font-semibold">Monitoring</h4>
-                      {systemFeatures.filter(f => f.category === "monitoring").map(feature => (
-                        <div key={feature.id} className="flex items-center space-x-2">
-                          <Checkbox 
-                            id={`feature-${feature.id}`} 
-                            checked={permissions[feature.id] || false}
-                            onCheckedChange={(checked) => {
-                              setPermissions(prev => ({
-                                ...prev,
-                                [feature.id]: checked === true
-                              }));
-                            }}
-                          />
-                          <label htmlFor={`feature-${feature.id}`} className="text-sm">
-                            {feature.name}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <h4 className="text-sm font-semibold">Administration</h4>
-                      {systemFeatures.filter(f => f.category === "admin").map(feature => (
-                        <div key={feature.id} className="flex items-center space-x-2">
-                          <Checkbox 
-                            id={`feature-${feature.id}`} 
-                            checked={permissions[feature.id] || false}
-                            onCheckedChange={(checked) => {
-                              setPermissions(prev => ({
-                                ...prev,
-                                [feature.id]: checked === true
-                              }));
-                            }}
-                          />
-                          <label htmlFor={`feature-${feature.id}`} className="text-sm">
-                            {feature.name}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button onClick={handleSavePermissions}>
-                    <Save className="h-4 w-4 mr-2" />
-                    Save Permissions
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center p-8 border rounded-md bg-muted/10">
-              <div className="text-center">
-                <Shield className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <h4 className="text-lg font-medium">Select a Group</h4>
-                <p className="text-sm text-muted-foreground">
-                  Please select a user group to manage permissions
-                </p>
+        </TabsContent>
+        
+        {/* Group Permissions Tab */}
+        <TabsContent value="group_permissions">
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium">Group Permissions</h3>
+              <div>
+                <Select 
+                  value={selectedGroupId?.toString() || ""}
+                  onValueChange={(value) => setSelectedGroupId(Number(value))}
+                >
+                  <SelectTrigger className="w-[240px]">
+                    <SelectValue placeholder="Select a group" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {userGroups.map(group => (
+                      <SelectItem key={group.id} value={group.id.toString()}>
+                        {group.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-          )}
-        </div>
-      </TabsContent>
+            <Separator />
+            
+            {selectedGroupId ? (
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Feature Access Permissions</CardTitle>
+                    <CardDescription>
+                      Select which features this group can access
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-semibold">Core Features</h4>
+                        {systemFeatures.filter(f => f.category === "core").map(feature => (
+                          <div key={feature.id} className="flex items-center space-x-2">
+                            <Checkbox 
+                              id={`feature-${feature.id}`} 
+                              checked={permissions[feature.id] || false}
+                              onCheckedChange={(checked) => {
+                                setPermissions(prev => ({
+                                  ...prev,
+                                  [feature.id]: checked === true
+                                }));
+                              }}
+                            />
+                            <label htmlFor={`feature-${feature.id}`} className="text-sm">
+                              {feature.name}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-semibold">Data Management</h4>
+                        {systemFeatures.filter(f => f.category === "data").map(feature => (
+                          <div key={feature.id} className="flex items-center space-x-2">
+                            <Checkbox 
+                              id={`feature-${feature.id}`} 
+                              checked={permissions[feature.id] || false}
+                              onCheckedChange={(checked) => {
+                                setPermissions(prev => ({
+                                  ...prev,
+                                  [feature.id]: checked === true
+                                }));
+                              }}
+                            />
+                            <label htmlFor={`feature-${feature.id}`} className="text-sm">
+                              {feature.name}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-semibold">Monitoring</h4>
+                        {systemFeatures.filter(f => f.category === "monitoring").map(feature => (
+                          <div key={feature.id} className="flex items-center space-x-2">
+                            <Checkbox 
+                              id={`feature-${feature.id}`} 
+                              checked={permissions[feature.id] || false}
+                              onCheckedChange={(checked) => {
+                                setPermissions(prev => ({
+                                  ...prev,
+                                  [feature.id]: checked === true
+                                }));
+                              }}
+                            />
+                            <label htmlFor={`feature-${feature.id}`} className="text-sm">
+                              {feature.name}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-semibold">Administration</h4>
+                        {systemFeatures.filter(f => f.category === "admin").map(feature => (
+                          <div key={feature.id} className="flex items-center space-x-2">
+                            <Checkbox 
+                              id={`feature-${feature.id}`} 
+                              checked={permissions[feature.id] || false}
+                              onCheckedChange={(checked) => {
+                                setPermissions(prev => ({
+                                  ...prev,
+                                  [feature.id]: checked === true
+                                }));
+                              }}
+                            />
+                            <label htmlFor={`feature-${feature.id}`} className="text-sm">
+                              {feature.name}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button onClick={handleSavePermissions}>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Permissions
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center p-8 border rounded-md bg-muted/10">
+                <div className="text-center">
+                  <Shield className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                  <h4 className="text-lg font-medium">Select a Group</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Please select a user group to manage permissions
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* Admin Setup Dialog */}
+      <Dialog open={showAdminSetupDialog} onOpenChange={setShowAdminSetupDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>System Administrator Setup</DialogTitle>
+            <DialogDescription>
+              This appears to be the first time setup. Would you like to set yourself as the system administrator?
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <div className="space-y-4">
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Important</AlertTitle>
+                <AlertDescription>
+                  As the system administrator, you will have full access to all system features and settings.
+                  You can add other administrators later.
+                </AlertDescription>
+              </Alert>
+              
+              <div className="flex items-start space-x-2">
+                <Shield className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Administrator Privileges</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Full access to user management, system settings, and all other features
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAdminSetupDialog(false)}>
+              Later
+            </Button>
+            <Button onClick={handleSetAsAdmin}>
+              <Shield className="h-4 w-4 mr-2" />
+              Set Me As Administrator
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       
       {/* Add/Edit Group Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
@@ -458,6 +531,6 @@ export const UserGroupSettings = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Tabs>
+    </>
   );
 };
