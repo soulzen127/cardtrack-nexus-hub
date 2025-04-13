@@ -70,8 +70,8 @@ export const LoginForm = () => {
       localStorage.setItem("authenticated", "true");
       localStorage.setItem("user_role", "user");
       localStorage.setItem("loginProvider", provider);
-      // Fix here: The t function expects an object for interpolation, not separate arguments
-      toast.success(t("loginSuccessSocial", { provider }));
+      // Correctly pass the provider to the translation function
+      toast.success(t("loginSuccessSocial", { provider: provider }));
       navigate("/portal");
       setIsLoading(false);
     }, 1000);
