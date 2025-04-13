@@ -6,7 +6,7 @@ import {
   FileText, 
   Download,
   Share,
-  FilePdf,
+  FileType,
   FileSpreadsheet,
   FileText as FileCSV
 } from "lucide-react";
@@ -28,7 +28,7 @@ interface RecentReportsListProps {
 export function RecentReportsList({ reports, onShare, onDownload }: RecentReportsListProps) {
   const getFormatIcon = (format: string) => {
     if (format.toLowerCase().includes('pdf')) {
-      return <FilePdf className="h-5 w-5 mr-2 text-cardtrack-red" />;
+      return <FileType className="h-5 w-5 mr-2 text-cardtrack-red" />;
     } else if (format.toLowerCase().includes('excel')) {
       return <FileSpreadsheet className="h-5 w-5 mr-2 text-cardtrack-green" />;
     } else {

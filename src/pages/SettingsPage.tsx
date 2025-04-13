@@ -27,7 +27,7 @@ import { UserGroupSettings } from "@/components/settings/UserGroupSettings";
 export default function SettingsPage() {
   const { t } = useI18n();
   const { currentUserRole } = useAccessControl();
-  const isAdmin = currentUserRole === "admin" || currentUserRole === "supervisor";
+  const isAdmin = currentUserRole === "admin" || currentUserRole === "manager";
   
   const handleSaveSettings = () => {
     toast.success(t("settingsSaved"));

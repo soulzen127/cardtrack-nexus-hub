@@ -1,182 +1,165 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Search, Filter, Download, RefreshCw, ChevronRight } from "lucide-react";
-import { toast } from "sonner";
+import { Play, Download, Save } from "lucide-react";
 
-interface QueryResult {
-  id: number;
-  cardId: string;
-  location: string;
-  timestamp: string;
-  action: string;
+interface RealtimeQueryContentProps {
+  onRunQuery: () => void;
 }
 
-export function RealtimeQueryContent() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [queryResults, setQueryResults] = useState<QueryResult[]>([
-    { id: 1, cardId: "CARD-001", location: "Main Office", timestamp: "2023-04-07 14:32:15", action: "Entry" },
-    { id: 2, cardId: "CARD-042", location: "Warehouse B", timestamp: "2023-04-07 14:25:10", action: "Exit" },
-    { id: 3, cardId: "CARD-053", location: "Conference Room", timestamp: "2023-04-07 14:10:45", action: "Entry" },
-  ]);
-
-  const handleSearch = () => {
-    setIsLoading(true);
-    
-    // Simulate API call for real-time query
-    setTimeout(() => {
-      // Mock filtering based on search query
-      const filteredResults = [
-        { id: 1, cardId: "CARD-001", location: "Main Office", timestamp: "2023-04-07 14:32:15", action: "Entry" },
-        { id: 2, cardId: "CARD-042", location: "Warehouse B", timestamp: "2023-04-07 14:25:10", action: "Exit" },
-        { id: 3, cardId: "CARD-053", location: "Conference Room", timestamp: "2023-04-07 14:10:45", action: "Entry" },
-      ].filter(item => 
-        searchQuery === "" || 
-        item.cardId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.location.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      
-      setQueryResults(filteredResults);
-      setIsLoading(false);
-      
-      if (filteredResults.length === 0) {
-        toast.info("No results found for your query");
-      } else {
-        toast.success(`Found ${filteredResults.length} results`);
-      }
-    }, 1000);
+export function RealtimeQueryContent({ onRunQuery }: RealtimeQueryContentProps) {
+  const [queryType, setQueryType] = useState("sql");
+  const [queryResults, setQueryResults] = useState<any[] | null>(null);
+  
+  // Sample mock data for demo purposes
+  const mockResults = [
+    { id: 1, name: "John Doe", location: "Building A", timestamp: "2023-04-18 09:32:45" },
+    { id: 2, name: "Jane Smith", location: "Building B", timestamp: "2023-04-18 10:15:22" },
+    { id: 3, name: "Robert Johnson", location: "Building A", timestamp: "2023-04-18 11:05:37" },
+  ];
+  
+  const handleRunQuery = () => {
+    // This would normally send the query to the backend
+    setQueryResults(mockResults);
+    if (onRunQuery) {
+      onRunQuery();
+    }
   };
-
-  const refreshData = () => {
-    setIsLoading(true);
-    
-    setTimeout(() => {
-      // Mock refreshed data
-      setQueryResults([
-        { id: 1, cardId: "CARD-001", location: "Main Office", timestamp: "2023-04-07 14:32:15", action: "Entry" },
-        { id: 2, cardId: "CARD-042", location: "Warehouse B", timestamp: "2023-04-07 14:25:10", action: "Exit" },
-        { id: 3, cardId: "CARD-053", location: "Conference Room", timestamp: "2023-04-07 14:10:45", action: "Entry" },
-        { id: 4, cardId: "CARD-007", location: "Cafeteria", timestamp: "2023-04-07 14:38:22", action: "Entry" },
-      ]);
-      
-      setIsLoading(false);
-      toast.success("Data refreshed successfully");
-    }, 800);
-  };
-
+  
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1 flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search by card ID, location..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSearch();
-                }
-              }}
-            />
-          </div>
-          <Button onClick={handleSearch} disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                Searching...
-              </>
-            ) : (
-              "Search"
-            )}
-          </Button>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={refreshData} disabled={isLoading}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
-        </div>
-      </div>
-      
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Real-Time Query Results</CardTitle>
+          <CardTitle>Real-time Data Query</CardTitle>
           <CardDescription>
-            Showing {queryResults.length} results
+            Run custom queries against your live data. Use SQL or our query builder.
           </CardDescription>
+          
+          <Tabs value={queryType} onValueChange={setQueryType} className="w-full">
+            <TabsList className="w-full">
+              <TabsTrigger value="sql" className="flex-1">SQL Query</TabsTrigger>
+              <TabsTrigger value="builder" className="flex-1">Query Builder</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </CardHeader>
+        
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Card ID</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Timestamp</TableHead>
-                <TableHead>Action</TableHead>
-                <TableHead className="text-right">Details</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {queryResults.length > 0 ? (
-                queryResults.map((result) => (
-                  <TableRow key={result.id}>
-                    <TableCell className="font-medium">{result.cardId}</TableCell>
-                    <TableCell>{result.location}</TableCell>
-                    <TableCell>{result.timestamp}</TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant="outline" 
-                        className={`${
-                          result.action === "Entry" 
-                            ? "bg-green-100 text-green-800 hover:bg-green-200" 
-                            : "bg-amber-100 text-amber-800 hover:bg-amber-200"
-                        }`}
-                      >
-                        {result.action}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                    No results found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <p className="text-sm text-muted-foreground">Showing the most recent data</p>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled>Previous</Button>
-            <Button variant="outline" size="sm" disabled>Next</Button>
+          <TabsContent value="sql" className="mt-0">
+            <Textarea
+              placeholder="SELECT * FROM card_events WHERE timestamp > NOW() - INTERVAL '24 HOURS'"
+              className="min-h-[200px] font-mono text-sm"
+            />
+          </TabsContent>
+          
+          <TabsContent value="builder" className="mt-0">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Select Table</label>
+                  <select className="w-full rounded-md border border-input bg-transparent px-3 py-2 mt-1">
+                    <option>card_events</option>
+                    <option>cards</option>
+                    <option>locations</option>
+                    <option>users</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium">Time Range</label>
+                  <select className="w-full rounded-md border border-input bg-transparent px-3 py-2 mt-1">
+                    <option>Last 24 Hours</option>
+                    <option>Last 7 Days</option>
+                    <option>Last 30 Days</option>
+                    <option>Custom Range</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">Filter Conditions</label>
+                <div className="flex items-center gap-2 mt-1">
+                  <select className="rounded-md border border-input bg-transparent px-3 py-2">
+                    <option>location</option>
+                    <option>card_id</option>
+                    <option>event_type</option>
+                  </select>
+                  
+                  <select className="rounded-md border border-input bg-transparent px-3 py-2">
+                    <option>equals</option>
+                    <option>contains</option>
+                    <option>in</option>
+                    <option>not equals</option>
+                  </select>
+                  
+                  <input 
+                    type="text" 
+                    placeholder="Value" 
+                    className="flex-1 rounded-md border border-input bg-transparent px-3 py-2"
+                  />
+                  
+                  <Button variant="outline" size="sm">+</Button>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <div className="mt-6 flex justify-end space-x-2">
+            <Button variant="outline">
+              <Save className="h-4 w-4 mr-2" />
+              Save Query
+            </Button>
+            <Button onClick={handleRunQuery}>
+              <Play className="h-4 w-4 mr-2" />
+              Run Query
+            </Button>
           </div>
-        </CardFooter>
+        </CardContent>
       </Card>
+      
+      {queryResults && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Query Results</CardTitle>
+            <CardDescription>
+              {queryResults.length} records found
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {Object.keys(queryResults[0]).map((key) => (
+                    <TableHead key={key}>{key}</TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {queryResults.map((row, i) => (
+                  <TableRow key={i}>
+                    {Object.values(row).map((value, j) => (
+                      <TableCell key={j}>{value}</TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+          
+          <CardFooter>
+            <div className="flex justify-end w-full">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Export Results
+              </Button>
+            </div>
+          </CardFooter>
+        </Card>
+      )}
     </div>
   );
 }
