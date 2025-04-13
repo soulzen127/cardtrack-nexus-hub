@@ -12,8 +12,8 @@ interface GoogleMapProps {
 export function GoogleMap({ setGoogleMapLoaded, cardLocations, center }: GoogleMapProps) {
   const { t } = useI18n();
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<google.maps.Map | null>(null);
-  const markers = useRef<google.maps.Marker[]>([]);
+  const map = useRef<any | null>(null);
+  const markers = useRef<any[]>([]);
 
   const [googleMapKey, setGoogleMapKey] = useState<string>(() => {
     return localStorage.getItem('google_maps_api_key') || '';
