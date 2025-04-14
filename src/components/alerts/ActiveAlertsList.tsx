@@ -17,21 +17,36 @@ import { ActiveAlert } from "./AlertsData";
 
 interface ActiveAlertsListProps {
   alerts: ActiveAlert[];
+  onConfirm?: (alertId: number, title: string) => void;
+  onResolve?: (alertId: number, title: string) => void;
+  onViewDetails?: (alertId: number) => void;
 }
 
-export function ActiveAlertsList({ alerts }: ActiveAlertsListProps) {
+export function ActiveAlertsList({ alerts, onConfirm, onResolve, onViewDetails }: ActiveAlertsListProps) {
   const { t } = useI18n();
 
-  const handleAcknowledge = (alertId: number) => {
-    toast.success(`Alert #${alertId} has been acknowledged`);
+  const handleAcknowledge = (alertId: number, title: string) => {
+    if (onConfirm) {
+      onConfirm(alertId, title);
+    } else {
+      toast.success(`Alert #${alertId} has been acknowledged`);
+    }
   };
 
-  const handleResolve = (alertId: number) => {
-    toast.success(`Alert #${alertId} has been marked as resolved`);
+  const handleResolve = (alertId: number, title: string) => {
+    if (onResolve) {
+      onResolve(alertId, title);
+    } else {
+      toast.success(`Alert #${alertId} has been marked as resolved`);
+    }
   };
 
-  const handleIgnore = (alertId: number) => {
-    toast.success(`Alert #${alertId} has been dismissed`);
+  const handleViewDetails = (alertId: number) => {
+    if (onViewDetails) {
+      onViewDetails(alertId);
+    } else {
+      toast.info(`Viewing details for alert #${alertId}`);
+    }
   };
 
   return (
@@ -86,24 +101,23 @@ export function ActiveAlertsList({ alerts }: ActiveAlertsListProps) {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => handleAcknowledge(alert.id)}
+                  onClick={() => handleAcknowledge(alert.id, alert.type)}
                 >
                   {t("acknowledge")}
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => handleResolve(alert.id)}
+                  onClick={() => handleResolve(alert.id, alert.type)}
                 >
                   {t("resolve")}
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleIgnore(alert.id)}
+                  onClick={() => handleViewDetails(alert.id)}
                 >
-                  <XCircle className="h-4 w-4 mr-2" />
-                  {t("dismiss")}
+                  {t("viewDetails")}
                 </Button>
               </div>
             </div>

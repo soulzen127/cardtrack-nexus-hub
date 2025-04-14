@@ -2,6 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { 
   CheckCircle, 
   Calendar, 
@@ -13,17 +14,31 @@ import { ResolvedAlert } from "./AlertsData";
 
 interface ResolvedAlertsListProps {
   alerts: ResolvedAlert[];
+  onViewResolution?: (alertId: number, title: string) => void;
+  onViewDetails?: (alertId: number) => void;
 }
 
-export function ResolvedAlertsList({ alerts }: ResolvedAlertsListProps) {
+export function ResolvedAlertsList({ alerts, onViewResolution, onViewDetails }: ResolvedAlertsListProps) {
   const { t } = useI18n();
+
+  const handleViewResolution = (alertId: number, title: string) => {
+    if (onViewResolution) {
+      onViewResolution(alertId, title);
+    }
+  };
+
+  const handleViewDetails = (alertId: number) => {
+    if (onViewDetails) {
+      onViewDetails(alertId);
+    }
+  };
 
   return (
     <div className="space-y-4">
       {alerts.map((alert) => (
         <Card key={alert.id}>
           <CardContent className="p-4">
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-4">
               <div className="flex items-start">
                 <CheckCircle className="h-5 w-5 mr-2 text-cardtrack-green mt-0.5" />
                 <div>
@@ -58,6 +73,23 @@ export function ResolvedAlertsList({ alerts }: ResolvedAlertsListProps) {
                     </div>
                   )}
                 </div>
+              </div>
+              
+              <div className="flex justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleViewResolution(alert.id, alert.type)}
+                >
+                  {t("viewResolution")}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleViewDetails(alert.id)}
+                >
+                  {t("viewDetails")}
+                </Button>
               </div>
             </div>
           </CardContent>
