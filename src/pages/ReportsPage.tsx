@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Download, Share, FileText, BarChart } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
@@ -16,6 +16,45 @@ import {
   RealtimeQueryContent
 } from "@/components/reports";
 import { CreateReportDialog } from "@/components/reports/CreateReportDialog";
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error("Error in Reports Page:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-6 border rounded-md bg-red-50 text-red-900">
+          <h3 className="text-lg font-medium mb-2">Something went wrong</h3>
+          <p>There was an error loading this section. Please try refreshing the page.</p>
+          <Button 
+            variant="outline" 
+            className="mt-4"
+            onClick={() => this.setState({ hasError: false })}
+          >
+            Try Again
+          </Button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState("templates");
@@ -104,11 +143,13 @@ export default function ReportsPage() {
           </Button>
         </div>
 
-        <ReportStatsCards 
-          reportTemplates={reportTemplates}
-          scheduledReports={scheduledReports}
-          recentReports={recentReports}
-        />
+        <ErrorBoundary>
+          <ReportStatsCards 
+            reportTemplates={reportTemplates}
+            scheduledReports={scheduledReports}
+            recentReports={recentReports}
+          />
+        </ErrorBoundary>
 
         <Card>
           <CardHeader>
@@ -127,44 +168,54 @@ export default function ReportsPage() {
                 <TabsTrigger value="query">Real-time Query</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="templates">
-                <ReportTemplatesList 
-                  templates={reportTemplates} 
-                  onGenerate={handleGenerateReport}
-                  onSchedule={handleScheduleReport}
-                  onView={handleViewReport}
-                />
-              </TabsContent>
+              <ErrorBoundary>
+                <TabsContent value="templates">
+                  <ReportTemplatesList 
+                    templates={reportTemplates} 
+                    onGenerate={handleGenerateReport}
+                    onSchedule={handleScheduleReport}
+                    onView={handleViewReport}
+                  />
+                </TabsContent>
+              </ErrorBoundary>
               
-              <TabsContent value="scheduled">
-                <ScheduledReportsList 
-                  reports={scheduledReports}
-                  onEditSchedule={handleEditSchedule}
-                  onDisable={handleDisableSchedule}
-                />
-              </TabsContent>
+              <ErrorBoundary>
+                <TabsContent value="scheduled">
+                  <ScheduledReportsList 
+                    reports={scheduledReports}
+                    onEditSchedule={handleEditSchedule}
+                    onDisable={handleDisableSchedule}
+                  />
+                </TabsContent>
+              </ErrorBoundary>
               
-              <TabsContent value="recent">
-                <RecentReportsList 
-                  reports={recentReports}
-                  onShare={handleShareReport}
-                  onDownload={handleDownloadReport}
-                />
-              </TabsContent>
+              <ErrorBoundary>
+                <TabsContent value="recent">
+                  <RecentReportsList 
+                    reports={recentReports}
+                    onShare={handleShareReport}
+                    onDownload={handleDownloadReport}
+                  />
+                </TabsContent>
+              </ErrorBoundary>
               
-              <TabsContent value="analytics">
-                <AnalyticsContent 
-                  selectedTimeframe={selectedTimeframe}
-                  setSelectedTimeframe={setSelectedTimeframe}
-                  onExport={handleExportAnalytics}
-                />
-              </TabsContent>
+              <ErrorBoundary>
+                <TabsContent value="analytics">
+                  <AnalyticsContent 
+                    selectedTimeframe={selectedTimeframe}
+                    setSelectedTimeframe={setSelectedTimeframe}
+                    onExport={handleExportAnalytics}
+                  />
+                </TabsContent>
+              </ErrorBoundary>
               
-              <TabsContent value="query">
-                <RealtimeQueryContent 
-                  onRunQuery={handleRealtimeQuery}
-                />
-              </TabsContent>
+              <ErrorBoundary>
+                <TabsContent value="query">
+                  <RealtimeQueryContent 
+                    onRunQuery={handleRealtimeQuery}
+                  />
+                </TabsContent>
+              </ErrorBoundary>
             </Tabs>
           </CardContent>
         </Card>

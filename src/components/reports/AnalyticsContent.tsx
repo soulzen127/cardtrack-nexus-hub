@@ -19,11 +19,70 @@ interface AnalyticsContentProps {
   onExport: () => void;
 }
 
+// Define sample data with proper type
+interface ChartDataPoint {
+  name: string;
+  value: number;
+}
+
 export function AnalyticsContent({ 
   selectedTimeframe, 
   setSelectedTimeframe,
   onExport
 }: AnalyticsContentProps) {
+  // Ensure we always have valid data by providing fallback empty arrays
+  const cardStatusData: ChartDataPoint[] = [
+    { name: 'Active', value: 65 },
+    { name: 'Suspended', value: 15 },
+    { name: 'Expired', value: 10 },
+    { name: 'Lost', value: 10 },
+  ];
+  
+  const cardIssuanceData: ChartDataPoint[] = [
+    { name: 'Jan', value: 10 },
+    { name: 'Feb', value: 15 },
+    { name: 'Mar', value: 25 },
+    { name: 'Apr', value: 22 },
+    { name: 'May', value: 30 },
+    { name: 'Jun', value: 28 },
+  ];
+  
+  const locationsData: ChartDataPoint[] = [
+    { name: 'Building A', value: 120 },
+    { name: 'Building B', value: 80 },
+    { name: 'Building C', value: 60 },
+    { name: 'Building D', value: 45 },
+    { name: 'Building E', value: 30 },
+  ];
+  
+  const transitionsData: ChartDataPoint[] = [
+    { name: 'Mon', value: 45 },
+    { name: 'Tue', value: 52 },
+    { name: 'Wed', value: 49 },
+    { name: 'Thu', value: 62 },
+    { name: 'Fri', value: 58 },
+    { name: 'Sat', value: 20 },
+    { name: 'Sun', value: 18 },
+  ];
+  
+  const eventsData: ChartDataPoint[] = [
+    { name: 'Card Actions', value: 45 },
+    { name: 'User Login', value: 25 },
+    { name: 'Alerts', value: 15 },
+    { name: 'Reports', value: 10 },
+    { name: 'Settings', value: 5 },
+  ];
+  
+  const activityData: ChartDataPoint[] = [
+    { name: '6am', value: 10 },
+    { name: '8am', value: 35 },
+    { name: '10am', value: 42 },
+    { name: '12pm', value: 30 },
+    { name: '2pm', value: 38 },
+    { name: '4pm', value: 25 },
+    { name: '6pm', value: 15 },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
@@ -64,14 +123,7 @@ export function AnalyticsContent({
                 <CardDescription>Current status of all cards in the system</CardDescription>
               </CardHeader>
               <CardContent>
-                <PieChart
-                  data={[
-                    { name: 'Active', value: 65 },
-                    { name: 'Suspended', value: 15 },
-                    { name: 'Expired', value: 10 },
-                    { name: 'Lost', value: 10 },
-                  ]}
-                />
+                <PieChart data={cardStatusData} />
               </CardContent>
             </Card>
             
@@ -81,16 +133,7 @@ export function AnalyticsContent({
                 <CardDescription>Number of cards issued over time</CardDescription>
               </CardHeader>
               <CardContent>
-                <LineChart
-                  data={[
-                    { name: 'Jan', value: 10 },
-                    { name: 'Feb', value: 15 },
-                    { name: 'Mar', value: 25 },
-                    { name: 'Apr', value: 22 },
-                    { name: 'May', value: 30 },
-                    { name: 'Jun', value: 28 },
-                  ]}
-                />
+                <LineChart data={cardIssuanceData} />
               </CardContent>
             </Card>
           </div>
@@ -104,15 +147,7 @@ export function AnalyticsContent({
                 <CardDescription>Most visited locations by cards</CardDescription>
               </CardHeader>
               <CardContent>
-                <BarChart
-                  data={[
-                    { name: 'Building A', value: 120 },
-                    { name: 'Building B', value: 80 },
-                    { name: 'Building C', value: 60 },
-                    { name: 'Building D', value: 45 },
-                    { name: 'Building E', value: 30 },
-                  ]}
-                />
+                <BarChart data={locationsData} />
               </CardContent>
             </Card>
             
@@ -122,17 +157,7 @@ export function AnalyticsContent({
                 <CardDescription>Number of zone boundary crossings</CardDescription>
               </CardHeader>
               <CardContent>
-                <LineChart
-                  data={[
-                    { name: 'Mon', value: 45 },
-                    { name: 'Tue', value: 52 },
-                    { name: 'Wed', value: 49 },
-                    { name: 'Thu', value: 62 },
-                    { name: 'Fri', value: 58 },
-                    { name: 'Sat', value: 20 },
-                    { name: 'Sun', value: 18 },
-                  ]}
-                />
+                <LineChart data={transitionsData} />
               </CardContent>
             </Card>
           </div>
@@ -146,15 +171,7 @@ export function AnalyticsContent({
                 <CardDescription>Events by category</CardDescription>
               </CardHeader>
               <CardContent>
-                <PieChart
-                  data={[
-                    { name: 'Card Actions', value: 45 },
-                    { name: 'User Login', value: 25 },
-                    { name: 'Alerts', value: 15 },
-                    { name: 'Reports', value: 10 },
-                    { name: 'Settings', value: 5 },
-                  ]}
-                />
+                <PieChart data={eventsData} />
               </CardContent>
             </Card>
             
@@ -164,17 +181,7 @@ export function AnalyticsContent({
                 <CardDescription>System access by hour of day</CardDescription>
               </CardHeader>
               <CardContent>
-                <BarChart
-                  data={[
-                    { name: '6am', value: 10 },
-                    { name: '8am', value: 35 },
-                    { name: '10am', value: 42 },
-                    { name: '12pm', value: 30 },
-                    { name: '2pm', value: 38 },
-                    { name: '4pm', value: 25 },
-                    { name: '6pm', value: 15 },
-                  ]}
-                />
+                <BarChart data={activityData} />
               </CardContent>
             </Card>
           </div>

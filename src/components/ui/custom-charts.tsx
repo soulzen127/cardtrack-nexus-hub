@@ -1,8 +1,20 @@
 
 import React from "react";
-import { PieChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { BarChart as RechartsBarChart, Bar } from 'recharts';
-import { PieChart as RechartsPieChart, Pie, Cell } from 'recharts';
+import { 
+  LineChart as RechartsLineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer, 
+  Legend,
+  BarChart as RechartsBarChart, 
+  Bar,
+  PieChart as RechartsPieChart, 
+  Pie, 
+  Cell
+} from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 // Custom colors for charts
@@ -17,11 +29,22 @@ interface ChartProps {
   data: ChartData[];
 }
 
+// Helper function to ensure safe data
+const ensureSafeData = (data: ChartData[] | undefined): ChartData[] => {
+  // Return an empty array if data is undefined or null
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return [{ name: 'No Data', value: 0 }];
+  }
+  return data;
+};
+
 export const BarChart: React.FC<ChartProps> = ({ data }) => {
+  const safeData = ensureSafeData(data);
+  
   return (
     <ChartContainer config={{}} className="aspect-[4/3] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <RechartsBarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
+        <RechartsBarChart data={safeData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
@@ -34,10 +57,12 @@ export const BarChart: React.FC<ChartProps> = ({ data }) => {
 };
 
 export const LineChart: React.FC<ChartProps> = ({ data }) => {
+  const safeData = ensureSafeData(data);
+  
   return (
     <ChartContainer config={{}} className="aspect-[4/3] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <RechartsLineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
+        <RechartsLineChart data={safeData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
@@ -50,12 +75,14 @@ export const LineChart: React.FC<ChartProps> = ({ data }) => {
 };
 
 export const PieChart: React.FC<ChartProps> = ({ data }) => {
+  const safeData = ensureSafeData(data);
+  
   return (
     <ChartContainer config={{}} className="aspect-[4/3] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <RechartsPieChart>
           <Pie
-            data={data}
+            data={safeData}
             cx="50%"
             cy="50%"
             labelLine={false}
@@ -64,7 +91,7 @@ export const PieChart: React.FC<ChartProps> = ({ data }) => {
             dataKey="value"
             label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
           >
-            {data.map((entry, index) => (
+            {safeData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
