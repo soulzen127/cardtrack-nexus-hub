@@ -35,16 +35,19 @@ export const LoginForm = () => {
       if (email === "admin@example.com" && password === "password") {
         localStorage.setItem("authenticated", "true");
         localStorage.setItem("user_role", "admin");
+        localStorage.setItem("user_name", "Admin User");
         toast.success(t("loginSuccessAdmin"));
         navigate("/portal");
       } else if (email === "supervisor@example.com" && password === "password") {
         localStorage.setItem("authenticated", "true");
         localStorage.setItem("user_role", "supervisor");
+        localStorage.setItem("user_name", "Supervisor User");
         toast.success(t("loginSuccessSupervisor"));
         navigate("/portal");
       } else if (email.includes("@example.com") && password === "password") {
         localStorage.setItem("authenticated", "true");
         localStorage.setItem("user_role", "user");
+        localStorage.setItem("user_name", "Regular User");
         toast.success(t("loginSuccess"));
         navigate("/portal");
       } else {
@@ -69,9 +72,23 @@ export const LoginForm = () => {
     setTimeout(() => {
       localStorage.setItem("authenticated", "true");
       localStorage.setItem("user_role", "user");
+      localStorage.setItem("user_name", `${provider} User`);
       localStorage.setItem("loginProvider", provider);
       // Correctly pass the provider to the translation function
       toast.success(t("loginSuccessSocial", { provider: provider }));
+      navigate("/portal");
+      setIsLoading(false);
+    }, 1000);
+  };
+  
+  const handleGuestLogin = () => {
+    setIsLoading(true);
+    // Guest login implementation
+    setTimeout(() => {
+      localStorage.setItem("authenticated", "true");
+      localStorage.setItem("user_role", "guest");
+      localStorage.setItem("user_name", "Guest User");
+      toast.success(t("loginSuccessGuest"));
       navigate("/portal");
       setIsLoading(false);
     }, 1000);
@@ -108,18 +125,27 @@ export const LoginForm = () => {
               Facebook
             </Button>
           </div>
-          <Button 
-            type="button" 
-            variant="outline" 
-            onClick={() => handleSocialLogin("LINE")}
-            disabled={isLoading}
-            className="w-full"
-          >
-            <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path d="M19.365 9.89c.50 0 .866.37.866.87s-.396.87-.866.87H18.24v.63h1.126c.48 0 .866.37.866.87s-.396.87-.866.87h-2c-.48 0-.867-.39-.867-.87V9.89c0-.5.387-.87.867-.87h2c.48 0 .866.37.866.87s-.396.87-.866.87H18.24v.13h1.126zm-3.97 3.24c.48 0 .867.39.867.87s-.387.87-.867.87h-2c-.48 0-.867-.39-.867-.87V9.89c0-.5.387-.87.867-.87s.867.37.867.87v2.37h1.133zm-3.63-2.39v.13h1.13c.48 0 .866.37.866.87s-.396.87-.866.87h-1.13v.5h1.13c.48 0 .866.37.866.87s-.396.87-.866.87h-2c-.48 0-.87-.39-.87-.87V9.89c0-.5.4-.87.87-.87h2c.48 0 .866.37.866.87s-.396.87-.866.87h-1.13zm-4.063 0v3.13c0 .48-.397.87-.867.87s-.867-.39-.867-.87V10.76H4.5c-.48 0-.867-.37-.867-.87s.387-.87.867-.87h3.11c.48 0 .866.37.866.87s-.396.87-.866.87h-1.54z" fill="#00B900"/>
-            </svg>
-            LINE
-          </Button>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => navigate("/signup")}
+              disabled={isLoading}
+              className="w-full"
+            >
+              {t("registerNewAccount")}
+            </Button>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={handleGuestLogin}
+              disabled={isLoading}
+              className="w-full"
+            >
+              {t("guestLogin")}
+            </Button>
+          </div>
           
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-background px-2 text-muted-foreground">

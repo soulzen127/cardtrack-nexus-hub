@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Bell, Menu, User } from "lucide-react";
+import { Bell, Menu, Moon, Sun, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu,
@@ -18,7 +18,7 @@ import {
   DialogDescription,
   DialogFooter
 } from "@/components/ui/dialog";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useI18n } from "@/hooks/use-i18n";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -29,23 +29,46 @@ import {
   SelectTrigger,
   SelectValue 
 } from "@/components/ui/select";
+import { LanguageSelector } from "@/components/language/LanguageSelector";
+import { useTheme } from "@/hooks/use-theme";
+import { SidebarToggle } from "./sidebar/SidebarToggle";
 
 interface TopbarProps {
   onToggleSidebar: () => void;
+  sidebarOpen: boolean;
 }
 
-export function Topbar({ onToggleSidebar }: TopbarProps) {
+export function Topbar({ onToggleSidebar, sidebarOpen }: TopbarProps) {
   const { t } = useI18n();
+  const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const [isAlertSettingsOpen, setIsAlertSettingsOpen] = useState(false);
+  
+  const handleLogout = () => {
+    localStorage.removeItem("authenticated");
+    localStorage.removeItem("user_role");
+    navigate("/login");
+  };
 
   return (
     <header className="sticky top-0 z-30 h-16 w-full border-b bg-background/95 backdrop-blur">
       <div className="flex h-16 items-center px-4 md:px-6">
-        <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="mr-2 lg:hidden">
-          <Menu className="h-5 w-5" />
-        </Button>
+        <SidebarToggle isOpen={sidebarOpen} onToggle={onToggleSidebar} />
         
         <div className="ml-auto flex items-center space-x-4">
+          {/* Language Selector */}
+          <LanguageSelector minimal />
+          
+          {/* Theme Switcher */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            aria-label={t("toggleTheme")}
+          >
+            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
@@ -101,8 +124,8 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
                 <Link to="/settings">{t("settings")}</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to="/login">{t("logout")}</Link>
+              <DropdownMenuItem onClick={handleLogout}>
+                {t("logout")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

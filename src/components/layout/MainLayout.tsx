@@ -28,7 +28,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         "flex flex-col flex-1 overflow-hidden transition-all duration-300",
         sidebarOpen ? "lg:ml-64" : "lg:ml-16"
       )}>
-        <Topbar onToggleSidebar={toggleSidebar} />
+        <Topbar onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           {children}
         </main>

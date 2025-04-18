@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { ThemeProvider } from "@/hooks/use-theme";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
@@ -27,39 +28,41 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            
-            {/* Protected routes - require authentication */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/portal" element={<PortalPage />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/cards" element={<CardsPage />} />
-              <Route path="/tracking" element={<TrackingPage />} />
-              <Route path="/records" element={<RecordsPage />} />
-              <Route path="/reports" element={<ReportsPage />} />
-              <Route path="/alerts" element={<AlertsPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/settings" element={<SettingsPage />} /> {/* Settings now available to all users */}
-            </Route>
-            
-            {/* Routes that require admin/supervisor access */}
-            <Route element={<ProtectedRoute requiredRole="admin" />}>
-              <Route path="/users" element={<UsersPage />} />
-            </Route>
-            
-            {/* Catch-all route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider defaultTheme="light">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              
+              {/* Protected routes - require authentication */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/portal" element={<PortalPage />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/cards" element={<CardsPage />} />
+                <Route path="/tracking" element={<TrackingPage />} />
+                <Route path="/records" element={<RecordsPage />} />
+                <Route path="/reports" element={<ReportsPage />} />
+                <Route path="/alerts" element={<AlertsPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/settings" element={<SettingsPage />} /> {/* Settings now available to all users */}
+              </Route>
+              
+              {/* Routes that require admin/supervisor access */}
+              <Route element={<ProtectedRoute requiredRole="admin" />}>
+                <Route path="/users" element={<UsersPage />} />
+              </Route>
+              
+              {/* Catch-all route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </LanguageProvider>
   </QueryClientProvider>
 );
