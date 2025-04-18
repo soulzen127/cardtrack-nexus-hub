@@ -82,7 +82,7 @@ export const commonTranslations = {
     registerNewAccount: "Register",
     guestLogin: "Guest",
   },
-  zh: {
+  zh_TW: {  // Changed from 'zh' to 'zh_TW'
     email: "邮箱",
     password: "密码",
     loginToYourAccount: "登录到您的帐户",
