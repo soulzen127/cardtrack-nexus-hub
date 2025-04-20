@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +21,7 @@ import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import PortalPage from "./pages/PortalPage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import EventsPage from "./pages/EventsPage";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +48,7 @@ const App = () => (
                 <Route path="/records" element={<RecordsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/events" element={<EventsPage />} />
               </Route>
               
               {/* Routes that require operator or higher access */}

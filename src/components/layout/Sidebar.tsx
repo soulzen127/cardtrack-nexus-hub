@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import { cn } from "@/lib/utils";
 import { 
   Home, 
   CreditCard, 
@@ -10,7 +9,10 @@ import {
   Bell, 
   Settings, 
   Users,
-  LayoutGrid
+  LayoutGrid,
+  MapPin,
+  AlertTriangle,
+  Route
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "@/i18n/translations";
@@ -44,9 +46,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
     { name: "Management Overview", translationKey: "managementOverview", path: "/dashboard", icon: <Home size={20} /> },
     { name: "Cards", translationKey: "cards", path: "/cards", icon: <CreditCard size={20} /> },
     { name: "Tracking", translationKey: "tracking", path: "/tracking", icon: <Map size={20} /> },
+    { name: "Event Reporting", translationKey: "eventReporting", path: "/events", icon: <Bell size={20} /> },
     { name: "Records", translationKey: "records", path: "/records", icon: <Search size={20} /> },
-    { name: "Reports", translationKey: "reports", path: "/reports", icon: <BarChart size={20} /> },
-    { name: "Alerts", translationKey: "alerts", path: "/alerts", icon: <Bell size={20} /> },
+    { name: "Reports", translationKey: "reportsManagement", path: "/reports", icon: <BarChart size={20} /> },
+    { name: "Alerts", translationKey: "alerts", path: "/alerts", icon: <AlertTriangle size={20} /> },
   ];
 
   const secondaryItems: SidebarItem[] = [

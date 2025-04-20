@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Card, 
@@ -59,14 +58,14 @@ export function MapSection({
         <CardTitle>{t("geographicLocation")}</CardTitle>
         <CardDescription>{t("realtimeGeographicVisualization")}</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col space-y-4">
+      <CardContent className="flex flex-col space-y-4 p-0">
         {/* External Map Controls - Before the map */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center px-4 pt-4">
           <MapActions />
         </div>
         
-        {/* Map Container - Increased height */}
-        <div className="h-[500px] lg:h-[600px] relative rounded-lg border overflow-hidden">
+        {/* Map Container - Full width and increased height */}
+        <div className="h-[600px] lg:h-[700px] relative">
           <MapView 
             isRealtime={isRealtime}
             timeSliderValue={timeSliderValue}
@@ -77,14 +76,16 @@ export function MapSection({
         </div>
         
         {/* Time Controls - After the map */}
-        <MapControls 
-          isRealtime={isRealtime}
-          setIsRealtime={setIsRealtime}
-          timeSliderValue={timeSliderValue}
-          setTimeSliderValue={setTimeSliderValue}
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-        />
+        <div className="px-4 pb-4">
+          <MapControls 
+            isRealtime={isRealtime}
+            setIsRealtime={setIsRealtime}
+            timeSliderValue={timeSliderValue}
+            setTimeSliderValue={setTimeSliderValue}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+          />
+        </div>
       </CardContent>
     </Card>
   );
