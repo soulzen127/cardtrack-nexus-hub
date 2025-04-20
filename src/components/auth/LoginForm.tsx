@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Eye, EyeOff, Facebook, Mail, User } from "lucide-react";
+import { Eye, EyeOff, Facebook, Mail } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 import { Separator } from "@/components/ui/separator";
 

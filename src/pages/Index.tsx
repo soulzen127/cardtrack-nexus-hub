@@ -13,6 +13,6 @@ export default function Index() {
     }
   }, [navigate]);
   
-  // If not authenticated, redirect to login
+  // Always redirect to login if not authenticated
   return <Navigate to="/login" replace />;
 }

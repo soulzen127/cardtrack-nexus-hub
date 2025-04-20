@@ -34,7 +34,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           setHasAccess(true);
         } else {
           setHasAccess(false);
-          toast.error("Please complete system setup first");
+          toast.error("請先完成系統設定");
         }
         setIsChecking(false);
         return;
@@ -51,7 +51,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         const hasRoleAccess = userRoleIndex >= requiredRoleIndex;
         
         if (!hasRoleAccess) {
-          toast.error("You don't have permission to access this page");
+          toast.error("您沒有權限訪問此頁面");
         }
         
         setHasAccess(hasRoleAccess);
@@ -68,7 +68,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   
   // Still checking auth state
   if (isChecking) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+    return <div className="flex h-screen items-center justify-center">載入中...</div>;
   }
   
   // If not authenticated or doesn't have required role, redirect to login
