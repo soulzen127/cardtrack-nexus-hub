@@ -1,15 +1,14 @@
 
 import React, { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAccessControl } from "@/hooks/use-access-control";
 import { toast } from "sonner";
 
 interface ProtectedRouteProps {
-  requiredRole?: "admin" | "supervisor" | "user" | "guest";
+  requiredRole?: "admin" | "manager" | "operator" | "viewer";
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  requiredRole = "user" 
+  requiredRole = "viewer" 
 }) => {
   const location = useLocation();
   const [isChecking, setIsChecking] = useState(true);
@@ -27,17 +26,24 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       // Check if system has been initialized
       const isSystemInitialized = localStorage.getItem("system_initialized") === "true";
       
-      // If system is not initialized, allow access to all routes
+      // If system is not initialized, allow access to portal and settings
+      // This is for first-time users to configure the system
       if (!isSystemInitialized) {
-        setHasAccess(true);
+        // Only allow access to portal and settings for first-time setup
+        if (location.pathname === "/portal" || location.pathname === "/settings") {
+          setHasAccess(true);
+        } else {
+          setHasAccess(false);
+          toast.error("Please complete system setup first");
+        }
         setIsChecking(false);
         return;
       }
       
       // Check role if needed
-      if (requiredRole && requiredRole !== "user") {
-        const userRole = localStorage.getItem("user_role") || "guest";
-        const roleHierarchy = ["guest", "user", "supervisor", "admin"];
+      if (requiredRole) {
+        const userRole = localStorage.getItem("user_role") || "viewer";
+        const roleHierarchy = ["viewer", "operator", "manager", "admin"];
         const requiredRoleIndex = roleHierarchy.indexOf(requiredRole);
         const userRoleIndex = roleHierarchy.indexOf(userRole);
         

@@ -11,6 +11,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 interface AdminSetupDialogProps {
   open: boolean;
@@ -23,6 +25,14 @@ export const AdminSetupDialog = ({
   onOpenChange,
   onSetAsAdmin,
 }: AdminSetupDialogProps) => {
+  const [confirmSetup, setConfirmSetup] = React.useState(false);
+  
+  const handleSetAsAdmin = () => {
+    if (confirmSetup) {
+      onSetAsAdmin();
+    }
+  };
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
@@ -53,6 +63,19 @@ export const AdminSetupDialog = ({
                 </p>
               </div>
             </div>
+            
+            <div className="flex items-start space-x-2 pt-2">
+              <Checkbox 
+                id="confirmAdmin" 
+                checked={confirmSetup}
+                onCheckedChange={(checked) => setConfirmSetup(checked as boolean)} 
+              />
+              <div className="grid gap-1.5 leading-none">
+                <Label htmlFor="confirmAdmin">
+                  I understand that this grants me full administrative privileges
+                </Label>
+              </div>
+            </div>
           </div>
         </div>
         
@@ -60,7 +83,7 @@ export const AdminSetupDialog = ({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Later
           </Button>
-          <Button onClick={onSetAsAdmin}>
+          <Button onClick={handleSetAsAdmin} disabled={!confirmSetup}>
             <Shield className="h-4 w-4 mr-2" />
             Set Me As Administrator
           </Button>

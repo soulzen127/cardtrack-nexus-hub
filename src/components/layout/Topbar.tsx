@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Bell, Menu, Moon, Sun, User } from "lucide-react";
+import { Bell, Moon, Sun, User, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu,
@@ -18,7 +17,7 @@ import {
   DialogDescription,
   DialogFooter
 } from "@/components/ui/dialog";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useI18n } from "@/hooks/use-i18n";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -41,12 +40,12 @@ interface TopbarProps {
 export function Topbar({ onToggleSidebar, sidebarOpen }: TopbarProps) {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const location = useLocation();
   const { theme, setTheme } = useTheme();
   const [isAlertSettingsOpen, setIsAlertSettingsOpen] = useState(false);
   
   const handleLogout = () => {
     localStorage.removeItem("authenticated");
-    localStorage.removeItem("user_role");
     navigate("/login");
   };
 
@@ -54,6 +53,19 @@ export function Topbar({ onToggleSidebar, sidebarOpen }: TopbarProps) {
     <header className="sticky top-0 z-30 h-16 w-full border-b bg-background/95 backdrop-blur">
       <div className="flex h-16 items-center px-4 md:px-6">
         <SidebarToggle isOpen={sidebarOpen} onToggle={onToggleSidebar} />
+        
+        {/* Return to Portal button - only show if not on the portal page */}
+        {location.pathname !== "/portal" && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="mr-2" 
+            onClick={() => navigate("/portal")}
+            aria-label="Return to Portal"
+          >
+            <Home className="h-5 w-5" />
+          </Button>
+        )}
         
         <div className="ml-auto flex items-center space-x-4">
           {/* Language Selector */}
@@ -79,6 +91,7 @@ export function Topbar({ onToggleSidebar, sidebarOpen }: TopbarProps) {
             <DropdownMenuContent align="end" className="w-80">
               <DropdownMenuLabel>{t("alerts")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              
               <div className="max-h-80 overflow-y-auto">
                 <DropdownMenuItem className="cursor-pointer">
                   <div className="flex flex-col space-y-1">
@@ -95,6 +108,7 @@ export function Topbar({ onToggleSidebar, sidebarOpen }: TopbarProps) {
                   </div>
                 </DropdownMenuItem>
               </div>
+              
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link to="/alerts" className="w-full text-center cursor-pointer">

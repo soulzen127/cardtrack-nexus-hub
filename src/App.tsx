@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/hooks/use-theme";
 import Index from "./pages/Index";
@@ -34,7 +34,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/" element={<Index />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -46,13 +46,17 @@ const App = () => (
                 <Route path="/cards" element={<CardsPage />} />
                 <Route path="/tracking" element={<TrackingPage />} />
                 <Route path="/records" element={<RecordsPage />} />
-                <Route path="/reports" element={<ReportsPage />} />
-                <Route path="/alerts" element={<AlertsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/settings" element={<SettingsPage />} /> {/* Settings now available to all users */}
+                <Route path="/settings" element={<SettingsPage />} />
               </Route>
               
-              {/* Routes that require admin/supervisor access */}
+              {/* Routes that require operator or higher access */}
+              <Route element={<ProtectedRoute requiredRole="operator" />}>
+                <Route path="/reports" element={<ReportsPage />} />
+                <Route path="/alerts" element={<AlertsPage />} />
+              </Route>
+              
+              {/* Routes that require admin access */}
               <Route element={<ProtectedRoute requiredRole="admin" />}>
                 <Route path="/users" element={<UsersPage />} />
               </Route>
