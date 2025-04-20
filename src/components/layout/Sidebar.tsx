@@ -21,6 +21,7 @@ import { SidebarNavigation } from "./sidebar/SidebarNavigation";
 import { SidebarFooter } from "./sidebar/SidebarFooter";
 import { SidebarToggle } from "./sidebar/SidebarToggle";
 import { SidebarOverlay } from "./sidebar/SidebarOverlay";
+import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   isOpen: boolean;
