@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Languages } from "lucide-react";
+import { Globe } from "lucide-react";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useLanguage, Language, languageLabels } from "@/contexts/LanguageContext";
+import { useLanguage, Language, languageLabels, languageFlags } from "@/contexts/LanguageContext";
 
 interface LanguageSelectorProps {
   minimal?: boolean;
@@ -25,18 +25,25 @@ export function LanguageSelector({ minimal = false }: LanguageSelectorProps) {
           size={minimal ? "icon" : "default"}
           className="flex items-center space-x-1"
         >
-          <Languages size={20} />
-          {!minimal && <span className="ml-2">{languageLabels[language]}</span>}
+          {minimal ? (
+            <Globe size={20} />
+          ) : (
+            <>
+              <span className="text-xl mr-1">{languageFlags[language]}</span>
+              <span className="ml-1">{languageLabels[language]}</span>
+            </>
+          )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-48">
         {(Object.keys(languageLabels) as Language[]).map((lang) => (
           <DropdownMenuItem
             key={lang}
             onClick={() => setLanguage(lang)}
-            className={language === lang ? "bg-accent" : ""}
+            className={`flex items-center space-x-2 ${language === lang ? "bg-accent" : ""}`}
           >
-            {languageLabels[lang]}
+            <span className="text-xl">{languageFlags[lang]}</span>
+            <span>{languageLabels[lang]}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

@@ -4,7 +4,7 @@ import { combineTranslations } from "./utils";
 import { commonTranslations } from "./common";
 import { dashboardTranslations } from "./dashboard";
 import { trackingTranslations } from "./tracking";
-import { cardsTranslations } from "./cards"; // Updated import
+import { cardsTranslations } from "./cards"; 
 import { recordsTranslations } from "./records";
 import { userManagementTranslations } from "./userManagement";
 import { settingsTranslations } from "./settings";
@@ -44,7 +44,7 @@ export const translations = combineTranslations([
 export const useTranslation = (language: Language) => {
   return {
     t: (key: TranslationKeys, params?: Record<string, string>) => {
-      let translation = translations[language][key] || key;
+      let translation = translations[language]?.[key] || key;
       
       // Add interpolation support
       if (params) {

@@ -1,13 +1,28 @@
 
 import React, { createContext, useState, useContext, ReactNode } from "react";
 
-export type Language = "en" | "zh_TW" | "ja";
+export type Language = "en" | "zh_TW" | "ja" | "ko" | "fr" | "es" | "de";
 export type LanguageLabels = Record<Language, string>;
 
 export const languageLabels: LanguageLabels = {
   en: "English",
   zh_TW: "繁體中文",
-  ja: "日本語"
+  ja: "日本語",
+  ko: "한국어",
+  fr: "Français",
+  de: "Deutsch",
+  es: "Español"
+};
+
+// Flag emoji codes for each language
+export const languageFlags: Record<Language, string> = {
+  en: "🇺🇸", // USA
+  zh_TW: "🇹🇼", // Taiwan
+  ja: "🇯🇵", // Japan
+  ko: "🇰🇷", // Korea
+  fr: "🇫🇷", // France
+  es: "🇪🇸", // Spain
+  de: "🇩🇪", // Germany
 };
 
 interface LanguageContextType {
@@ -34,7 +49,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const getInitialLanguage = (): Language => {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       const savedLanguage = localStorage.getItem("language") as Language;
-      if (savedLanguage && ["en", "zh_TW", "ja"].includes(savedLanguage)) {
+      if (savedLanguage && ["en", "zh_TW", "ja", "ko", "fr", "es", "de"].includes(savedLanguage)) {
         return savedLanguage;
       }
       
@@ -42,6 +57,10 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
         const browserLang = navigator.language;
         if (browserLang.startsWith("zh")) return "zh_TW";
         if (browserLang.startsWith("ja")) return "ja";
+        if (browserLang.startsWith("ko")) return "ko";
+        if (browserLang.startsWith("fr")) return "fr";
+        if (browserLang.startsWith("es")) return "es";
+        if (browserLang.startsWith("de")) return "de";
       }
     }
     return "en";
