@@ -8,9 +8,10 @@ import { useI18n } from "@/hooks/use-i18n";
 
 interface TopbarProps {
   onToggleSidebar: () => void;
+  sidebarOpen?: boolean; // Added sidebarOpen prop as optional
 }
 
-export function Topbar({ onToggleSidebar }: TopbarProps) {
+export function Topbar({ onToggleSidebar, sidebarOpen }: TopbarProps) {
   const { t } = useI18n();
   
   return (
