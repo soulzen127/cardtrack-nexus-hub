@@ -24,7 +24,7 @@ export default function LoginPage() {
         <LanguageSelector minimal />
       </div>
       <div className="w-full max-w-md">
-        <Card>
+        <Card className="border-0 shadow-md">
           <CardHeader className="space-y-1">
             <div className="flex flex-col items-center mb-4">
               <h1 className="text-3xl font-bold tracking-tight text-cardtrack-700">CardTrack</h1>
@@ -41,9 +41,9 @@ export default function LoginPage() {
                 )}
               </div>
             </div>
-            <CardTitle className="text-2xl text-center">{t("loginToYourAccount")}</CardTitle>
+            <CardTitle className="text-2xl text-center">登入</CardTitle>
             <CardDescription className="text-center">
-              {t("enterCredentials")}
+              登入您的帳號繼續使用卡片追蹤系統
             </CardDescription>
           </CardHeader>
           <LoginForm />

@@ -42,7 +42,7 @@ export const SocialLoginButtons: React.FC<SocialLoginButtonsProps> = ({ onSocial
           className="w-full"
         >
           {socialIcons.Google}
-          Google
+          Gmail
         </Button>
         <Button 
           type="button" 

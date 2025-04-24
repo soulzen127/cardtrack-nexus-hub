@@ -34,37 +34,24 @@ export const LoginFormFields: React.FC<LoginFormFieldsProps> = ({
     <form onSubmit={onSubmit}>
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">{t("email")}</Label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={onEmailChange}
-              className="pl-10"
-              required
-            />
-          </div>
+          <Input
+            id="email"
+            type="email"
+            placeholder="輸入您的使用者名稱"
+            value={email}
+            onChange={onEmailChange}
+            className="pl-3"
+            required
+          />
         </div>
         
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">{t("password")}</Label>
-            <Link 
-              to="/forgot-password" 
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              {t("forgotPassword")}
-            </Link>
-          </div>
           <div className="relative">
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
               value={password}
-              placeholder="••••••••"
+              placeholder="輸入您的密碼"
               onChange={onPasswordChange}
               required
             />
@@ -78,20 +65,24 @@ export const LoginFormFields: React.FC<LoginFormFieldsProps> = ({
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </Button>
           </div>
+          <div className="flex justify-end">
+            <Link 
+              to="/forgot-password" 
+              className="text-sm text-primary hover:underline"
+            >
+              忘記密碼？
+            </Link>
+          </div>
         </div>
       </div>
 
       <Button 
         type="submit" 
-        className="w-full mt-6" 
+        className="w-full mt-6 bg-purple-600 hover:bg-purple-700" 
         disabled={isLoading}
       >
-        {isLoading ? t("signingIn") : t("signIn")}
+        {isLoading ? t("signingIn") : "登入"}
       </Button>
-
-      <div className="mt-4 text-center text-sm">
-        {t("dontHaveAccount")} <Link to="/signup" className="text-primary hover:underline">{t("createAccount")}</Link>
-      </div>
     </form>
   );
 };
