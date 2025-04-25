@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CardContent, CardFooter } from "@/components/ui/card";
@@ -42,34 +41,27 @@ export const LoginForm = () => {
         throw new Error(t("emailPasswordRequired"));
       }
       
-      console.log("Logging in with email:", email);
+      console.log("LoginForm: attempting login with email:", email);
       
       // Set authentication state
       localStorage.setItem("authenticated", "true");
       
-      // Handle first time login vs regular login differently
+      // Handle first time login vs regular login
       if (!isSystemInitialized) {
-        console.log("First time login, setting as admin");
+        console.log("LoginForm: first time login, setting as admin");
         localStorage.setItem("user_role", "admin");
         localStorage.setItem("user_name", email.split("@")[0]);
+        localStorage.setItem("system_initialized", "false");
         toast.success(t("loginSuccessFirstTime"));
       } else {
-        // Determine user role based on email prefix for demo purposes
-        // In a real application, this would be from your backend
-        if (email.toLowerCase().startsWith("admin")) {
-          localStorage.setItem("user_role", "admin");
-        } else if (email.toLowerCase().startsWith("manager")) {
-          localStorage.setItem("user_role", "manager");
-        } else if (email.toLowerCase().startsWith("operator")) {
-          localStorage.setItem("user_role", "operator");
-        } else {
-          localStorage.setItem("user_role", "viewer");
-        }
+        // Enhanced role assignment logic
+        const role = determineUserRole(email.toLowerCase());
+        console.log("LoginForm: assigning role:", role);
+        localStorage.setItem("user_role", role);
         localStorage.setItem("user_name", email.split("@")[0]);
         toast.success(t("loginSuccess"));
       }
       
-      // Navigate to the destination or portal page
       navigate(from);
     } catch (error: any) {
       console.error("Login error:", error);
@@ -77,6 +69,13 @@ export const LoginForm = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const determineUserRole = (email: string): string => {
+    if (email.startsWith("admin")) return "admin";
+    if (email.startsWith("manager")) return "manager";
+    if (email.startsWith("operator")) return "operator";
+    return "viewer";
   };
 
   const handleSocialLogin = (provider: string) => {

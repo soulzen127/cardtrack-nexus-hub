@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { toast } from "sonner";
+import { useAccessControl } from "@/hooks/use-access-control";
 
 interface ProtectedRouteProps {
   requiredRole?: "admin" | "manager" | "operator" | "viewer";
@@ -12,82 +13,60 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const location = useLocation();
   const [isChecking, setIsChecking] = useState(true);
-  const [hasAccess, setHasAccess] = useState(false);
+  const { hasAccess, isLoading } = useAccessControl({ requiredRole });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   useEffect(() => {
     const checkAuth = () => {
-      // Check for authentication
-      const isAuthenticated = localStorage.getItem("authenticated") === "true";
-      if (!isAuthenticated) {
-        console.log("Not authenticated, redirecting to login");
-        setHasAccess(false);
-        setIsChecking(false);
-        return;
-      }
+      const authenticated = localStorage.getItem("authenticated") === "true";
+      console.log("ProtectedRoute: checking auth status:", authenticated);
+      setIsAuthenticated(authenticated);
       
-      // Check if system has been initialized
+      // Check system initialization status for /portal access
       const isSystemInitialized = localStorage.getItem("system_initialized") === "true";
+      console.log("ProtectedRoute: system initialized:", isSystemInitialized);
       
-      // Grant access to portal regardless of initialization state
-      // This ensures users can always access the portal even during first setup
+      if (!authenticated) {
+        console.log("ProtectedRoute: not authenticated, redirecting to login");
+        setIsChecking(false);
+        return;
+      }
+
+      // Special handling for /portal route
       if (location.pathname === "/portal") {
-        console.log("Allowing access to portal");
-        setHasAccess(true);
-        setIsChecking(false);
-        return;
-      }
-      
-      // If system is not initialized, only allow access to settings for first-time setup
-      if (!isSystemInitialized) {
-        if (location.pathname === "/settings") {
-          console.log("System not initialized but allowing access to settings");
-          setHasAccess(true);
-        } else {
-          console.log("System not initialized, redirecting to settings");
-          toast.info("請先完成系統設定");
-          setHasAccess(false);
+        if (!isSystemInitialized) {
+          console.log("ProtectedRoute: system not initialized, setting as admin");
+          localStorage.setItem("user_role", "admin");
         }
         setIsChecking(false);
         return;
       }
-      
-      // Check role access for initialized system
-      if (requiredRole) {
-        const userRole = localStorage.getItem("user_role") || "viewer";
-        const roleHierarchy = ["viewer", "operator", "manager", "admin"];
-        const requiredRoleIndex = roleHierarchy.indexOf(requiredRole);
-        const userRoleIndex = roleHierarchy.indexOf(userRole);
-        
-        // User has access if their role is same or higher level than required
-        const hasRoleAccess = userRoleIndex >= requiredRoleIndex;
-        
-        if (!hasRoleAccess) {
-          console.log("Insufficient permissions for", location.pathname);
-          toast.error("您沒有權限訪問此頁面");
-        }
-        
-        setHasAccess(hasRoleAccess);
-        setIsChecking(false);
-      } else {
-        // For regular user routes, just check authentication
-        setHasAccess(true);
-        setIsChecking(false);
+
+      // For all other routes, ensure system is initialized
+      if (!isSystemInitialized && location.pathname !== "/settings") {
+        console.log("ProtectedRoute: redirecting to settings for initialization");
+        toast.info("請先完成系統設定");
       }
+      
+      setIsChecking(false);
     };
     
     checkAuth();
-  }, [requiredRole, location.pathname]);
+  }, [location.pathname]);
   
-  // Still checking auth state
-  if (isChecking) {
+  if (isChecking || isLoading) {
     return <div className="flex h-screen items-center justify-center">載入中...</div>;
   }
   
-  // If not authenticated or doesn't have required role, redirect to login
-  if (!hasAccess) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
   
-  // User is authenticated and has required role, render children
+  if (!hasAccess && location.pathname !== "/portal") {
+    console.log("ProtectedRoute: insufficient permissions");
+    toast.error("您沒有權限訪問此頁面");
+    return <Navigate to="/portal" replace />;
+  }
+  
   return <Outlet />;
 };
