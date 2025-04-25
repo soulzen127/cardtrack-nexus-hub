@@ -18,8 +18,8 @@ export const useAccessControl = ({
   requiredRole = "viewer", 
   featureKey 
 }: UseAccessControlProps = {}) => {
-  // In a real app, this would come from an auth context
-  const [currentUserRole, setCurrentUserRole] = useState<UserRole>("admin");
+  // Get user role from localStorage
+  const [currentUserRole, setCurrentUserRole] = useState<UserRole>("viewer");
   const [isLoading, setIsLoading] = useState(true);
   
   // Role hierarchy - higher index means more permissions
@@ -29,10 +29,16 @@ export const useAccessControl = ({
   const [featureSettings, setFeatureSettings] = useState<Record<string, boolean>>({});
   
   useEffect(() => {
-    // Simulate loading user role from storage or API
+    // Get stored role from localStorage
     const storedRole = localStorage.getItem("user_role") as UserRole | null;
+    console.log("Retrieved user role from storage:", storedRole);
+    
     if (storedRole && roleHierarchy.includes(storedRole)) {
       setCurrentUserRole(storedRole);
+    } else {
+      // Default to viewer if no role is stored
+      console.log("No valid role found, using viewer");
+      setCurrentUserRole("viewer");
     }
     
     // Load feature-specific settings
@@ -60,11 +66,14 @@ export const useAccessControl = ({
     const requiredRoleIndex = roleHierarchy.indexOf(requiredRole);
     const currentRoleIndex = roleHierarchy.indexOf(currentUserRole);
     
+    console.log(`Access check: Required role ${requiredRole} (${requiredRoleIndex}), Current role ${currentUserRole} (${currentRoleIndex})`);
+    
     return currentRoleIndex >= requiredRoleIndex;
   };
   
-  // Mock function to set user role (for demo/testing)
+  // Function to set user role (for testing)
   const setUserRole = (role: UserRole) => {
+    console.log("Setting user role to:", role);
     setCurrentUserRole(role);
     localStorage.setItem("user_role", role);
   };

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/use-i18n";
@@ -14,15 +14,21 @@ export const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useI18n();
+  
+  // Get redirect location from state if available
+  const from = location.state?.from?.pathname || "/portal";
   
   const [isSystemInitialized, setIsSystemInitialized] = useState(
     localStorage.getItem("system_initialized") === "true"
   );
 
   useEffect(() => {
+    // Check if already authenticated and redirect
     const isAuthenticated = localStorage.getItem("authenticated") === "true";
     if (isAuthenticated) {
+      console.log("Already authenticated, redirecting to portal");
       navigate("/portal");
     }
   }, [navigate]);
@@ -36,20 +42,25 @@ export const LoginForm = () => {
         throw new Error(t("emailPasswordRequired"));
       }
       
-      console.log("Logging in with:", { email, password });
+      console.log("Logging in with email:", email);
       
+      // Set authentication state
       localStorage.setItem("authenticated", "true");
       
+      // Handle first time login vs regular login differently
       if (!isSystemInitialized) {
-        localStorage.setItem("user_role", "viewer");
+        console.log("First time login, setting as admin");
+        localStorage.setItem("user_role", "admin");
         localStorage.setItem("user_name", email.split("@")[0]);
         toast.success(t("loginSuccessFirstTime"));
       } else {
-        if (email.startsWith("admin")) {
+        // Determine user role based on email prefix for demo purposes
+        // In a real application, this would be from your backend
+        if (email.toLowerCase().startsWith("admin")) {
           localStorage.setItem("user_role", "admin");
-        } else if (email.startsWith("manager")) {
+        } else if (email.toLowerCase().startsWith("manager")) {
           localStorage.setItem("user_role", "manager");
-        } else if (email.startsWith("operator")) {
+        } else if (email.toLowerCase().startsWith("operator")) {
           localStorage.setItem("user_role", "operator");
         } else {
           localStorage.setItem("user_role", "viewer");
@@ -58,7 +69,8 @@ export const LoginForm = () => {
         toast.success(t("loginSuccess"));
       }
       
-      navigate("/portal");
+      // Navigate to the destination or portal page
+      navigate(from);
     } catch (error: any) {
       console.error("Login error:", error);
       toast.error(error.message || t("loginFailed"));
@@ -74,9 +86,12 @@ export const LoginForm = () => {
     setTimeout(() => {
       localStorage.setItem("authenticated", "true");
       
+      // Set role based on whether system is initialized
       if (!isSystemInitialized) {
-        localStorage.setItem("user_role", "viewer");
+        console.log("First time social login, setting as admin");
+        localStorage.setItem("user_role", "admin");
       } else {
+        console.log("Setting default role for social login");
         localStorage.setItem("user_role", "viewer");
       }
       
@@ -84,7 +99,7 @@ export const LoginForm = () => {
       localStorage.setItem("loginProvider", provider);
       
       toast.success(t("loginSuccessSocial", { provider: provider }));
-      navigate("/portal");
+      navigate(from);
       setIsLoading(false);
     }, 1000);
   };

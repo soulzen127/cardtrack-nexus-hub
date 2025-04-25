@@ -13,8 +13,11 @@ export default function LoginPage() {
   // If user is already logged in, redirect to portal
   React.useEffect(() => {
     const isAuthenticated = localStorage.getItem("authenticated") === "true";
+    console.log("LoginPage: authentication check:", isAuthenticated);
+    
     if (isAuthenticated) {
-      navigate("/portal");
+      console.log("LoginPage: user is authenticated, navigating to portal");
+      navigate("/portal", { replace: true });
     }
   }, [navigate]);
 
@@ -41,9 +44,9 @@ export default function LoginPage() {
                 )}
               </div>
             </div>
-            <CardTitle className="text-2xl text-center">登入</CardTitle>
+            <CardTitle className="text-2xl text-center">{t("login") || "登入"}</CardTitle>
             <CardDescription className="text-center">
-              登入您的帳號繼續使用卡片追蹤系統
+              {t("loginDescription") || "登入您的帳號繼續使用卡片追蹤系統"}
             </CardDescription>
           </CardHeader>
           <LoginForm />

@@ -1,8 +1,8 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useI18n } from "@/hooks/use-i18n";
 import { useAccessControl } from "@/hooks/use-access-control";
 import {
@@ -20,6 +20,16 @@ import {
 export default function PortalPage() {
   const { t } = useI18n();
   const { hasAccess, currentUserRole } = useAccessControl();
+  const navigate = useNavigate();
+
+  // Check system initialization status
+  useEffect(() => {
+    const isSystemInitialized = localStorage.getItem("system_initialized") === "true";
+    if (!isSystemInitialized) {
+      console.log("PortalPage: System not initialized, setting current user as admin");
+      localStorage.setItem("user_role", "admin");
+    }
+  }, []);
 
   // Define menu items with their access requirements
   const menuItems = [
@@ -77,7 +87,7 @@ export default function PortalPage() {
       icon: <Settings className="h-12 w-12 mb-4 text-primary" />,
       description: t("settingsDescription"),
       path: "/settings",
-      requiredRole: "operator" // Operators and above can access settings
+      requiredRole: "viewer" // All users can access settings
     },
     {
       title: t("profile"),
@@ -90,10 +100,17 @@ export default function PortalPage() {
 
   // Filter menu items based on user role
   const filteredMenuItems = menuItems.filter(item => {
-    if (item.requiredRole === "admin") return currentUserRole === "admin";
-    if (item.requiredRole === "operator") return ["operator", "manager", "admin"].includes(currentUserRole);
+    const userRole = localStorage.getItem("user_role") || "viewer";
+    if (item.requiredRole === "admin") return userRole === "admin";
+    if (item.requiredRole === "operator") return ["operator", "manager", "admin"].includes(userRole);
     return true; // All users can access 'viewer' level items
   });
+
+  // Handler for card click
+  const handleCardClick = (path: string) => {
+    console.log("Navigating to:", path);
+    navigate(path);
+  };
 
   return (
     <MainLayout>
@@ -104,14 +121,16 @@ export default function PortalPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredMenuItems.map((item, index) => (
-            <Card key={index} className="overflow-hidden hover:shadow-md transition-shadow">
-              <Link to={item.path}>
-                <CardContent className="p-6 flex flex-col items-center text-center">
-                  {item.icon}
-                  <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                  <p className="text-muted-foreground text-sm">{item.description}</p>
-                </CardContent>
-              </Link>
+            <Card 
+              key={index} 
+              className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => handleCardClick(item.path)}
+            >
+              <CardContent className="p-6 flex flex-col items-center text-center">
+                {item.icon}
+                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
+                <p className="text-muted-foreground text-sm">{item.description}</p>
+              </CardContent>
             </Card>
           ))}
         </div>

@@ -16,8 +16,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   
   useEffect(() => {
     const checkAuth = () => {
+      // Check for authentication
       const isAuthenticated = localStorage.getItem("authenticated") === "true";
       if (!isAuthenticated) {
+        console.log("Not authenticated, redirecting to login");
         setHasAccess(false);
         setIsChecking(false);
         return;
@@ -26,21 +28,30 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       // Check if system has been initialized
       const isSystemInitialized = localStorage.getItem("system_initialized") === "true";
       
-      // If system is not initialized, allow access to portal and settings
-      // This is for first-time users to configure the system
+      // Grant access to portal regardless of initialization state
+      // This ensures users can always access the portal even during first setup
+      if (location.pathname === "/portal") {
+        console.log("Allowing access to portal");
+        setHasAccess(true);
+        setIsChecking(false);
+        return;
+      }
+      
+      // If system is not initialized, only allow access to settings for first-time setup
       if (!isSystemInitialized) {
-        // Only allow access to portal and settings for first-time setup
-        if (location.pathname === "/portal" || location.pathname === "/settings") {
+        if (location.pathname === "/settings") {
+          console.log("System not initialized but allowing access to settings");
           setHasAccess(true);
         } else {
+          console.log("System not initialized, redirecting to settings");
+          toast.info("請先完成系統設定");
           setHasAccess(false);
-          toast.error("請先完成系統設定");
         }
         setIsChecking(false);
         return;
       }
       
-      // Check role if needed
+      // Check role access for initialized system
       if (requiredRole) {
         const userRole = localStorage.getItem("user_role") || "viewer";
         const roleHierarchy = ["viewer", "operator", "manager", "admin"];
@@ -51,6 +62,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         const hasRoleAccess = userRoleIndex >= requiredRoleIndex;
         
         if (!hasRoleAccess) {
+          console.log("Insufficient permissions for", location.pathname);
           toast.error("您沒有權限訪問此頁面");
         }
         
