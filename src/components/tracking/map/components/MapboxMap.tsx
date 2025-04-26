@@ -121,7 +121,9 @@ export function MapboxMap({
     cardLocations.forEach(location => {
       const el = document.createElement('div');
       el.className = 'mapbox-custom-marker';
-      el.style.backgroundColor = location.status === 'active' ? '#10b981' : '#f59e0b';
+      // Default to amber if status is not provided, otherwise use green for active, amber for others
+      const markerColor = location.status === 'active' ? '#10b981' : '#f59e0b';
+      el.style.backgroundColor = markerColor;
       el.style.width = '20px';
       el.style.height = '20px';
       el.style.borderRadius = '50%';
@@ -138,7 +140,7 @@ export function MapboxMap({
           <div class="p-2">
             <h3 class="font-bold">${location.name}</h3>
             <p>${location.description || ''}</p>
-            <p class="text-xs mt-1">Last updated: ${location.lastSeen || 'N/A'}</p>
+            <p class="text-xs mt-1">Last updated: ${location.lastSeen || location.lastUpdated || 'N/A'}</p>
           </div>
         `);
         

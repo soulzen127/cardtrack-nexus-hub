@@ -81,7 +81,10 @@ export const LocationOverview = () => {
         coordinates: [
           location.coordinates[0] + (Math.random() - 0.5) * 0.005,
           location.coordinates[1] + (Math.random() - 0.5) * 0.005
-        ] as [number, number]
+        ] as [number, number],
+        // Add status and lastSeen properties to ensure compatibility
+        status: Math.random() > 0.3 ? 'active' : 'inactive',
+        lastSeen: new Date().toISOString()
       }));
       
       createMarkers({

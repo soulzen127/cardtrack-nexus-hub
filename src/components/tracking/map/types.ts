@@ -1,4 +1,3 @@
-
 // Types related to map markers and card locations
 export interface CardLocation {
   id: string;
@@ -11,6 +10,8 @@ export interface CardLocation {
   lastUpdated?: string; // Timestamp for when the location was last updated
   title?: string; // Title for the location marker
   description?: string; // Description for the location marker
+  status?: 'active' | 'inactive' | 'warning'; // Status of the card for visual indication
+  lastSeen?: string; // Timestamp for when the card was last seen
 }
 
 export interface CreateMarkersOptions {
