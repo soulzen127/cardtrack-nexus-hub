@@ -1,3 +1,4 @@
+
 import { TranslationCategory } from "./utils";
 
 export const commonTranslations: TranslationCategory = {
@@ -847,4 +848,40 @@ export const commonTranslations: TranslationCategory = {
     historical: "Historisch",
     trackedCards: "Verfolgte Karten",
     alerts: "Benachrichtigungen",
-    search:
+    search: "Suche",
+    cardDetails: "Kartendetails",
+    cardHistory: "Kartenverlauf",
+    eventTimeline: "Ereigniszeitleiste",
+    details: "Details",
+    map: "Karte",
+    date: "Datum",
+    time: "Zeit",
+    event: "Ereignis",
+    card: "Karte",
+    cardNumber: "Kartennummer",
+    cardType: "Kartentyp",
+    location: "Standort",
+    lastSeen: "Zuletzt gesehen",
+    statusChange: "Statusänderung",
+    temperatureReading: "Temperaturmessung",
+    humidityReading: "Feuchtigkeitsmessung",
+    batteryLevel: "Batteriestand",
+    signalStrength: "Signalstärke",
+    noHistoryAvailable: "Für diese Karte ist kein Verlauf verfügbar.",
+    noEventsAvailable: "Für diese Karte sind keine Ereignisse verfügbar.",
+    systemFunctionPortal: "Systemfunktionsportal",
+    managementOverview: "Managementübersicht",
+    reportsManagement: "Berichtsverwaltung",
+    userManagement: "Benutzerverwaltung",
+    addUser: "Benutzer hinzufügen",
+    users: "Benutzer",
+    manageUserAccounts: "Benutzerkonten verwalten",
+    editUser: "Benutzer bearbeiten",
+    createUser: "Benutzer erstellen",
+    editUserDetails: "Benutzerdetails bearbeiten",
+    createNewUserAccount: "Neues Benutzerkonto erstellen",
+    userDetails: "Benutzerdetails",
+    userUpdated: "Benutzer erfolgreich aktualisiert!",
+    userCreated: "Benutzer erfolgreich erstellt!"
+  }
+};
