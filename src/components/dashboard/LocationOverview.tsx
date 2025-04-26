@@ -10,6 +10,7 @@ import { mockCardLocations } from "@/components/tracking/map/mockData";
 import { createMarkers } from "@/components/tracking/map/createMarkers";
 import { CardLocation } from "@/components/tracking/map/types";
 import { useI18n } from "@/hooks/use-i18n";
+import { isMapboxInitialized, initializeMapbox } from "@/components/tracking/map/MapInitializer";
 
 export const LocationOverview = () => {
   const { t } = useI18n();
@@ -17,15 +18,22 @@ export const LocationOverview = () => {
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapboxToken, setMapboxToken] = useState<string | null>(null);
+  
+  // Check for stored token on component mount
+  useEffect(() => {
+    const storedToken = localStorage.getItem("mapbox_api_key");
+    setMapboxToken(storedToken);
+  }, []);
   
   // Load overview map with real-time location data
   useEffect(() => {
-    // Check if token exists in localStorage
-    const mapboxToken = localStorage.getItem("mapbox_api_key");
+    if (!mapboxToken || !mapContainer.current || map.current) return;
     
-    if (mapContainer.current && mapboxToken && !map.current) {
-      mapboxgl.accessToken = mapboxToken;
-      
+    console.log("LocationOverview: Initializing map with stored token");
+    
+    // Initialize mapbox with the token
+    if (initializeMapbox(mapboxToken)) {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/light-v11',
@@ -34,6 +42,7 @@ export const LocationOverview = () => {
       });
       
       map.current.on('load', () => {
+        console.log("LocationOverview: Map loaded successfully");
         setMapLoaded(true);
         
         // Add markers using the createMarkers function
@@ -59,7 +68,7 @@ export const LocationOverview = () => {
         map.current = null;
       }
     };
-  }, []);
+  }, [mapboxToken]);
 
   // Simulate real-time updates
   useEffect(() => {
@@ -93,7 +102,7 @@ export const LocationOverview = () => {
       </CardHeader>
       <CardContent>
         <div className="relative h-[400px] rounded-md">
-          {localStorage.getItem("mapbox_api_key") ? (
+          {mapboxToken ? (
             <div ref={mapContainer} className="absolute inset-0 rounded-md overflow-hidden border border-border" />
           ) : (
             <div className="h-full flex items-center justify-center bg-muted rounded-md border border-dashed">

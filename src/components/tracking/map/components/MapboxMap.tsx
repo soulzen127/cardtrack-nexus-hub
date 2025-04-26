@@ -2,8 +2,8 @@
 import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { CardLocation } from "../types";
-import { createMarkers } from "../createMarkers";
+import { CardLocation } from '../types';
+import { initializeMapbox } from '../MapInitializer';
 import { MapboxControls } from '../MapboxControls';
 
 interface MapboxMapProps {
@@ -13,7 +13,7 @@ interface MapboxMapProps {
   isIndoorMode: boolean;
   currentFloor: number;
   isMapInitialized: boolean;
-  setIsMapInitialized: (value: boolean) => void;
+  setIsMapInitialized: (initialized: boolean) => void;
   cardLocations?: CardLocation[];
   center?: [number, number] | null;
 }
@@ -23,146 +23,177 @@ export function MapboxMap({
   mapStyle, 
   setMapStyle, 
   isIndoorMode, 
-  currentFloor, 
+  currentFloor,
   isMapInitialized,
   setIsMapInitialized,
-  cardLocations,
+  cardLocations = [],
   center
 }: MapboxMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
   
-  // Initialize map
+  // Initialize map or update token if it changes
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken) return;
+    // Check for stored token in localStorage if not provided in props
+    const storedToken = localStorage.getItem('mapbox_api_key') || mapboxToken;
     
-    // Initialize Mapbox
-    mapboxgl.accessToken = mapboxToken;
+    if (!mapContainer.current || !storedToken) return;
     
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: `mapbox://styles/mapbox/${mapStyle}`,
-      center: [120.9738, 23.9739], // Center on Taiwan
-      zoom: 7,
-    });
-
-    // Add navigation controls
-    map.current.addControl(
-      new mapboxgl.NavigationControl(),
-      'top-right'
-    );
-
-    // Add markers when map loads
-    map.current.on('load', () => {
-      setIsMapInitialized(true);
+    if (!map.current) {
+      console.log('MapboxMap: Initializing map with token:', storedToken.substring(0, 10) + '...');
       
-      // Add markers using the extracted function
-      if (cardLocations) {
-        createMarkers({
-          map: map.current!,
-          locations: cardLocations,
-          markerRef: markers
-        });
+      try {
+        // Initialize the Mapbox token
+        const initialized = initializeMapbox(storedToken);
+        
+        if (initialized) {
+          map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: `mapbox://styles/mapbox/${mapStyle}`,
+            center: [121.5654, 25.0330], // Default to Taipei
+            zoom: 13
+          });
+          
+          map.current.on('load', () => {
+            console.log('MapboxMap: Map loaded successfully');
+            setIsMapInitialized(true);
+            
+            // Create markers for locations
+            if (cardLocations.length > 0 && map.current) {
+              createMarkers();
+            }
+          });
+          
+          map.current.on('error', (e) => {
+            console.error('MapboxMap: Error loading map:', e);
+            setIsMapInitialized(false);
+          });
+        }
+      } catch (error) {
+        console.error('MapboxMap: Error initializing map:', error);
+        setIsMapInitialized(false);
       }
-    });
+    }
     
     return () => {
-      markers.current.forEach(marker => marker.remove());
       if (map.current) {
+        console.log('MapboxMap: Cleaning up map instance');
+        clearMarkers();
         map.current.remove();
+        map.current = null;
       }
     };
-  }, [mapboxToken, setIsMapInitialized, cardLocations]);
-
-  // Update markers when locations or floor changes
+  }, [mapboxToken, mapStyle, setIsMapInitialized]);
+  
+  // Update markers when locations change
   useEffect(() => {
-    if (isMapInitialized && map.current && cardLocations) {
-      // Filter locations by floor if in indoor mode
-      const locationsToUse = isIndoorMode 
-        ? cardLocations.filter(loc => loc.floor === currentFloor)
-        : cardLocations;
-        
-      createMarkers({
-        map: map.current,
-        locations: locationsToUse,
-        markerRef: markers
-      });
+    if (map.current && isMapInitialized && cardLocations.length > 0) {
+      createMarkers();
     }
-  }, [isIndoorMode, currentFloor, isMapInitialized, cardLocations]);
-
-  // Center map when center coordinates change
+  }, [cardLocations, isMapInitialized]);
+  
+  // Update map style if it changes
   useEffect(() => {
-    if (map.current && center) {
+    if (map.current && isMapInitialized) {
+      map.current.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
+    }
+  }, [mapStyle, isMapInitialized]);
+  
+  // Pan to selected location if center changes
+  useEffect(() => {
+    if (map.current && isMapInitialized && center) {
       map.current.flyTo({
         center: center,
-        zoom: 15,
-        essential: true,
-        duration: 1000
+        zoom: 15
       });
     }
-  }, [center]);
-
-  // Handle style changes
-  const handleStyleChange = (style: string) => {
+  }, [center, isMapInitialized]);
+  
+  // Helper function to create markers
+  const createMarkers = () => {
     if (!map.current) return;
     
-    setMapStyle(style);
-    map.current.setStyle(`mapbox://styles/mapbox/${style}`);
+    // Clear existing markers
+    clearMarkers();
     
-    // Re-add markers after style change (markers get removed on style change)
-    map.current.once('styledata', () => {
-      if (!cardLocations) return;
+    // Create new markers
+    cardLocations.forEach(location => {
+      const el = document.createElement('div');
+      el.className = 'mapbox-custom-marker';
+      el.style.backgroundColor = location.status === 'active' ? '#10b981' : '#f59e0b';
+      el.style.width = '20px';
+      el.style.height = '20px';
+      el.style.borderRadius = '50%';
+      el.style.border = '2px solid white';
+      el.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.1)';
       
-      // Filter by floor if in indoor mode
-      const filteredLocations = isIndoorMode 
-        ? cardLocations.filter(loc => loc.floor === currentFloor)
-        : cardLocations;
+      const marker = new mapboxgl.Marker(el)
+        .setLngLat(location.coordinates)
+        .addTo(map.current!);
       
-      createMarkers({
-        map: map.current!,
-        locations: filteredLocations,
-        markerRef: markers
-      });
+      // Add popup with info
+      const popup = new mapboxgl.Popup({ offset: 25 })
+        .setHTML(`
+          <div class="p-2">
+            <h3 class="font-bold">${location.name}</h3>
+            <p>${location.description || ''}</p>
+            <p class="text-xs mt-1">Last updated: ${location.lastSeen || 'N/A'}</p>
+          </div>
+        `);
+        
+      marker.setPopup(popup);
+      markers.current.push(marker);
     });
   };
-
-  // Zoom controls
+  
+  // Helper function to clear all markers
+  const clearMarkers = () => {
+    markers.current.forEach(marker => marker.remove());
+    markers.current = [];
+  };
+  
+  // Zoom and recenter handlers
   const handleZoom = (direction: 'in' | 'out') => {
-    if (!map.current) return;
-    
-    const currentZoom = map.current.getZoom();
-    map.current.easeTo({
-      zoom: direction === 'in' ? currentZoom + 1 : currentZoom - 1,
-      duration: 300
-    });
+    if (map.current) {
+      const zoom = map.current.getZoom();
+      map.current.zoomTo(direction === 'in' ? zoom + 1 : zoom - 1);
+    }
   };
-
-  // Center on Taiwan
+  
   const handleRecenter = () => {
-    if (!map.current) return;
-    
-    map.current.easeTo({
-      center: [120.9738, 23.9739],
-      zoom: 7,
-      duration: 1000
-    });
+    if (map.current && cardLocations.length > 0) {
+      // Create a bounds that contains all locations
+      const bounds = new mapboxgl.LngLatBounds();
+      cardLocations.forEach(location => {
+        bounds.extend(location.coordinates as [number, number]);
+      });
+      
+      // Fit the map to these bounds
+      map.current.fitBounds(bounds, {
+        padding: 50,
+        maxZoom: 15
+      });
+    }
+  };
+  
+  const handleStyleChange = (style: string) => {
+    setMapStyle(style);
   };
 
   return (
-    <div className="relative">
-      <div 
-        ref={mapContainer} 
-        className="map-container w-full h-[300px] rounded-md relative"
-      />
+    <div className="w-full h-[500px] rounded-md relative">
+      <div ref={mapContainer} className="absolute inset-0 rounded-md" style={{ zIndex: 1 }} />
       
-      <MapboxControls
-        map={map.current}
-        mapStyle={mapStyle}
-        handleZoom={handleZoom}
-        handleRecenter={handleRecenter}
-        handleStyleChange={handleStyleChange}
-      />
+      {map.current && isMapInitialized && (
+        <MapboxControls
+          map={map.current}
+          mapStyle={mapStyle}
+          handleZoom={handleZoom}
+          handleRecenter={handleRecenter}
+          handleStyleChange={handleStyleChange}
+        />
+      )}
     </div>
   );
 }

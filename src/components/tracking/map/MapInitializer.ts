@@ -14,16 +14,23 @@ export function initializeMapbox(token: string): boolean {
   }
   
   try {
+    // Set the token in mapboxgl
     mapboxgl.accessToken = token;
     
     // Store token in localStorage for future use
     localStorage.setItem('mapbox_api_key', token);
     
+    console.log('Mapbox initialized successfully with token:', token.substring(0, 10) + '...');
     return true;
   } catch (error) {
     console.error('Error initializing Mapbox:', error);
     return false;
   }
+}
+
+// Check if mapbox is initialized
+export function isMapboxInitialized(): boolean {
+  return !!mapboxgl.accessToken && mapboxgl.accessToken.length > 20;
 }
 
 // Utility function to convert coordinates to string format

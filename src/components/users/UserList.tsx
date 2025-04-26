@@ -1,63 +1,61 @@
 
-import React from "react";
-import { Search } from "lucide-react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
 import { UserTable } from "./UserTable";
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-  lastActive: string;
-  created: string;
-}
+import { useI18n } from "@/hooks/use-i18n";
+import { Search } from "lucide-react";
 
 interface UserListProps {
-  users: User[];
+  users: any[];
   searchTerm: string;
   setSearchTerm: (term: string) => void;
+  onEditUser: (user: any) => void;
 }
 
-export const UserList = ({ users, searchTerm, setSearchTerm }: UserListProps) => {
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.role.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+export function UserList({ users, searchTerm, setSearchTerm, onEditUser }: UserListProps) {
+  const { t } = useI18n();
+  
+  // Filter users based on search term
+  const filteredUsers = users.filter((user) => {
+    const searchFields = [
+      user.username,
+      user.email,
+      user.firstName,
+      user.lastName,
+      user.role,
+      user.department
+    ].map(field => field?.toLowerCase() || '');
+    
+    return searchFields.some(field => field.includes(searchTerm.toLowerCase()));
+  });
 
   return (
-    <>
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search users by name, email, or role..."
-            className="pl-8"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+    <div className="space-y-4">
+      <div className="relative">
+        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          className="pl-8"
+          placeholder={t("searchUsers")}
+          type="search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
-      <UserTable users={filteredUsers} />
-
-      <div className="flex items-center justify-between mt-4">
-        <div className="text-sm text-muted-foreground">
-          Showing {filteredUsers.length} of {users.length} users
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm" disabled>
-            Previous
-          </Button>
-          <Button variant="outline" size="sm">
-            Next
-          </Button>
-        </div>
+      <div className="rounded-md border">
+        <UserTable 
+          users={filteredUsers} 
+          onEditUser={onEditUser}
+        />
       </div>
-    </>
+    </div>
   );
-};
-
-import { Button } from "@/components/ui/button";
+}
