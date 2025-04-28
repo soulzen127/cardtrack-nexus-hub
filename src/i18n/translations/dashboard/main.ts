@@ -4,7 +4,7 @@ import { TranslationCategory } from "../utils";
 // Main dashboard translations
 export const dashboardMainTranslations: TranslationCategory = {
   en: {
-    dashboard: "Dashboard",
+    dashboard: "Management Overview",
     dashboardDescription: "View system overview and statistics",
     portal: "Portal",
     locationOverview: "Location Overview",
@@ -15,7 +15,7 @@ export const dashboardMainTranslations: TranslationCategory = {
     mapboxTokenRequired: "Mapbox token is required to display the map",
   },
   zh_TW: {
-    dashboard: "儀表板",
+    dashboard: "管理概覽",
     dashboardDescription: "查看系統概覽和統計數據",
     portal: "門戶",
     locationOverview: "位置概覽",
@@ -26,7 +26,7 @@ export const dashboardMainTranslations: TranslationCategory = {
     mapboxTokenRequired: "需要Mapbox令牌以顯示地圖",
   },
   ja: {
-    dashboard: "ダッシュボード",
+    dashboard: "管理概要",
     dashboardDescription: "システム概要と統計を表示",
     portal: "ポータル",
     locationOverview: "位置の概要",

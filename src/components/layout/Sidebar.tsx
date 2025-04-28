@@ -46,10 +46,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
     { name: "System Function Portal", translationKey: "systemFunctionPortal", path: "/portal", icon: <LayoutGrid size={20} /> },
     { name: "Management Overview", translationKey: "managementOverview", path: "/dashboard", icon: <Home size={20} /> },
     { name: "Cards", translationKey: "cards", path: "/cards", icon: <CreditCard size={20} /> },
-    { name: "Tracking", translationKey: "tracking", path: "/tracking", icon: <Map size={20} /> },
+    { name: "Location Tracking", translationKey: "locationTracking", path: "/tracking", icon: <Map size={20} /> },
     { name: "Event Reporting", translationKey: "eventReporting", path: "/events", icon: <Bell size={20} /> },
     { name: "Records", translationKey: "records", path: "/records", icon: <Search size={20} /> },
-    { name: "Reports", translationKey: "reportsManagement", path: "/reports", icon: <BarChart size={20} /> },
+    { name: "Reports", translationKey: "reports", path: "/reports", icon: <BarChart size={20} /> },
     { name: "Alerts", translationKey: "alerts", path: "/alerts", icon: <AlertTriangle size={20} /> },
   ];
 

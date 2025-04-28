@@ -1,4 +1,3 @@
-
 import { TranslationCategory } from "./utils";
 
 // Tracking-specific translations
@@ -157,7 +156,12 @@ export const trackingTranslations: TranslationCategory = {
     errorCardRegistration: "Error Registering Card",
     cardNumberAndHolderNameRequired: "Card number and holder name are required",
     cardRegistered: "Card Registered",
-    cardHasBeenSuccessfullyRegistered: "Card has been successfully registered"
+    cardHasBeenSuccessfullyRegistered: "Card has been successfully registered",
+    // New Location Info Platform translations
+    locationInfoPlatform: "Location Information Platform",
+    threeDGISLayer: "3D GIS Map Layer",
+    venueSpaceManagementLayer: "Venue & Space Management Layer",
+    comingSoon: "Coming Soon"
   },
   zh_TW: {
     locationTracking: "位置追蹤",
@@ -311,7 +315,12 @@ export const trackingTranslations: TranslationCategory = {
     errorCardRegistration: "註冊卡片錯誤",
     cardNumberAndHolderNameRequired: "卡號和持卡人姓名為必填項",
     cardRegistered: "卡片已註冊",
-    cardHasBeenSuccessfullyRegistered: "卡片已成功註冊"
+    cardHasBeenSuccessfullyRegistered: "卡片已成功註冊",
+    // New Location Info Platform translations
+    locationInfoPlatform: "位置資訊圖台",
+    threeDGISLayer: "3D GIS 地圖顯示層",
+    venueSpaceManagementLayer: "場域與空間編輯管理層",
+    comingSoon: "即將推出"
   },
   ja: {
     locationTracking: "位置追跡",
@@ -465,6 +474,11 @@ export const trackingTranslations: TranslationCategory = {
     errorCardRegistration: "カード登録エラー",
     cardNumberAndHolderNameRequired: "カード番号と所有者名が必要です",
     cardRegistered: "カードが登録されました",
-    cardHasBeenSuccessfullyRegistered: "カードが正常に登録されました"
+    cardHasBeenSuccessfullyRegistered: "カードが正常に登録されました",
+    // New Location Info Platform translations
+    locationInfoPlatform: "位置情報プラットフォーム",
+    threeDGISLayer: "3D GISマップレイヤー",
+    venueSpaceManagementLayer: "会場＆スペース管理レイヤー",
+    comingSoon: "近日公開"
   }
 };

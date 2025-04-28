@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   Card, 
@@ -7,11 +8,12 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Filter, Layers, MapPin, Map as MapIcon } from "lucide-react";
+import { Filter, Layers, MapPin, Map as MapIcon, Globe, Building3 } from "lucide-react";
 import { MapView } from "@/components/tracking/MapView";
 import { MapControls } from "@/components/tracking/MapControls";
 import { useI18n } from "@/hooks/use-i18n";
 import { CardLocation } from "./map/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -51,16 +53,37 @@ export function MapSection({
   center,
 }: MapSectionProps) {
   const { t } = useI18n();
+  const [currentMapLayer, setCurrentMapLayer] = useState<'3dgis' | 'venue'>('3dgis');
 
   return (
     <Card className="lg:col-span-2">
       <CardHeader>
-        <CardTitle>{t("geographicLocation")}</CardTitle>
+        <CardTitle>{t("locationInfoPlatform")}</CardTitle>
         <CardDescription>{t("realtimeGeographicVisualization")}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col space-y-4 p-0">
+        {/* Layer Selector Tabs */}
+        <div className="px-4 pt-4">
+          <Tabs 
+            defaultValue="3dgis"
+            value={currentMapLayer} 
+            onValueChange={(value) => setCurrentMapLayer(value as '3dgis' | 'venue')}
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="3dgis" className="flex items-center justify-center">
+                <Globe className="h-4 w-4 mr-2" />
+                {t("threeDGISLayer")}
+              </TabsTrigger>
+              <TabsTrigger value="venue" className="flex items-center justify-center">
+                <Building3 className="h-4 w-4 mr-2" />
+                {t("venueSpaceManagementLayer")}
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+
         {/* External Map Controls - Before the map */}
-        <div className="flex justify-between items-center px-4 pt-4">
+        <div className="flex justify-between items-center px-4">
           <MapActions />
         </div>
         
@@ -72,6 +95,7 @@ export function MapSection({
             selectedDate={selectedDate}
             cardLocations={cardLocations}
             center={center}
+            currentMapLayer={currentMapLayer}
           />
         </div>
         

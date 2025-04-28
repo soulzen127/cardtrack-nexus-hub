@@ -100,7 +100,7 @@ export const LocationOverview = () => {
   return (
     <Card className="col-span-full">
       <CardHeader>
-        <CardTitle>{t("locationOverview")}</CardTitle>
+        <CardTitle>{t("locationInfoPlatform")}</CardTitle>
         <CardDescription>{t("geographicDistribution")}</CardDescription>
       </CardHeader>
       <CardContent>

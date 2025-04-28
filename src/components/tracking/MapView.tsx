@@ -20,9 +20,17 @@ interface MapViewProps {
   selectedDate?: string;
   cardLocations?: CardLocation[];
   center?: [number, number] | null;
+  currentMapLayer?: '3dgis' | 'venue';
 }
 
-export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocations, center }: MapViewProps) {
+export function MapView({ 
+  isRealtime, 
+  timeSliderValue, 
+  selectedDate, 
+  cardLocations, 
+  center, 
+  currentMapLayer = '3dgis' 
+}: MapViewProps) {
   const { t } = useI18n();
   const {
     mapboxToken, setMapboxToken,
@@ -97,6 +105,7 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
   // The actual locations to use (from props or mock data)
   const locationsToUse = cardLocations || mockCardLocations;
 
+  // Show different content based on the current map layer
   return (
     <div className="relative">
       <div className="flex items-center justify-between mb-2">
@@ -106,29 +115,31 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
           handleMapProviderChange={handleMapProviderChange}
         />
         
-        {/* Indoor/Outdoor Toggle Button - Moved outside the map */}
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={toggleIndoorMode}
-          className="flex items-center"
-        >
-          {isIndoorMode ? (
-            <>
-              <Building className="h-4 w-4 mr-2" />
-              {t("indoorMode")}
-            </>
-          ) : (
-            <>
-              <Globe className="h-4 w-4 mr-2" />
-              {t("outdoorMode")}
-            </>
-          )}
-        </Button>
+        {/* Indoor/Outdoor Toggle Button - if in 3D GIS layer */}
+        {currentMapLayer === '3dgis' && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={toggleIndoorMode}
+            className="flex items-center"
+          >
+            {isIndoorMode ? (
+              <>
+                <Building className="h-4 w-4 mr-2" />
+                {t("indoorMode")}
+              </>
+            ) : (
+              <>
+                <Globe className="h-4 w-4 mr-2" />
+                {t("outdoorMode")}
+              </>
+            )}
+          </Button>
+        )}
       </div>
       
       {/* Indoor Map Controller - Now positioned outside the map container */}
-      {isIndoorMode && (
+      {isIndoorMode && currentMapLayer === '3dgis' && (
         <IndoorMapController
           isIndoorMode={isIndoorMode}
           setIsIndoorMode={setIsIndoorMode}
@@ -144,29 +155,43 @@ export function MapView({ isRealtime, timeSliderValue, selectedDate, cardLocatio
       
       {/* Map Containers */}
       <div className="w-full h-full">
-        {mapProvider === 'mapbox' ? (
-          <MapboxMap 
-            mapboxToken={mapboxToken}
-            mapStyle={mapStyle}
-            setMapStyle={setMapStyle}
-            isIndoorMode={isIndoorMode}
-            currentFloor={currentFloor}
-            isMapInitialized={isMapInitialized}
-            setIsMapInitialized={setIsMapInitialized}
-            cardLocations={locationsToUse}
-            center={center}
-          />
+        {currentMapLayer === '3dgis' ? (
+          // 3D GIS Map Layer
+          mapProvider === 'mapbox' ? (
+            <MapboxMap 
+              mapboxToken={mapboxToken}
+              mapStyle={mapStyle}
+              setMapStyle={setMapStyle}
+              isIndoorMode={isIndoorMode}
+              currentFloor={currentFloor}
+              isMapInitialized={isMapInitialized}
+              setIsMapInitialized={setIsMapInitialized}
+              cardLocations={locationsToUse}
+              center={center}
+            />
+          ) : (
+            <GoogleMap 
+              setGoogleMapLoaded={setGoogleMapLoaded}
+              cardLocations={locationsToUse}
+              center={center}
+            />
+          )
         ) : (
-          <GoogleMap 
-            setGoogleMapLoaded={setGoogleMapLoaded}
-            cardLocations={locationsToUse}
-            center={center}
-          />
+          // Venue & Space Management Layer
+          <div className="flex items-center justify-center h-[500px] bg-gray-100 rounded-md border border-gray-200">
+            <div className="text-center">
+              <Building className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium">{t("venueSpaceManagementLayer")}</h3>
+              <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
+                {t("comingSoon")}
+              </p>
+            </div>
+          </div>
         )}
       </div>
       
       {/* Indoor Mode Indicator */}
-      {isIndoorMode && !indoorControllerHidden && (
+      {isIndoorMode && !indoorControllerHidden && currentMapLayer === '3dgis' && (
         <div className="absolute left-2 bottom-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-sm">
           {t("indoorMode")}: {currentBuilding}, {t("floor")} {currentFloor}
         </div>
