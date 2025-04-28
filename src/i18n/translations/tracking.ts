@@ -1,9 +1,10 @@
+
 const trackingTranslations = {
   en: {
     locationTracking: "Location Tracking",
     realtimeGeographicVisualization: "Real-time geographic visualization of card locations",
     threeDGISLayer: "3D GIS Layer",
-    3dGISMapLayer: "3D GIS Map Layer",
+    "3dGISMapLayer": "3D GIS Map Layer",
     venueSpaceManagementLayer: "Venue & Space Management",
     fieldSpaceManagementLayer: "Field & Space Management",
     comingSoon: "This feature is currently in development and will be available soon.",
@@ -92,7 +93,7 @@ const trackingTranslations = {
     locationTracking: "位置追踪",
     realtimeGeographicVisualization: "卡片位置的實時地理可視化",
     threeDGISLayer: "3D GIS 層",
-    3dGISMapLayer: "3D GIS 地圖層",
+    "3dGISMapLayer": "3D GIS 地圖層",
     venueSpaceManagementLayer: "場地與空間管理",
     fieldSpaceManagementLayer: "場域和空間管理層",
     comingSoon: "此功能正在開發中，即將推出。",
@@ -181,7 +182,7 @@ const trackingTranslations = {
     locationTracking: "位置追跡",
     realtimeGeographicVisualization: "カードの位置のリアルタイム地理的可視化",
     threeDGISLayer: "3D GISレイヤー",
-    3dGISMapLayer: "3D GIS地図レイヤー",
+    "3dGISMapLayer": "3D GIS地図レイヤー",
     venueSpaceManagementLayer: "会場と空間管理",
     fieldSpaceManagementLayer: "フィールドと空間管理レイヤー",
     comingSoon: "この機能は現在開発中であり、まもなく利用可能になります。",
