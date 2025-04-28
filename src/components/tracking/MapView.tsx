@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useMapState } from './map/hooks/useMapState';
 import { useI18n } from "@/hooks/use-i18n";

@@ -8,7 +8,7 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Filter, Layers, MapPin, Map as MapIcon, Globe, Building3 } from "lucide-react";
+import { Filter, Layers, MapPin, Map as MapIcon, Globe, Building } from "lucide-react";
 import { MapView } from "@/components/tracking/MapView";
 import { MapControls } from "@/components/tracking/MapControls";
 import { useI18n } from "@/hooks/use-i18n";
@@ -75,7 +75,7 @@ export function MapSection({
                 {t("threeDGISLayer")}
               </TabsTrigger>
               <TabsTrigger value="venue" className="flex items-center justify-center">
-                <Building3 className="h-4 w-4 mr-2" />
+                <Building className="h-4 w-4 mr-2" />
                 {t("venueSpaceManagementLayer")}
               </TabsTrigger>
             </TabsList>
