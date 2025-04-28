@@ -1,7 +1,8 @@
 
 import React, { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { MapSection, MapActions } from "@/components/tracking/MapSection";
+import { MapSection } from "@/components/tracking/MapSection";
+import { MapActions } from "@/components/tracking/map/MapActions";
 import { TrackedCardsPanel } from "@/components/tracking/TrackedCardsPanel";
 import { AlertConfigurationPanel } from "@/components/tracking/alerts/AlertConfigurationPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
