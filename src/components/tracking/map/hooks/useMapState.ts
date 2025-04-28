@@ -5,8 +5,9 @@ export function useMapState() {
   const [mapboxToken, setMapboxToken] = useState<string>('');
   const [isMapInitialized, setIsMapInitialized] = useState(false);
   const [mapStyle, setMapStyle] = useState<string>('streets-v12');
-  const [mapProvider, setMapProvider] = useState<'mapbox' | 'google'>('mapbox');
+  const [mapProvider, setMapProvider] = useState<'mapbox' | 'google' | 'cesium'>('mapbox');
   const [googleMapLoaded, setGoogleMapLoaded] = useState(false);
+  const [cesiumMapLoaded, setCesiumMapLoaded] = useState(false);
   
   // Indoor map state
   const [isIndoorMode, setIsIndoorMode] = useState(false);
@@ -39,6 +40,8 @@ export function useMapState() {
     setMapProvider,
     googleMapLoaded, 
     setGoogleMapLoaded,
+    cesiumMapLoaded,
+    setCesiumMapLoaded,
     isIndoorMode, 
     setIsIndoorMode,
     currentFloor, 

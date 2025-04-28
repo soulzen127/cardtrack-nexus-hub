@@ -11,6 +11,7 @@ import { settingsTranslations } from "./settings";
 import { alertsTranslations } from "./alerts";
 import { reportsTranslations } from "./reports";
 import { locationsTranslations } from "./locations";
+import { mapsLocationTranslations } from "./maps-location";
 
 // Export the combined type from all translation categories
 export type TranslationKeys = 
@@ -23,7 +24,8 @@ export type TranslationKeys =
   keyof typeof settingsTranslations.en |
   keyof typeof alertsTranslations.en |
   keyof typeof reportsTranslations.en |
-  keyof typeof locationsTranslations.en;
+  keyof typeof locationsTranslations.en |
+  keyof typeof mapsLocationTranslations.en;
 
 export type Translations = Record<TranslationKeys, string>;
 
@@ -38,7 +40,8 @@ export const translations = combineTranslations([
   settingsTranslations,
   alertsTranslations,
   reportsTranslations,
-  locationsTranslations
+  locationsTranslations,
+  mapsLocationTranslations
 ]);
 
 export const useTranslation = (language: Language) => {

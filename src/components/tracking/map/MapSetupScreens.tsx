@@ -8,8 +8,8 @@ import { Label } from "@/components/ui/label";
 interface TokenInputScreenProps {
   mapboxToken: string;
   setMapboxToken: (token: string) => void;
-  mapProvider: 'mapbox' | 'google';
-  handleMapProviderChange: (provider: 'mapbox' | 'google') => void;
+  mapProvider: 'mapbox' | 'google' | 'cesium';
+  handleMapProviderChange: (provider: 'mapbox' | 'google' | 'cesium') => void;
   initializeMapbox: () => void;
 }
 
@@ -46,7 +46,7 @@ export function TokenInputScreen({
             <RadioGroup 
               defaultValue="mapbox" 
               value={mapProvider}
-              onValueChange={(value) => handleMapProviderChange(value as 'mapbox' | 'google')}
+              onValueChange={(value) => handleMapProviderChange(value as 'mapbox' | 'google' | 'cesium')}
               className="flex space-x-4"
             >
               <div className="flex items-center space-x-2">
@@ -56,6 +56,10 @@ export function TokenInputScreen({
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="google" id="google" />
                 <Label htmlFor="google">Google Maps</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="cesium" id="cesium" />
+                <Label htmlFor="cesium">Cesium</Label>
               </div>
             </RadioGroup>
           </div>
@@ -72,8 +76,8 @@ export function TokenInputScreen({
 }
 
 interface GoogleMapSetupScreenProps {
-  mapProvider: 'mapbox' | 'google';
-  handleMapProviderChange: (provider: 'mapbox' | 'google') => void;
+  mapProvider: 'mapbox' | 'google' | 'cesium';
+  handleMapProviderChange: (provider: 'mapbox' | 'google' | 'cesium') => void;
   initializeGoogleMap: () => void;
 }
 
@@ -95,7 +99,7 @@ export function GoogleMapSetupScreen({
             <p className="text-sm font-medium">{t("mapProvider")}</p>
             <RadioGroup 
               value={mapProvider}
-              onValueChange={(value) => handleMapProviderChange(value as 'mapbox' | 'google')}
+              onValueChange={(value) => handleMapProviderChange(value as 'mapbox' | 'google' | 'cesium')}
               className="flex space-x-4"
             >
               <div className="flex items-center space-x-2">
@@ -104,7 +108,11 @@ export function GoogleMapSetupScreen({
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="google" id="google" />
-                <Label htmlFor="google">Google Maps</Label>
+                <Label htmlFor="google">Google</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="cesium" id="cesium" />
+                <Label htmlFor="cesium">Cesium</Label>
               </div>
             </RadioGroup>
           </div>
@@ -115,6 +123,61 @@ export function GoogleMapSetupScreen({
           
           <Button onClick={initializeGoogleMap}>
             {t("initializeGoogleMap")}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface CesiumMapSetupScreenProps {
+  mapProvider: 'mapbox' | 'google' | 'cesium';
+  handleMapProviderChange: (provider: 'mapbox' | 'google' | 'cesium') => void;
+  initializeCesiumMap: () => void;
+}
+
+export function CesiumMapSetupScreen({
+  mapProvider,
+  handleMapProviderChange,
+  initializeCesiumMap
+}: CesiumMapSetupScreenProps) {
+  const { t } = useI18n();
+  
+  return (
+    <div className="map-container bg-muted flex flex-col items-center justify-center p-8 rounded-md min-h-[300px]">
+      <div className="text-center space-y-3 max-w-md mx-auto">
+        <h3 className="text-lg font-medium">{t("cesiumSetup")}</h3>
+        <p className="text-muted-foreground">{t("cesiumExplanation")}</p>
+        
+        <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-2">
+            <p className="text-sm font-medium">{t("mapProvider")}</p>
+            <RadioGroup 
+              value={mapProvider}
+              onValueChange={(value) => handleMapProviderChange(value as 'mapbox' | 'google' | 'cesium')}
+              className="flex space-x-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="mapbox" id="mapbox" />
+                <Label htmlFor="mapbox">Mapbox</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="google" id="google" />
+                <Label htmlFor="google">Google</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="cesium" id="cesium" />
+                <Label htmlFor="cesium">Cesium</Label>
+              </div>
+            </RadioGroup>
+          </div>
+          
+          <p className="text-xs text-muted-foreground">
+            {t("cesiumIonTokenNeeded")} <a href="https://cesium.com/ion/" target="_blank" rel="noopener" className="text-primary">Cesium Ion</a>
+          </p>
+          
+          <Button onClick={initializeCesiumMap}>
+            {t("initializeCesiumMap")}
           </Button>
         </div>
       </div>

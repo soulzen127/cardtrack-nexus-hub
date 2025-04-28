@@ -5,8 +5,8 @@ import { Label } from "@/components/ui/label";
 import { useI18n } from "@/hooks/use-i18n";
 
 interface MapProviderSelectorProps {
-  mapProvider: 'mapbox' | 'google';
-  handleMapProviderChange: (provider: 'mapbox' | 'google') => void;
+  mapProvider: 'mapbox' | 'google' | 'cesium';
+  handleMapProviderChange: (provider: 'mapbox' | 'google' | 'cesium') => void;
 }
 
 export function MapProviderSelector({
@@ -17,7 +17,7 @@ export function MapProviderSelector({
   const { t } = useI18n();
   
   const handleProviderChange = (value: string) => {
-    handleMapProviderChange(value as 'mapbox' | 'google');
+    handleMapProviderChange(value as 'mapbox' | 'google' | 'cesium');
     setIsOpen(false); // Hide the selector after selection
   };
   
@@ -27,7 +27,10 @@ export function MapProviderSelector({
         onClick={() => setIsOpen(!isOpen)}
         className="px-3 py-2 bg-white dark:bg-gray-800 rounded-md shadow-md text-sm font-medium flex items-center"
       >
-        {t("mapProvider")}: {mapProvider === 'mapbox' ? 'Mapbox' : 'Google'}
+        {t("mapProvider")}: {
+          mapProvider === 'mapbox' ? 'Mapbox' : 
+          mapProvider === 'google' ? 'Google' : 'Cesium'
+        }
       </button>
       
       {isOpen && (
@@ -44,6 +47,10 @@ export function MapProviderSelector({
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="google" id="google-map" />
               <Label htmlFor="google-map" className="text-xs">Google</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="cesium" id="cesium-map" />
+              <Label htmlFor="cesium-map" className="text-xs">Cesium</Label>
             </div>
           </RadioGroup>
         </div>

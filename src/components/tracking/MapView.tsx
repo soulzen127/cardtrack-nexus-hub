@@ -1,17 +1,20 @@
+
 import React, { useState } from 'react';
 import { useMapState } from './map/hooks/useMapState';
 import { useI18n } from "@/hooks/use-i18n";
 import { MapProviderSelector } from './map/MapProviderSelector';
 import { IndoorMapController } from './map/IndoorMapController';
-import { TokenInputScreen, GoogleMapSetupScreen } from './map/MapSetupScreens';
+import { TokenInputScreen, GoogleMapSetupScreen, CesiumMapSetupScreen } from './map/MapSetupScreens';
 import { useAccessControl } from '@/hooks/use-access-control';
 import { MapboxMap } from './map/components/MapboxMap';
 import { GoogleMap } from './map/components/GoogleMap';
+import { CesiumMap } from './map/components/CesiumMap';
 import { AccessDenied } from './map/components/AccessDenied';
 import { mockCardLocations } from './map/mockData';
 import { CardLocation } from "./map/types";
 import { Button } from '@/components/ui/button';
 import { Building, Globe } from 'lucide-react';
+import { FieldSpaceManagement } from './map/components/FieldSpaceManagement';
 
 interface MapViewProps {
   isRealtime: boolean;
@@ -37,6 +40,7 @@ export function MapView({
     mapStyle, setMapStyle,
     mapProvider, setMapProvider,
     googleMapLoaded, setGoogleMapLoaded,
+    cesiumMapLoaded, setCesiumMapLoaded,
     isIndoorMode, setIsIndoorMode,
     currentFloor, setCurrentFloor,
     availableFloors, currentBuilding
@@ -52,7 +56,7 @@ export function MapView({
   });
 
   // Handle map provider change
-  const handleMapProviderChange = (provider: 'mapbox' | 'google') => {
+  const handleMapProviderChange = (provider: 'mapbox' | 'google' | 'cesium') => {
     setMapProvider(provider);
     setIsMapInitialized(false);
   };
@@ -65,6 +69,11 @@ export function MapView({
   // Initialize google maps
   const initGoogleMap = () => {
     setGoogleMapLoaded(false);
+  };
+  
+  // Initialize cesium maps
+  const initCesiumMap = () => {
+    setCesiumMapLoaded(false);
   };
 
   // Toggle indoor/outdoor mode
@@ -100,6 +109,17 @@ export function MapView({
       />
     );
   }
+  
+  // Display Cesium Maps setup if Cesium is selected but no map is loaded
+  if (mapProvider === 'cesium' && !cesiumMapLoaded) {
+    return (
+      <CesiumMapSetupScreen
+        mapProvider={mapProvider}
+        handleMapProviderChange={handleMapProviderChange}
+        initializeCesiumMap={initCesiumMap}
+      />
+    );
+  }
 
   // The actual locations to use (from props or mock data)
   const locationsToUse = cardLocations || mockCardLocations;
@@ -108,11 +128,13 @@ export function MapView({
   return (
     <div className="relative">
       <div className="flex items-center justify-between mb-2">
-        {/* Map Provider Selection */}
-        <MapProviderSelector 
-          mapProvider={mapProvider}
-          handleMapProviderChange={handleMapProviderChange}
-        />
+        {/* Map Provider Selection - only show for 3D GIS layer */}
+        {currentMapLayer === '3dgis' && (
+          <MapProviderSelector 
+            mapProvider={mapProvider}
+            handleMapProviderChange={handleMapProviderChange}
+          />
+        )}
         
         {/* Indoor/Outdoor Toggle Button - if in 3D GIS layer */}
         {currentMapLayer === '3dgis' && (
@@ -168,24 +190,22 @@ export function MapView({
               cardLocations={locationsToUse}
               center={center}
             />
-          ) : (
+          ) : mapProvider === 'google' ? (
             <GoogleMap 
               setGoogleMapLoaded={setGoogleMapLoaded}
               cardLocations={locationsToUse}
               center={center}
             />
+          ) : (
+            <CesiumMap
+              setCesiumMapLoaded={setCesiumMapLoaded}
+              cardLocations={locationsToUse}
+              center={center}
+            />
           )
         ) : (
-          // Venue & Space Management Layer
-          <div className="flex items-center justify-center h-[500px] bg-gray-100 rounded-md border border-gray-200">
-            <div className="text-center">
-              <Building className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium">{t("venueSpaceManagementLayer")}</h3>
-              <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
-                {t("comingSoon")}
-              </p>
-            </div>
-          </div>
+          // Field & Space Management Layer
+          <FieldSpaceManagement />
         )}
       </div>
       
